@@ -30,17 +30,17 @@ subprojects {
             plugins.hasPlugin("com.android.library")
         ) {
             extensions.configure<BaseExtension>("android") {
-                compileSdkVersion(libs.versions.compileSdk.get().toInt())
+                compileSdkVersion(apiLevel = 36)
 
                 lintOptions {
                     isAbortOnError = false
                 }
 
                 defaultConfig {
-                    minSdkVersion(libs.versions.minSdk.get().toInt())
-                    targetSdkVersion(libs.versions.targetSdk.get().toInt())
-                    versionCode = 1913
-                    versionName = "1.9.13"
+                    minSdkVersion(26)
+                    targetSdkVersion(36)
+                    versionCode = 2000
+                    versionName = "2.0.0"
                 }
             }
         }
