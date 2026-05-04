@@ -8,8 +8,13 @@ ext {
     pomDescription = 'An android library project which contains the zbar barcode scanner view'
 }
 
+//dependencies {
+////    api project(":core")
+//    api libraries.barcodescanner_core
+//    api fileTree(dir: 'libs', include: '*.jar')
+//}
+
 dependencies {
-//    api project(":core")
-    api libraries.barcodescanner_core
+    api project(":core")
     api fileTree(dir: 'libs', include: '*.jar')
 }
