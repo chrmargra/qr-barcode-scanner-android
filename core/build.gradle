@@ -8,10 +8,6 @@ ext {
     pomDescription = 'An android library project which contains the core barcode scanner view'
 }
 
-//dependencies {
-//    implementation libraries.support_v4
-//}
-
 dependencies {
     implementation libraries.support_v4
 }
