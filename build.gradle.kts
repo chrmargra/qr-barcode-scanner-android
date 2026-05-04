@@ -1,4 +1,4 @@
-apply(from = "dependencies.gradle")
+import com.android.build.gradle.BaseExtension
 
 buildscript {
     repositories {
@@ -25,22 +25,20 @@ allprojects {
 
 subprojects {
     afterEvaluate {
-        val pluginContainer = plugins
-
         if (
-            pluginContainer.hasPlugin("com.android.application") ||
-            pluginContainer.hasPlugin("com.android.library")
+            plugins.hasPlugin("com.android.application") ||
+            plugins.hasPlugin("com.android.library")
         ) {
-            extensions.configure<com.android.build.gradle.BaseExtension>("android") {
-                compileSdkVersion((rootProject.extra["versions"] as Map<*, *>)["compile_sdk"] as Int)
+            extensions.configure<BaseExtension>("android") {
+                compileSdkVersion(libs.versions.compileSdk.get().toInt())
 
                 lintOptions {
                     isAbortOnError = false
                 }
 
                 defaultConfig {
-                    minSdkVersion((rootProject.extra["versions"] as Map<*, *>)["min_sdk"] as Int)
-                    targetSdkVersion((rootProject.extra["versions"] as Map<*, *>)["target_sdk"] as Int)
+                    minSdkVersion(libs.versions.minSdk.get().toInt())
+                    targetSdkVersion(libs.versions.targetSdk.get().toInt())
                     versionCode = 1913
                     versionName = "1.9.13"
                 }

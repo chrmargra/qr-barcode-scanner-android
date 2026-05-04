@@ -2,14 +2,11 @@ plugins {
     id("com.android.application")
 }
 
-@Suppress(names = ["UNCHECKED_CAST"])
-val libraries = rootProject.extra["libraries"] as Map<String, Any>
-
 dependencies {
     implementation(project(":zxing"))
-    implementation(libraries["support_v4"].toString())
-    implementation(libraries["appcompat_v7"].toString())
-    implementation(libraries["design_support"].toString())
+    implementation(libs.support.v4)
+    implementation(libs.appcompat.v7)
+    implementation(libs.design.support)
 }
 
 android {

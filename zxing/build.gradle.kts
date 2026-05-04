@@ -2,9 +2,6 @@ plugins {
     id("com.android.library")
 }
 
-@Suppress(names = ["UNCHECKED_CAST"])
-val libraries = rootProject.extra["libraries"] as Map<String, Any>
-
 extra["isLibrary"] = true
 extra["pomPackaging"] = "aar"
 extra["pomArtifactId"] = "zxing"
@@ -13,7 +10,8 @@ extra["pomDescription"] = "An android library project which contains the zxing b
 
 dependencies {
     api(project(":core"))
-    api(libraries["zxing_core"].toString())
+    api(libs.zxing.core)
+
 }
 
 android {
