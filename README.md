@@ -1,8 +1,27 @@
-Project Archived
-================
-**July 1 2020**
+# QR / Barcode Scanner Android
+
+> This repository is a maintained fork of the original [dm77/barcodescanner](https://github.com/dm77/barcodescanner) project.
+
+The original project was archived on July 1, 2020 and is no longer maintained by its original author. This fork keeps the library available and usable with newer Android tooling, dependencies, and build environments.
+
+All original credits, copyright notices, and license terms are preserved. This fork remains based on the original `dm77/barcodescanner` project and continues to follow the Apache License 2.0 terms that apply to the original code.
+
+## Maintenance status
+
+This fork is maintained primarily for my own Android projects, but the repository is public so others may clone it, inspect it, or use it under the terms of the original license.
+
+## Original project status
+
+The original `dm77/barcodescanner` project was archived on July 1, 2020 and is no longer maintained by its original author.
+
+<details>
+<summary>Original archive notice</summary>
+
+**July 1, 2020**
 
 This project is no longer maintained. When I first started this project in late 2013 there were very few libraries to help with barcode scanning on Android. But the situation today is much different. We have lots of great libraries based on ZXing and there is also barcode scanning API in Google's MLKit (https://github.com/googlesamples/mlkit). So given the options I have decided to stop working on this project.
+
+</details>
 
 Introduction
 ============
