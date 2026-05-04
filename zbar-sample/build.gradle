@@ -11,4 +11,5 @@ android {
     defaultConfig {
         applicationId "${project.group}.zbar.sample"
     }
+    namespace 'me.dm7.barcodescanner.zbar.sample'
 }

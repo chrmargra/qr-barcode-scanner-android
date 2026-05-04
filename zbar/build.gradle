@@ -12,3 +12,6 @@ dependencies {
     api project(":core")
     api fileTree(dir: 'libs', include: '*.jar')
 }
+android {
+    namespace 'me.dm7.barcodescanner.zbar'
+}

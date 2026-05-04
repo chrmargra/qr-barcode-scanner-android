@@ -11,3 +11,6 @@ ext {
 dependencies {
     implementation libraries.support_v4
 }
+android {
+    namespace 'me.dm7.barcodescanner.core'
+}
