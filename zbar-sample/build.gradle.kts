@@ -7,15 +7,11 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "${project.group}.zbar.sample"
+        applicationId = "me.dm7.barcodescanner.zbar.sample"
         minSdk = 26
         targetSdk = 36
         versionCode = 2000
         versionName = "2.0.0"
-    }
-
-    lint {
-        abortOnError = false
     }
 }
 
