@@ -48,14 +48,18 @@ ZXing
 Installation
 ------------
 
-Add the following dependency to your build.gradle file.
+This fork is maintained as a local Android library project.  
+The original JCenter/Bintray dependency flow is no longer used.  
+Add the required modules to your project and depend on the scanner implementation you want to use.
 
-```
-repositories {
-   jcenter()
+```kotlin
+dependencies {
+    implementation(project(":zxing"))
 }
-implementation 'me.dm7.barcodescanner:zxing:1.9.13'
 ```
+
+Both :zxing and :zbar depend on :core, so you normally do not need to add :core directly.  
+The core module declares the camera permission and required camera feature in its manifest. Apps still need to request the camera permission at runtime before starting the scanner.
 
 Simple Usage
 ------------
@@ -165,14 +169,18 @@ ZBar
 Installation
 ------------
 
-Add the following dependency to your build.gradle file.
+This fork is maintained as a local Android library project.  
+The original JCenter/Bintray dependency flow is no longer used.  
+Add the required modules to your project and depend on the scanner implementation you want to use.  
 
-```
-repositories {
-   jcenter()
+```kotlin
+dependencies {
+    implementation(project(":zbar"))
 }
-implementation 'me.dm7.barcodescanner:zbar:1.9.13'
 ```
+
+Both :zxing and :zbar depend on :core, so you normally do not need to add :core directly.  
+The core module declares the camera permission and required camera feature in its manifest. Apps still need to request the camera permission at runtime before starting the scanner.
 
 Simple Usage
 ------------
