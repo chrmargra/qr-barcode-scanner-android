@@ -21,7 +21,7 @@ android {
 
 dependencies {
     implementation(project(":zxing"))
-    implementation(libs.support.v4)
-    implementation(libs.appcompat.v7)
-    implementation(libs.design.support)
+
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
 }

@@ -12,5 +12,5 @@ android {
 }
 
 dependencies {
-    implementation(libs.support.v4)
+    implementation(libs.androidx.annotation)
 }
