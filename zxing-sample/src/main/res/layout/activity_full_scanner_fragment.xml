@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment android:name="me.dm7.barcodescanner.zxing.sample.FullScannerFragment"
-              android:id="@+id/scanner_fragment"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent" />
+    <fragment
+        android:id="@+id/scanner_fragment"
+        android:name="me.dm7.barcodescanner.zxing.sample.FullScannerFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_gravity="top"
-        android:minHeight="?attr/actionBarSize"
-        android:background="@color/actionbar_opacity"
-        app:theme="@style/TransparentToolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@color/actionbar_opacity"
+        android:minHeight="?attr/actionBarSize"
+        app:theme="@style/TransparentToolbar" />
 </FrameLayout>
