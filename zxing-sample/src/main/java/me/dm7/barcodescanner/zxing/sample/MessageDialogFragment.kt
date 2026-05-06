@@ -1,47 +1,46 @@
-package me.dm7.barcodescanner.zxing.sample;
+package me.dm7.barcodescanner.zxing.sample
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
+import android.app.AlertDialog
+import android.app.Dialog
+import android.os.Bundle
+import androidx.fragment.app.DialogFragment
 
-import androidx.fragment.app.DialogFragment;
+class MessageDialogFragment : DialogFragment() {
 
-public class MessageDialogFragment extends DialogFragment {
-
-    public interface MessageDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog);
+    interface MessageDialogListener {
+        fun onDialogPositiveClick(dialog: DialogFragment)
     }
 
-    private String mTitle;
-    private String mMessage;
-    private MessageDialogListener mListener;
+    private var title: String? = null
+    private var message: String? = null
+    private var listener: MessageDialogListener? = null
 
-    public void onCreate(Bundle state) {
-        super.onCreate(state);
-        setRetainInstance(true);
+    override fun onCreate(state: Bundle?) {
+        super.onCreate(state)
+        retainInstance = true
     }
 
-    public static MessageDialogFragment newInstance(String title, String message, MessageDialogListener listener) {
-        MessageDialogFragment fragment = new MessageDialogFragment();
-        fragment.mTitle = title;
-        fragment.mMessage = message;
-        fragment.mListener = listener;
-        return fragment;
-    }
-
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(mMessage)
-                .setTitle(mTitle);
-
-        builder.setPositiveButton("OK", (dialog, id) -> {
-            if (mListener != null) {
-                mListener.onDialogPositiveClick(MessageDialogFragment.this);
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return AlertDialog.Builder(requireActivity())
+            .setMessage(message)
+            .setTitle(title)
+            .setPositiveButton("OK") { _, _ ->
+                listener?.onDialogPositiveClick(this)
             }
-        });
+            .create()
+    }
 
-        return builder.create();
+    companion object {
+        fun newInstance(
+            title: String,
+            message: String,
+            listener: MessageDialogListener
+        ): MessageDialogFragment {
+            return MessageDialogFragment().apply {
+                this.title = title
+                this.message = message
+                this.listener = listener
+            }
+        }
     }
 }

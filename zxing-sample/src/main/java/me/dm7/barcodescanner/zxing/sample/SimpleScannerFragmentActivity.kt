@@ -1,15 +1,16 @@
-package me.dm7.barcodescanner.zxing.sample;
+package me.dm7.barcodescanner.zxing.sample
 
-import android.os.Bundle;
+import android.os.Bundle
+import me.dm7.barcodescanner.zxing.sample.databinding.ActivitySimpleScannerFragmentBinding
 
-import me.dm7.barcodescanner.zxing.sample.databinding.ActivitySimpleScannerFragmentBinding;
+class SimpleScannerFragmentActivity : BaseScannerActivity() {
 
-public class SimpleScannerFragmentActivity extends BaseScannerActivity {
-    @Override
-    public void onCreate(Bundle state) {
-        super.onCreate(state);
-        ActivitySimpleScannerFragmentBinding binding = ActivitySimpleScannerFragmentBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        setupToolbar(binding.toolbar);
+    override fun onCreate(state: Bundle?) {
+        super.onCreate(state)
+
+        val binding = ActivitySimpleScannerFragmentBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setupToolbar(binding.toolbar)
     }
 }

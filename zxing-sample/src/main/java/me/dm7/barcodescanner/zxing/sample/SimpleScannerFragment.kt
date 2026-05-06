@@ -1,50 +1,65 @@
-package me.dm7.barcodescanner.zxing.sample;
+package me.dm7.barcodescanner.zxing.sample
 
-import android.os.Bundle;
-import android.os.Handler;
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.google.zxing.Result
+import me.dm7.barcodescanner.zxing.ZXingScannerView
 
-import androidx.fragment.app.Fragment;
+class SimpleScannerFragment : Fragment(), ZXingScannerView.ResultHandler {
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
+    private var scannerView: ZXingScannerView? = null
 
-import com.google.zxing.Result;
-
-import me.dm7.barcodescanner.zxing.ZXingScannerView;
-
-public class SimpleScannerFragment extends Fragment implements ZXingScannerView.ResultHandler {
-    private ZXingScannerView mScannerView;
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mScannerView = new ZXingScannerView(getActivity());
-        return mScannerView;
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val newScannerView = ZXingScannerView(requireActivity())
+        scannerView = newScannerView
+        return newScannerView
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mScannerView.setResultHandler(this);
-        mScannerView.startCamera();
+    override fun onResume() {
+        super.onResume()
+
+        scannerView?.setResultHandler(this)
+        scannerView?.startCamera()
     }
 
-    @Override
-    public void handleResult(Result rawResult) {
-        Toast.makeText(getActivity(), "Contents = " + rawResult.getText() +
-                ", Format = " + rawResult.getBarcodeFormat().toString(), Toast.LENGTH_SHORT).show();
+    override fun handleResult(rawResult: Result) {
+        Toast.makeText(
+            requireActivity(),
+            "Contents = ${rawResult.text}, Format = ${rawResult.barcodeFormat}",
+            Toast.LENGTH_SHORT
+        ).show()
+
         // Note:
         // * Wait 2 seconds to resume the preview.
         // * On older devices continuously stopping and resuming camera preview can result in freezing the app.
         // * I don't know why this is the case but I don't have the time to figure out.
-        Handler handler = new Handler();
-        handler.postDelayed(() -> mScannerView.resumeCameraPreview(SimpleScannerFragment.this), 2000);
+        Handler(Looper.getMainLooper()).postDelayed(
+            {
+                scannerView?.resumeCameraPreview(this)
+            },
+            2000
+        )
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mScannerView.stopCamera();
+    override fun onPause() {
+        super.onPause()
+
+        scannerView?.stopCamera()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        scannerView = null
     }
 }

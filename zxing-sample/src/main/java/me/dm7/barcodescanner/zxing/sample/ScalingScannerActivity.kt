@@ -1,69 +1,82 @@
-package me.dm7.barcodescanner.zxing.sample;
+package me.dm7.barcodescanner.zxing.sample
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.view.View;
-import android.widget.Toast;
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
+import android.widget.Toast
+import com.google.zxing.Result
+import me.dm7.barcodescanner.zxing.ZXingScannerView
+import me.dm7.barcodescanner.zxing.sample.databinding.ActivityScalingScannerBinding
 
-import com.google.zxing.Result;
+private const val FLASH_STATE = "FLASH_STATE"
 
-import me.dm7.barcodescanner.zxing.ZXingScannerView;
-import me.dm7.barcodescanner.zxing.sample.databinding.ActivityScalingScannerBinding;
+class ScalingScannerActivity : BaseScannerActivity(), ZXingScannerView.ResultHandler {
 
-public class ScalingScannerActivity extends BaseScannerActivity implements ZXingScannerView.ResultHandler {
-    private static final String FLASH_STATE = "FLASH_STATE";
+    private var scannerView: ZXingScannerView? = null
+    private var flash = false
 
-    private ZXingScannerView mScannerView;
-    private boolean mFlash;
+    override fun onCreate(state: Bundle?) {
+        super.onCreate(state)
 
-    @Override
-    public void onCreate(Bundle state) {
-        super.onCreate(state);
-        ActivityScalingScannerBinding binding = ActivityScalingScannerBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        setupToolbar(binding.toolbar);
-        mScannerView = new ZXingScannerView(this);
-        binding.contentFrame.addView(mScannerView);
+        flash = state?.getBoolean(FLASH_STATE, false) ?: false
+
+        val binding = ActivityScalingScannerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setupToolbar(binding.toolbar)
+
+        val newScannerView = ZXingScannerView(this)
+        scannerView = newScannerView
+        binding.contentFrame.addView(newScannerView)
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mScannerView.setResultHandler(this);
+    override fun onResume() {
+        super.onResume()
+
+        scannerView?.setResultHandler(this)
+
         // You can optionally set aspect ratio tolerance level
         // that is used in calculating the optimal Camera preview size
-        mScannerView.setAspectTolerance(0.2f);
-        mScannerView.startCamera();
-        mScannerView.setFlash(mFlash);
+        scannerView?.setAspectTolerance(0.2f)
+
+        scannerView?.startCamera()
+        scannerView?.setFlash(flash)
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mScannerView.stopCamera();
+    override fun onPause() {
+        super.onPause()
+
+        scannerView?.stopCamera()
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(FLASH_STATE, mFlash);
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putBoolean(FLASH_STATE, flash)
     }
 
-    @Override
-    public void handleResult(Result rawResult) {
-        Toast.makeText(this, "Contents = " + rawResult.getText() +
-                ", Format = " + rawResult.getBarcodeFormat().toString(), Toast.LENGTH_SHORT).show();
+    override fun handleResult(rawResult: Result) {
+        Toast.makeText(
+            this,
+            "Contents = ${rawResult.text}, Format = ${rawResult.barcodeFormat}",
+            Toast.LENGTH_SHORT
+        ).show()
 
         // Note:
         // * Wait 2 seconds to resume the preview.
         // * On older devices continuously stopping and resuming camera preview can result in freezing the app.
         // * I don't know why this is the case but I don't have the time to figure out.
-        Handler handler = new Handler();
-        handler.postDelayed(() -> mScannerView.resumeCameraPreview(ScalingScannerActivity.this), 2000);
+        Handler(Looper.getMainLooper()).postDelayed(
+            {
+                scannerView?.resumeCameraPreview(this)
+            },
+            2000
+        )
     }
 
-    public void toggleFlash(View v) {
-        mFlash = !mFlash;
-        mScannerView.setFlash(mFlash);
+    fun toggleFlash(view: View) {
+        flash = !flash
+        scannerView?.setFlash(flash)
     }
 }
