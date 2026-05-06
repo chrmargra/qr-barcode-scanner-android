@@ -1,14 +1,18 @@
 [versions]
 agp = "8.13.2"
-supportLib = "28.0.0"
+kotlin = "2.3.21"
+androidxAnnotation = "1.10.0"
+androidxAppcompat = "1.7.1"
+material = "1.13.0"
 zxing = "3.5.4"
 
 [libraries]
-support-v4 = { group = "com.android.support", name = "support-v4", version.ref = "supportLib" }
-appcompat-v7 = { group = "com.android.support", name = "appcompat-v7", version.ref = "supportLib" }
-design-support = { group = "com.android.support", name = "design", version.ref = "supportLib" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
