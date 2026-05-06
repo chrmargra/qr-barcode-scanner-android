@@ -4,10 +4,12 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.core.view.MenuItemCompat;
+
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +27,7 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView;
 public class FullScannerFragment extends Fragment implements MessageDialogFragment.MessageDialogListener,
         ZBarScannerView.ResultHandler, FormatSelectorDialogFragment.FormatSelectorDialogListener,
         CameraSelectorDialogFragment.CameraSelectorDialogListener {
+
     private static final String FLASH_STATE = "FLASH_STATE";
     private static final String AUTO_FOCUS_STATE = "AUTO_FOCUS_STATE";
     private static final String SELECTED_FORMATS = "SELECTED_FORMATS";
@@ -38,7 +41,7 @@ public class FullScannerFragment extends Fragment implements MessageDialogFragme
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle state) {
         mScannerView = new ZBarScannerView(getActivity());
-        if(state != null) {
+        if (state != null) {
             mFlash = state.getBoolean(FLASH_STATE, false);
             mAutoFocus = state.getBoolean(AUTO_FOCUS_STATE, true);
             mSelectedIndices = state.getIntegerArrayList(SELECTED_FORMATS);
@@ -59,12 +62,12 @@ public class FullScannerFragment extends Fragment implements MessageDialogFragme
         setHasOptionsMenu(true);
     }
 
-    public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
         MenuItem menuItem;
 
-        if(mFlash) {
+        if (mFlash) {
             menuItem = menu.add(Menu.NONE, R.id.menu_flash, 0, R.string.flash_on);
         } else {
             menuItem = menu.add(Menu.NONE, R.id.menu_flash, 0, R.string.flash_off);
@@ -72,7 +75,7 @@ public class FullScannerFragment extends Fragment implements MessageDialogFragme
         MenuItemCompat.setShowAsAction(menuItem, MenuItem.SHOW_AS_ACTION_NEVER);
 
 
-        if(mAutoFocus) {
+        if (mAutoFocus) {
             menuItem = menu.add(Menu.NONE, R.id.menu_auto_focus, 0, R.string.auto_focus_on);
         } else {
             menuItem = menu.add(Menu.NONE, R.id.menu_auto_focus, 0, R.string.auto_focus_off);
@@ -92,7 +95,7 @@ public class FullScannerFragment extends Fragment implements MessageDialogFragme
         switch (item.getItemId()) {
             case R.id.menu_flash:
                 mFlash = !mFlash;
-                if(mFlash) {
+                if (mFlash) {
                     item.setTitle(R.string.flash_on);
                 } else {
                     item.setTitle(R.string.flash_off);
@@ -101,7 +104,7 @@ public class FullScannerFragment extends Fragment implements MessageDialogFragme
                 return true;
             case R.id.menu_auto_focus:
                 mAutoFocus = !mAutoFocus;
-                if(mAutoFocus) {
+                if (mAutoFocus) {
                     item.setTitle(R.string.auto_focus_on);
                 } else {
                     item.setTitle(R.string.auto_focus_off);
@@ -146,7 +149,8 @@ public class FullScannerFragment extends Fragment implements MessageDialogFragme
             Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             Ringtone r = RingtoneManager.getRingtone(getActivity().getApplicationContext(), notification);
             r.play();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         showMessageDialog("Contents = " + rawResult.getContents() + ", Format = " + rawResult.getBarcodeFormat().getName());
     }
 
@@ -166,7 +170,7 @@ public class FullScannerFragment extends Fragment implements MessageDialogFragme
     public void closeDialog(String dialogName) {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         DialogFragment fragment = (DialogFragment) fragmentManager.findFragmentByTag(dialogName);
-        if(fragment != null) {
+        if (fragment != null) {
             fragment.dismiss();
         }
     }
@@ -192,18 +196,18 @@ public class FullScannerFragment extends Fragment implements MessageDialogFragme
     }
 
     public void setupFormats() {
-        List<BarcodeFormat> formats = new ArrayList<BarcodeFormat>();
-        if(mSelectedIndices == null || mSelectedIndices.isEmpty()) {
-            mSelectedIndices = new ArrayList<Integer>();
-            for(int i = 0; i < BarcodeFormat.ALL_FORMATS.size(); i++) {
+        List<BarcodeFormat> formats = new ArrayList<>();
+        if (mSelectedIndices == null || mSelectedIndices.isEmpty()) {
+            mSelectedIndices = new ArrayList<>();
+            for (int i = 0; i < BarcodeFormat.ALL_FORMATS.size(); i++) {
                 mSelectedIndices.add(i);
             }
         }
 
-        for(int index : mSelectedIndices) {
+        for (int index : mSelectedIndices) {
             formats.add(BarcodeFormat.ALL_FORMATS.get(index));
         }
-        if(mScannerView != null) {
+        if (mScannerView != null) {
             mScannerView.setFormats(formats);
         }
     }

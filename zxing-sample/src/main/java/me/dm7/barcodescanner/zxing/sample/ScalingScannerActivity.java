@@ -3,12 +3,12 @@ package me.dm7.barcodescanner.zxing.sample;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
+import me.dm7.barcodescanner.zxing.sample.databinding.ActivityScalingScannerBinding;
 
 public class ScalingScannerActivity extends BaseScannerActivity implements ZXingScannerView.ResultHandler {
     private static final String FLASH_STATE = "FLASH_STATE";
@@ -19,11 +19,11 @@ public class ScalingScannerActivity extends BaseScannerActivity implements ZXing
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        setContentView(R.layout.activity_scaling_scanner);
-        setupToolbar();
-        ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
+        ActivityScalingScannerBinding binding = ActivityScalingScannerBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setupToolbar(binding.toolbar);
         mScannerView = new ZXingScannerView(this);
-        contentFrame.addView(mScannerView);
+        binding.contentFrame.addView(mScannerView);
     }
 
     @Override
@@ -59,12 +59,7 @@ public class ScalingScannerActivity extends BaseScannerActivity implements ZXing
         // * On older devices continuously stopping and resuming camera preview can result in freezing the app.
         // * I don't know why this is the case but I don't have the time to figure out.
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mScannerView.resumeCameraPreview(ScalingScannerActivity.this);
-            }
-        }, 2000);
+        handler.postDelayed(() -> mScannerView.resumeCameraPreview(ScalingScannerActivity.this), 2000);
     }
 
     public void toggleFlash(View v) {

@@ -3,14 +3,15 @@ package me.dm7.barcodescanner.zbar.sample;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.MenuItem;
 
 public class BaseScannerActivity extends AppCompatActivity {
-    public void setupToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
+
+    public void setupToolbar(Toolbar toolbar) {
         setSupportActionBar(toolbar);
         final ActionBar ab = getSupportActionBar();
-        if(ab != null) {
+        if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
     }
