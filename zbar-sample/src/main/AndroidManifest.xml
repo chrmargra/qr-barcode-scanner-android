@@ -10,6 +10,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
 
             <intent-filter>
@@ -21,6 +22,7 @@
         <activity
             android:name=".FullScannerActivity"
             android:label="@string/scanner_activity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme"
             android:uiOptions="splitActionBarWhenNarrow">
 
@@ -32,6 +34,7 @@
         <activity
             android:name=".FullScannerFragmentActivity"
             android:label="@string/scanner_fragment_activity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme"
             android:uiOptions="splitActionBarWhenNarrow">
 
@@ -43,11 +46,13 @@
         <activity
             android:name=".SimpleScannerActivity"
             android:label="@string/simple_scanner_activity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme" />
 
         <activity
             android:name=".SimpleScannerFragmentActivity"
             android:label="@string/simple_scanner_fragment_activity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme" />
     </application>
 </manifest>

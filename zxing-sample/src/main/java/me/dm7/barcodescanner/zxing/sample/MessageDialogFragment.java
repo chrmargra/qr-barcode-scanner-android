@@ -4,9 +4,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+
+import androidx.fragment.app.DialogFragment;
 
 public class MessageDialogFragment extends DialogFragment {
+
     public interface MessageDialogListener {
         public void onDialogPositiveClick(DialogFragment dialog);
     }
@@ -34,11 +36,9 @@ public class MessageDialogFragment extends DialogFragment {
         builder.setMessage(mMessage)
                 .setTitle(mTitle);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                if(mListener != null) {
-                    mListener.onDialogPositiveClick(MessageDialogFragment.this);
-                }
+        builder.setPositiveButton("OK", (dialog, id) -> {
+            if (mListener != null) {
+                mListener.onDialogPositiveClick(MessageDialogFragment.this);
             }
         });
 

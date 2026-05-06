@@ -2,11 +2,11 @@ package me.dm7.barcodescanner.zbar.sample;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import me.dm7.barcodescanner.zbar.Result;
 import me.dm7.barcodescanner.zbar.ZBarScannerView;
+import me.dm7.barcodescanner.zbar.sample.databinding.ActivitySimpleScannerBinding;
 
 public class SimpleScannerActivity extends BaseScannerActivity implements ZBarScannerView.ResultHandler {
     private ZBarScannerView mScannerView;
@@ -14,11 +14,11 @@ public class SimpleScannerActivity extends BaseScannerActivity implements ZBarSc
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        setContentView(R.layout.activity_simple_scanner);
-        setupToolbar();
-        ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
+        ActivitySimpleScannerBinding binding = ActivitySimpleScannerBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setupToolbar(binding.toolbar);
         mScannerView = new ZBarScannerView(this);
-        contentFrame.addView(mScannerView);
+        binding.contentFrame.addView(mScannerView);
     }
 
     @Override
@@ -43,11 +43,6 @@ public class SimpleScannerActivity extends BaseScannerActivity implements ZBarSc
         // * On older devices continuously stopping and resuming camera preview can result in freezing the app.
         // * I don't know why this is the case but I don't have the time to figure out.
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mScannerView.resumeCameraPreview(SimpleScannerActivity.this);
-            }
-        }, 2000);
+        handler.postDelayed(() -> mScannerView.resumeCameraPreview(SimpleScannerActivity.this), 2000);
     }
 }

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
@@ -17,6 +16,7 @@ import com.google.zxing.Result;
 import me.dm7.barcodescanner.core.IViewFinder;
 import me.dm7.barcodescanner.core.ViewFinderView;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
+import me.dm7.barcodescanner.zxing.sample.databinding.ActivityCustomViewFinderScannerBinding;
 
 public class CustomViewFinderScannerActivity extends BaseScannerActivity implements ZXingScannerView.ResultHandler {
     private ZXingScannerView mScannerView;
@@ -24,17 +24,18 @@ public class CustomViewFinderScannerActivity extends BaseScannerActivity impleme
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        setContentView(R.layout.activity_custom_view_finder_scanner);
-        setupToolbar();
 
-        ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
+        ActivityCustomViewFinderScannerBinding binding = ActivityCustomViewFinderScannerBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setupToolbar(binding.toolbar);
+
         mScannerView = new ZXingScannerView(this) {
             @Override
             protected IViewFinder createViewFinderView(Context context) {
                 return new CustomViewFinderView(context);
             }
         };
-        contentFrame.addView(mScannerView);
+        binding.contentFrame.addView(mScannerView);
     }
 
     @Override
@@ -60,12 +61,7 @@ public class CustomViewFinderScannerActivity extends BaseScannerActivity impleme
         // * On older devices continuously stopping and resuming camera preview can result in freezing the app.
         // * I don't know why this is the case but I don't have the time to figure out.
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mScannerView.resumeCameraPreview(CustomViewFinderScannerActivity.this);
-            }
-        }, 2000);
+        handler.postDelayed(() -> mScannerView.resumeCameraPreview(CustomViewFinderScannerActivity.this), 2000);
     }
 
     private static class CustomViewFinderView extends ViewFinderView {

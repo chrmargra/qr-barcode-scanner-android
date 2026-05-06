@@ -13,6 +13,10 @@ android {
         versionCode = 2000
         versionName = "2.0.0"
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
