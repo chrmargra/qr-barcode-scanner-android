@@ -16,19 +16,14 @@ private const val ZBAR_CAMERA_PERMISSION = 1
 class MainActivity : AppCompatActivity() {
 
     private var clss: Class<*>? = null
-    private lateinit var binding: ActivityMainBinding
+    private var binding: ActivityMainBinding? = null
 
     override fun onCreate(state: Bundle?) {
         super.onCreate(state)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        setupToolbar()
-    }
-
-    fun setupToolbar() {
-        setSupportActionBar(binding.toolbar)
+        setContentView(binding?.root)
+        setSupportActionBar(binding?.toolbar)
     }
 
     fun launchSimpleActivity(view: View) {

@@ -29,7 +29,7 @@ class FullScannerFragment :
     FormatSelectorDialogFragment.FormatSelectorDialogListener,
     CameraSelectorDialogFragment.CameraSelectorDialogListener {
 
-    private lateinit var scannerView: ZBarScannerView
+    private var scannerView: ZBarScannerView? = null
     private var flash = false
     private var autoFocus = true
     private var selectedIndices: ArrayList<Int>? = null
@@ -39,7 +39,7 @@ class FullScannerFragment :
         inflater: LayoutInflater,
         container: ViewGroup?,
         state: Bundle?
-    ): View {
+    ): View? {
         scannerView = ZBarScannerView(requireActivity())
 
         if (state != null) {
@@ -94,14 +94,14 @@ class FullScannerFragment :
             R.id.menu_flash -> {
                 flash = !flash
                 item.setTitle(if (flash) R.string.flash_on else R.string.flash_off)
-                scannerView.setFlash(flash)
+                scannerView?.setFlash(flash)
                 true
             }
 
             R.id.menu_auto_focus -> {
                 autoFocus = !autoFocus
                 item.setTitle(if (autoFocus) R.string.auto_focus_on else R.string.auto_focus_off)
-                scannerView.setAutoFocus(autoFocus)
+                scannerView?.setAutoFocus(autoFocus)
                 true
             }
 
@@ -112,7 +112,7 @@ class FullScannerFragment :
             }
 
             R.id.menu_camera_selector -> {
-                scannerView.stopCamera()
+                scannerView?.stopCamera()
                 val fragment = CameraSelectorDialogFragment.newInstance(this, cameraId)
                 fragment.show(requireActivity().supportFragmentManager, "camera_selector")
                 true
@@ -124,10 +124,10 @@ class FullScannerFragment :
 
     override fun onResume() {
         super.onResume()
-        scannerView.setResultHandler(this)
-        scannerView.startCamera(cameraId)
-        scannerView.setFlash(flash)
-        scannerView.setAutoFocus(autoFocus)
+        scannerView?.setResultHandler(this)
+        scannerView?.startCamera(cameraId)
+        scannerView?.setFlash(flash)
+        scannerView?.setAutoFocus(autoFocus)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -174,7 +174,7 @@ class FullScannerFragment :
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        scannerView.resumeCameraPreview(this)
+        scannerView?.resumeCameraPreview(this)
     }
 
     override fun onFormatsSaved(selectedIndices: ArrayList<Int>) {
@@ -184,9 +184,9 @@ class FullScannerFragment :
 
     override fun onCameraSelected(cameraId: Int) {
         this.cameraId = cameraId
-        scannerView.startCamera(this.cameraId)
-        scannerView.setFlash(flash)
-        scannerView.setAutoFocus(autoFocus)
+        scannerView?.startCamera(this.cameraId)
+        scannerView?.setFlash(flash)
+        scannerView?.setAutoFocus(autoFocus)
     }
 
     fun setupFormats() {
@@ -205,12 +205,12 @@ class FullScannerFragment :
             }
         }
 
-        scannerView.setFormats(formats)
+        scannerView?.setFormats(formats)
     }
 
     override fun onPause() {
         super.onPause()
-        scannerView.stopCamera()
+        scannerView?.stopCamera()
         closeMessageDialog()
         closeFormatsDialog()
     }
