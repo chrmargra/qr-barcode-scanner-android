@@ -4,12 +4,15 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import me.dm7.barcodescanner.zbar.sample.databinding.ActivityMainBinding
+import me.dm7.barcodescanner.zbar.sample.fullscanner.FullScannerActivity
+import me.dm7.barcodescanner.zbar.sample.fullscanner.FullScannerFragmentActivity
+import me.dm7.barcodescanner.zbar.sample.simplescanner.SimpleScannerActivity
+import me.dm7.barcodescanner.zbar.sample.simplescanner.SimpleScannerFragmentActivity
 
 private const val ZBAR_CAMERA_PERMISSION = 1
 
@@ -24,25 +27,31 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
         setSupportActionBar(binding?.toolbar)
+
+        initListeners()
     }
 
-    fun launchSimpleActivity(view: View) {
-        launchActivity(SimpleScannerActivity::class.java)
+    private fun initListeners() {
+        binding?.apply {
+            buttonSimpleActivity.setOnClickListener {
+                launchActivity(clss = SimpleScannerActivity::class.java)
+            }
+
+            buttonSimpleFragment.setOnClickListener {
+                launchActivity(clss = SimpleScannerFragmentActivity::class.java)
+            }
+
+            buttonFullActivity.setOnClickListener {
+                launchActivity(clss = FullScannerActivity::class.java)
+            }
+
+            buttonFullFragment.setOnClickListener {
+                launchActivity(clss = FullScannerFragmentActivity::class.java)
+            }
+        }
     }
 
-    fun launchSimpleFragmentActivity(view: View) {
-        launchActivity(SimpleScannerFragmentActivity::class.java)
-    }
-
-    fun launchFullActivity(view: View) {
-        launchActivity(FullScannerActivity::class.java)
-    }
-
-    fun launchFullFragmentActivity(view: View) {
-        launchActivity(FullScannerFragmentActivity::class.java)
-    }
-
-    fun launchActivity(clss: Class<*>) {
+    private fun launchActivity(clss: Class<*>) {
         if (
             ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) !=
             PackageManager.PERMISSION_GRANTED

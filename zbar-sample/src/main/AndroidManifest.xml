@@ -26,7 +26,7 @@
         </activity>
 
         <activity
-            android:name=".FullScannerActivity"
+            android:name=".fullscanner.FullScannerActivity"
             android:label="@string/scanner_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme"
@@ -38,7 +38,7 @@
         </activity>
 
         <activity
-            android:name=".FullScannerFragmentActivity"
+            android:name=".fullscanner.FullScannerFragmentActivity"
             android:label="@string/scanner_fragment_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme"
@@ -50,13 +50,13 @@
         </activity>
 
         <activity
-            android:name=".SimpleScannerActivity"
+            android:name=".simplescanner.SimpleScannerActivity"
             android:label="@string/simple_scanner_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme" />
 
         <activity
-            android:name=".SimpleScannerFragmentActivity"
+            android:name=".simplescanner.SimpleScannerFragmentActivity"
             android:label="@string/simple_scanner_fragment_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme" />

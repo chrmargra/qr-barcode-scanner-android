@@ -1,15 +1,12 @@
-package me.dm7.barcodescanner.zbar.sample
+package me.dm7.barcodescanner.zxing.sample.fullscanner.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import me.dm7.barcodescanner.zxing.sample.fullscanner.scannerlistener.MessageDialogListener
 
 class MessageDialogFragment : DialogFragment() {
-
-    interface MessageDialogListener {
-        fun onDialogPositiveClick(dialog: DialogFragment)
-    }
 
     private var title: String? = null
     private var message: String? = null
@@ -21,15 +18,13 @@ class MessageDialogFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(requireActivity())
+        return AlertDialog.Builder(requireActivity())
             .setMessage(message)
             .setTitle(title)
-
-        builder.setPositiveButton("OK") { _, _ ->
-            listener?.onDialogPositiveClick(this)
-        }
-
-        return builder.create()
+            .setPositiveButton("OK") { _, _ ->
+                listener?.onDialogPositiveClick(this)
+            }
+            .create()
     }
 
     companion object {
@@ -38,11 +33,11 @@ class MessageDialogFragment : DialogFragment() {
             message: String,
             listener: MessageDialogListener
         ): MessageDialogFragment {
-            val fragment = MessageDialogFragment()
-            fragment.title = title
-            fragment.message = message
-            fragment.listener = listener
-            return fragment
+            return MessageDialogFragment().apply {
+                this.title = title
+                this.message = message
+                this.listener = listener
+            }
         }
     }
 }

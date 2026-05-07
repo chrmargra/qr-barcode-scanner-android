@@ -1,28 +1,37 @@
-package me.dm7.barcodescanner.zxing.sample
+package me.dm7.barcodescanner.zxing.sample.customviewfinder
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import com.google.zxing.Result
+import me.dm7.barcodescanner.core.IViewFinder
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import me.dm7.barcodescanner.zxing.sample.base.BaseScannerActivity
+import me.dm7.barcodescanner.zxing.sample.databinding.ActivityCustomViewFinderScannerBinding
 
-class SimpleScannerFragment : Fragment(), ZXingScannerView.ResultHandler {
+private const val DELAY = 2000L
+
+class CustomViewFinderScannerActivity : BaseScannerActivity(), ZXingScannerView.ResultHandler {
 
     private var scannerView: ZXingScannerView? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val newScannerView = ZXingScannerView(requireActivity())
+    override fun onCreate(state: Bundle?) {
+        super.onCreate(state)
+
+        val binding = ActivityCustomViewFinderScannerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setupToolbar(binding.toolbar)
+
+        val newScannerView = object : ZXingScannerView(this) {
+            override fun createViewFinderView(context: Context): IViewFinder =
+                CustomViewFinderView(context)
+        }
+
         scannerView = newScannerView
-        return newScannerView
+        binding.contentFrame.addView(newScannerView)
     }
 
     override fun onResume() {
@@ -32,9 +41,15 @@ class SimpleScannerFragment : Fragment(), ZXingScannerView.ResultHandler {
         scannerView?.startCamera()
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        scannerView?.stopCamera()
+    }
+
     override fun handleResult(rawResult: Result) {
         Toast.makeText(
-            requireActivity(),
+            this,
             "Contents = ${rawResult.text}, Format = ${rawResult.barcodeFormat}",
             Toast.LENGTH_SHORT
         ).show()
@@ -47,19 +62,7 @@ class SimpleScannerFragment : Fragment(), ZXingScannerView.ResultHandler {
             {
                 scannerView?.resumeCameraPreview(this)
             },
-            2000
+            DELAY
         )
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        scannerView?.stopCamera()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-
-        scannerView = null
     }
 }

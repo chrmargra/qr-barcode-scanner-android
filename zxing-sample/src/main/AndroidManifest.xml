@@ -26,7 +26,7 @@
         </activity>
 
         <activity
-            android:name=".FullScannerActivity"
+            android:name=".fullscanner.FullScannerActivity"
             android:label="@string/scanner_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme"
@@ -38,7 +38,7 @@
         </activity>
 
         <activity
-            android:name=".FullScannerFragmentActivity"
+            android:name=".fullscanner.FullScannerFragmentActivity"
             android:label="@string/scanner_fragment_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme"
@@ -50,31 +50,31 @@
         </activity>
 
         <activity
-            android:name=".SimpleScannerActivity"
+            android:name=".simplescanner.SimpleScannerActivity"
             android:label="@string/simple_scanner_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme" />
 
         <activity
-            android:name=".SimpleScannerFragmentActivity"
+            android:name=".simplescanner.SimpleScannerFragmentActivity"
             android:label="@string/simple_scanner_fragment_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme" />
 
         <activity
-            android:name=".FullScreenScannerFragmentActivity"
+            android:name=".fullscanner.FullScreenScannerFragmentActivity"
             android:label="@string/full_screen_scanner_fragment_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppOverlayTheme" />
 
         <activity
-            android:name=".CustomViewFinderScannerActivity"
+            android:name=".customviewfinder.CustomViewFinderScannerActivity"
             android:label="@string/custom_view_finder_scanner_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
         <activity
-            android:name=".ScalingScannerActivity"
+            android:name=".scalingscanner.ScalingScannerActivity"
             android:label="@string/scaling_scanner_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />

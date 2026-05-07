@@ -1,5 +1,6 @@
-package me.dm7.barcodescanner.zxing.sample
+package me.dm7.barcodescanner.zbar.sample.base
 
+import android.R
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -12,7 +13,7 @@ open class BaseScannerActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == android.R.id.home) {
+        return if (item.itemId == R.id.home) {
             finish()
             true
         } else {

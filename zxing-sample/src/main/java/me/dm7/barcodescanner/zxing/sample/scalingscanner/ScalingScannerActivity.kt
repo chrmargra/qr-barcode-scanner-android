@@ -1,18 +1,20 @@
-package me.dm7.barcodescanner.zxing.sample
+package me.dm7.barcodescanner.zxing.sample.scalingscanner
 
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View
 import android.widget.Toast
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import me.dm7.barcodescanner.zxing.sample.base.BaseScannerActivity
 import me.dm7.barcodescanner.zxing.sample.databinding.ActivityScalingScannerBinding
 
 private const val FLASH_STATE = "FLASH_STATE"
+private const val DELAY = 2000L
 
 class ScalingScannerActivity : BaseScannerActivity(), ZXingScannerView.ResultHandler {
 
+    private var binding: ActivityScalingScannerBinding? = null
     private var scannerView: ZXingScannerView? = null
     private var flash = false
 
@@ -21,14 +23,22 @@ class ScalingScannerActivity : BaseScannerActivity(), ZXingScannerView.ResultHan
 
         flash = state?.getBoolean(FLASH_STATE, false) ?: false
 
-        val binding = ActivityScalingScannerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding = ActivityScalingScannerBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
 
-        setupToolbar(binding.toolbar)
+        setupToolbar(binding?.toolbar)
+        initListeners()
 
         val newScannerView = ZXingScannerView(this)
         scannerView = newScannerView
-        binding.contentFrame.addView(newScannerView)
+        binding?.contentFrame?.addView(newScannerView)
+    }
+
+    private fun initListeners() {
+        binding?.buttonFlash?.setOnClickListener {
+            flash = !flash
+            scannerView?.setFlash(flash)
+        }
     }
 
     override fun onResume() {
@@ -71,12 +81,7 @@ class ScalingScannerActivity : BaseScannerActivity(), ZXingScannerView.ResultHan
             {
                 scannerView?.resumeCameraPreview(this)
             },
-            2000
+            DELAY
         )
-    }
-
-    fun toggleFlash(view: View) {
-        flash = !flash
-        scannerView?.setFlash(flash)
     }
 }

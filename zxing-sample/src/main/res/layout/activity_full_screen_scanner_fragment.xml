@@ -4,9 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/scanner_fragment"
-        android:name="me.dm7.barcodescanner.zxing.sample.FullScannerFragment"
+        android:name="me.dm7.barcodescanner.zxing.sample.fullscanner.FullScannerFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -14,12 +14,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:contentDescription="@null"
         android:src="@mipmap/ic_launcher" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|bottom"
-        android:text="Place a barcode in the viewfinder rectangle to scan it."
+        android:layout_marginBottom="12dp"
+        android:text="@string/scanner_instructions"
         android:textColor="#ffffff" />
 </FrameLayout>

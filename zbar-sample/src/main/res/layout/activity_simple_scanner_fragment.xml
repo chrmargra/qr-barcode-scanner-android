@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:theme="@style/AppTheme">
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/scanner_fragment"
-        android:name="me.dm7.barcodescanner.zbar.sample.SimpleScannerFragment"
+        android:name="me.dm7.barcodescanner.zbar.sample.simplescanner.SimpleScannerFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_height="match_parent" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -18,5 +19,6 @@
         android:layout_gravity="top"
         android:background="@color/actionbar_opacity"
         android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/ToolbarPopupTheme"
         app:theme="@style/TransparentToolbar" />
 </FrameLayout>

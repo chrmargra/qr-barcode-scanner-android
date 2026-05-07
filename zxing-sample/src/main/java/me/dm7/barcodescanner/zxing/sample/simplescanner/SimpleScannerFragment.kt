@@ -1,4 +1,4 @@
-package me.dm7.barcodescanner.zbar.sample
+package me.dm7.barcodescanner.zxing.sample.simplescanner
 
 import android.os.Bundle
 import android.os.Handler
@@ -8,19 +8,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import me.dm7.barcodescanner.zbar.Result
-import me.dm7.barcodescanner.zbar.ZBarScannerView
+import com.google.zxing.Result
+import me.dm7.barcodescanner.zxing.ZXingScannerView
 
-class SimpleScannerFragment : Fragment(), ZBarScannerView.ResultHandler {
+private const val DELAY = 2000L
 
-    private var scannerView: ZBarScannerView? = null
+class SimpleScannerFragment : Fragment(), ZXingScannerView.ResultHandler {
+
+    private var scannerView: ZXingScannerView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val newScannerView = ZBarScannerView(requireActivity())
+        val newScannerView = ZXingScannerView(requireActivity())
         scannerView = newScannerView
         return newScannerView
     }
@@ -35,7 +37,7 @@ class SimpleScannerFragment : Fragment(), ZBarScannerView.ResultHandler {
     override fun handleResult(rawResult: Result) {
         Toast.makeText(
             requireActivity(),
-            "Contents = ${rawResult.contents}, Format = ${rawResult.barcodeFormat.name}",
+            "Contents = ${rawResult.text}, Format = ${rawResult.barcodeFormat}",
             Toast.LENGTH_SHORT
         ).show()
 
@@ -47,7 +49,7 @@ class SimpleScannerFragment : Fragment(), ZBarScannerView.ResultHandler {
             {
                 scannerView?.resumeCameraPreview(this)
             },
-            2000
+            DELAY
         )
     }
 
