@@ -1,4 +1,4 @@
-package me.dm7.barcodescanner.zbar.sample
+package me.dm7.barcodescanner.zbar.sample.simplescanner
 
 import android.os.Bundle
 import android.os.Handler

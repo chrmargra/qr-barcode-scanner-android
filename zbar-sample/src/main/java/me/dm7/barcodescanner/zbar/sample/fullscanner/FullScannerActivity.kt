@@ -1,4 +1,4 @@
-package me.dm7.barcodescanner.zbar.sample
+package me.dm7.barcodescanner.zbar.sample.fullscanner
 
 import android.media.RingtoneManager
 import android.net.Uri
@@ -11,7 +11,15 @@ import androidx.fragment.app.FragmentManager
 import me.dm7.barcodescanner.zbar.BarcodeFormat
 import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
+import me.dm7.barcodescanner.zbar.sample.base.BaseScannerActivity
+import me.dm7.barcodescanner.zbar.sample.fullscanner.dialog.MessageDialogFragment
+import me.dm7.barcodescanner.zbar.sample.R
 import me.dm7.barcodescanner.zbar.sample.databinding.ActivityFullScannerBinding
+import me.dm7.barcodescanner.zbar.sample.fullscanner.dialog.CameraSelectorDialogFragment
+import me.dm7.barcodescanner.zbar.sample.fullscanner.dialog.FormatSelectorDialogFragment
+import me.dm7.barcodescanner.zbar.sample.fullscanner.scannerlistener.CameraSelectorDialogListener
+import me.dm7.barcodescanner.zbar.sample.fullscanner.scannerlistener.FormatSelectorDialogListener
+import me.dm7.barcodescanner.zbar.sample.fullscanner.scannerlistener.MessageDialogListener
 
 private const val FLASH_STATE = "FLASH_STATE"
 private const val AUTO_FOCUS_STATE = "AUTO_FOCUS_STATE"
@@ -20,10 +28,10 @@ private const val CAMERA_ID = "CAMERA_ID"
 
 class FullScannerActivity :
     BaseScannerActivity(),
-    MessageDialogFragment.MessageDialogListener,
+    MessageDialogListener,
     ZBarScannerView.ResultHandler,
-    FormatSelectorDialogFragment.FormatSelectorDialogListener,
-    CameraSelectorDialogFragment.CameraSelectorDialogListener {
+    FormatSelectorDialogListener,
+    CameraSelectorDialogListener {
 
     private var scannerView: ZBarScannerView? = null
     private var flash = false
@@ -113,14 +121,15 @@ class FullScannerActivity :
             }
 
             R.id.menu_formats -> {
-                val fragment = FormatSelectorDialogFragment.newInstance(this, selectedIndices)
+                val fragment =
+                    FormatSelectorDialogFragment.Companion.newInstance(this, selectedIndices)
                 fragment.show(supportFragmentManager, "format_selector")
                 true
             }
 
             R.id.menu_camera_selector -> {
                 scannerView?.stopCamera()
-                val fragment = CameraSelectorDialogFragment.newInstance(this, cameraId)
+                val fragment = CameraSelectorDialogFragment.Companion.newInstance(this, cameraId)
                 fragment.show(supportFragmentManager, "camera_selector")
                 true
             }
@@ -143,7 +152,7 @@ class FullScannerActivity :
     }
 
     fun showMessageDialog(message: String) {
-        val fragment = MessageDialogFragment.newInstance("Scan Results", message, this)
+        val fragment = MessageDialogFragment.Companion.newInstance("Scan Results", message, this)
         fragment.show(supportFragmentManager, "scan_results")
     }
 

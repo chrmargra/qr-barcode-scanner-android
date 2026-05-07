@@ -1,4 +1,4 @@
-package me.dm7.barcodescanner.zbar.sample
+package me.dm7.barcodescanner.zbar.sample.simplescanner
 
 import android.os.Bundle
 import android.os.Handler
@@ -6,6 +6,7 @@ import android.os.Looper
 import android.widget.Toast
 import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
+import me.dm7.barcodescanner.zbar.sample.base.BaseScannerActivity
 import me.dm7.barcodescanner.zbar.sample.databinding.ActivitySimpleScannerBinding
 
 class SimpleScannerActivity : BaseScannerActivity(), ZBarScannerView.ResultHandler {

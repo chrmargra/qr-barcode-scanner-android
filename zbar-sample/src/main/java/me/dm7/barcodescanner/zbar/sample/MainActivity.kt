@@ -10,6 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import me.dm7.barcodescanner.zbar.sample.databinding.ActivityMainBinding
+import me.dm7.barcodescanner.zbar.sample.fullscanner.FullScannerActivity
+import me.dm7.barcodescanner.zbar.sample.fullscanner.FullScannerFragmentActivity
+import me.dm7.barcodescanner.zbar.sample.simplescanner.SimpleScannerActivity
+import me.dm7.barcodescanner.zbar.sample.simplescanner.SimpleScannerFragmentActivity
 
 private const val ZBAR_CAMERA_PERMISSION = 1
 

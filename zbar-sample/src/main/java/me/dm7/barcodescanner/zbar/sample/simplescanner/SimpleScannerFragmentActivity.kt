@@ -1,6 +1,7 @@
-package me.dm7.barcodescanner.zbar.sample
+package me.dm7.barcodescanner.zbar.sample.simplescanner
 
 import android.os.Bundle
+import me.dm7.barcodescanner.zbar.sample.base.BaseScannerActivity
 import me.dm7.barcodescanner.zbar.sample.databinding.ActivitySimpleScannerFragmentBinding
 
 class SimpleScannerFragmentActivity : BaseScannerActivity() {

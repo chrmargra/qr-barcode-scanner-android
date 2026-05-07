@@ -1,16 +1,14 @@
-package me.dm7.barcodescanner.zbar.sample
+package me.dm7.barcodescanner.zbar.sample.fullscanner.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
 import android.hardware.Camera
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import me.dm7.barcodescanner.zbar.sample.R
+import me.dm7.barcodescanner.zbar.sample.fullscanner.scannerlistener.CameraSelectorDialogListener
 
 class CameraSelectorDialogFragment : DialogFragment() {
-
-    interface CameraSelectorDialogListener {
-        fun onCameraSelected(cameraId: Int)
-    }
 
     private var cameraId = -1
     private var listener: CameraSelectorDialogListener? = null
