@@ -74,9 +74,7 @@ class FullScannerFragment :
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
-        var menuItem: MenuItem
-
-        menuItem = if (flash) {
+        var menuItem: MenuItem = if (flash) {
             menu.add(Menu.NONE, R.id.menu_flash, 0, R.string.flash_on)
         } else {
             menu.add(Menu.NONE, R.id.menu_flash, 0, R.string.flash_off)
@@ -166,20 +164,20 @@ class FullScannerFragment :
         )
     }
 
-    fun showMessageDialog(message: String) {
+    private fun showMessageDialog(message: String) {
         val fragment = MessageDialogFragment.Companion.newInstance("Scan Results", message, this)
         fragment.show(requireActivity().supportFragmentManager, "scan_results")
     }
 
-    fun closeMessageDialog() {
+    private fun closeMessageDialog() {
         closeDialog("scan_results")
     }
 
-    fun closeFormatsDialog() {
+    private fun closeFormatsDialog() {
         closeDialog("format_selector")
     }
 
-    fun closeDialog(dialogName: String) {
+    private fun closeDialog(dialogName: String) {
         val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
         val fragment = fragmentManager.findFragmentByTag(dialogName) as? DialogFragment
         fragment?.dismiss()
@@ -202,7 +200,7 @@ class FullScannerFragment :
         scannerView?.setAutoFocus(autoFocus)
     }
 
-    fun setupFormats() {
+    private fun setupFormats() {
         val formats = ArrayList<BarcodeFormat>()
 
         if (selectedIndices == null || selectedIndices?.isEmpty() == true) {

@@ -9,7 +9,7 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView
 import me.dm7.barcodescanner.zbar.sample.base.BaseScannerActivity
 import me.dm7.barcodescanner.zbar.sample.databinding.ActivitySimpleScannerBinding
 
-private const val DIALOG_DELAY = 2000L
+private const val DELAY = 2000L
 
 class SimpleScannerActivity : BaseScannerActivity(), ZBarScannerView.ResultHandler {
 
@@ -53,7 +53,7 @@ class SimpleScannerActivity : BaseScannerActivity(), ZBarScannerView.ResultHandl
             {
                 scannerView?.resumeCameraPreview(this)
             },
-            DIALOG_DELAY
+            DELAY
         )
     }
 }

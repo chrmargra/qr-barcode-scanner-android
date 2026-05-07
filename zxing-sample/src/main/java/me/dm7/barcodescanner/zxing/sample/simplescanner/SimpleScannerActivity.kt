@@ -9,6 +9,8 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView
 import me.dm7.barcodescanner.zxing.sample.base.BaseScannerActivity
 import me.dm7.barcodescanner.zxing.sample.databinding.ActivitySimpleScannerBinding
 
+private const val DELAY = 2000L
+
 class SimpleScannerActivity : BaseScannerActivity(), ZXingScannerView.ResultHandler {
 
     private var scannerView: ZXingScannerView? = null
@@ -54,7 +56,7 @@ class SimpleScannerActivity : BaseScannerActivity(), ZXingScannerView.ResultHand
             {
                 scannerView?.resumeCameraPreview(this)
             },
-            2000
+            DELAY
         )
     }
 }

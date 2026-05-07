@@ -10,7 +10,7 @@ import me.dm7.barcodescanner.zxing.sample.base.BaseScannerActivity
 import me.dm7.barcodescanner.zxing.sample.databinding.ActivityScalingScannerBinding
 
 private const val FLASH_STATE = "FLASH_STATE"
-private const val DIALOG_DELAY = 2000L
+private const val DELAY = 2000L
 
 class ScalingScannerActivity : BaseScannerActivity(), ZXingScannerView.ResultHandler {
 
@@ -81,7 +81,7 @@ class ScalingScannerActivity : BaseScannerActivity(), ZXingScannerView.ResultHan
             {
                 scannerView?.resumeCameraPreview(this)
             },
-            DIALOG_DELAY
+            DELAY
         )
     }
 }

@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 
+private const val DELAY = 2000L
+
 class SimpleScannerFragment : Fragment(), ZXingScannerView.ResultHandler {
 
     private var scannerView: ZXingScannerView? = null
@@ -47,7 +49,7 @@ class SimpleScannerFragment : Fragment(), ZXingScannerView.ResultHandler {
             {
                 scannerView?.resumeCameraPreview(this)
             },
-            2000
+            DELAY
         )
     }
 

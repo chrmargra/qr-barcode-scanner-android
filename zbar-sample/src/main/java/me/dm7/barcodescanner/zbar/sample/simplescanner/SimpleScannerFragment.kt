@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
 
-private const val DIALOG_DELAY = 2000L
+private const val DELAY = 2000L
 
 class SimpleScannerFragment : Fragment(), ZBarScannerView.ResultHandler {
 
@@ -49,7 +49,7 @@ class SimpleScannerFragment : Fragment(), ZBarScannerView.ResultHandler {
             {
                 scannerView?.resumeCameraPreview(this)
             },
-            DIALOG_DELAY
+            DELAY
         )
     }
 
