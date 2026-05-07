@@ -9,11 +9,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import me.dm7.barcodescanner.zbar.Result
+import me.dm7.barcodescanner.zbar.ResultHandler
 import me.dm7.barcodescanner.zbar.ZBarScannerView
 
 private const val DELAY = 2000L
 
-class SimpleScannerFragment : Fragment(), ZBarScannerView.ResultHandler {
+class SimpleScannerFragment : Fragment(), ResultHandler {
 
     private var scannerView: ZBarScannerView? = null
 

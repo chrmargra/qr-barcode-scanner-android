@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import com.google.zxing.Result
+import me.dm7.barcodescanner.zxing.ResultHandler
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import me.dm7.barcodescanner.zxing.sample.base.BaseScannerActivity
 import me.dm7.barcodescanner.zxing.sample.databinding.ActivityScalingScannerBinding
@@ -12,7 +13,7 @@ import me.dm7.barcodescanner.zxing.sample.databinding.ActivityScalingScannerBind
 private const val FLASH_STATE = "FLASH_STATE"
 private const val DELAY = 2000L
 
-class ScalingScannerActivity : BaseScannerActivity(), ZXingScannerView.ResultHandler {
+class ScalingScannerActivity : BaseScannerActivity(), ResultHandler {
 
     private var binding: ActivityScalingScannerBinding? = null
     private var scannerView: ZXingScannerView? = null

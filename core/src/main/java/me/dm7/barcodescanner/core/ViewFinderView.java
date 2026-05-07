@@ -12,14 +12,13 @@ import android.util.AttributeSet;
 import android.view.View;
 
 public class ViewFinderView extends View implements IViewFinder {
-    private static final String TAG = "ViewFinderView";
 
-    private Rect mFramingRect;
+    private Rect framingRect;
 
-    private static final float PORTRAIT_WIDTH_RATIO = 6f/8;
+    private static final float PORTRAIT_WIDTH_RATIO = 6f / 8;
     private static final float PORTRAIT_WIDTH_HEIGHT_RATIO = 0.75f;
 
-    private static final float LANDSCAPE_HEIGHT_RATIO = 5f/8;
+    private static final float LANDSCAPE_HEIGHT_RATIO = 5f / 8;
     private static final float LANDSCAPE_WIDTH_HEIGHT_RATIO = 1.4f;
     private static final int MIN_DIMENSION_DIFF = 50;
 
@@ -28,22 +27,21 @@ public class ViewFinderView extends View implements IViewFinder {
     private static final int[] SCANNER_ALPHA = {0, 64, 128, 192, 255, 192, 128, 64};
     private int scannerAlpha;
     private static final int POINT_SIZE = 10;
-    private static final long ANIMATION_DELAY = 80l;
+    private static final long ANIMATION_DELAY = 80L;
 
-    private final int mDefaultLaserColor = getResources().getColor(R.color.viewfinder_laser);
-    private final int mDefaultMaskColor = getResources().getColor(R.color.viewfinder_mask);
-    private final int mDefaultBorderColor = getResources().getColor(R.color.viewfinder_border);
-    private final int mDefaultBorderStrokeWidth = getResources().getInteger(R.integer.viewfinder_border_width);
-    private final int mDefaultBorderLineLength = getResources().getInteger(R.integer.viewfinder_border_length);
+    private final int defaultLaserColor = getResources().getColor(R.color.viewfinder_laser);
+    private final int defaultMaskColor = getResources().getColor(R.color.viewfinder_mask);
+    private final int defaultBorderColor = getResources().getColor(R.color.viewfinder_border);
+    private final int defaultBorderStrokeWidth = getResources().getInteger(R.integer.viewfinder_border_width);
+    private final int defaultBorderLineLength = getResources().getInteger(R.integer.viewfinder_border_length);
 
-    protected Paint mLaserPaint;
-    protected Paint mFinderMaskPaint;
-    protected Paint mBorderPaint;
-    protected int mBorderLineLength;
-    protected boolean mSquareViewFinder;
-    private boolean mIsLaserEnabled;
-    private float mBordersAlpha;
-    private int mViewFinderOffset = 0;
+    protected Paint laserPaint;
+    protected Paint finderMaskPaint;
+    protected Paint borderPaint;
+    protected int borderLineLength;
+    protected boolean squareViewFinder;
+    private boolean isLaserEnabled;
+    private int viewFinderOffset = 0;
 
     public ViewFinderView(Context context) {
         super(context);
@@ -57,82 +55,83 @@ public class ViewFinderView extends View implements IViewFinder {
 
     private void init() {
         //set up laser paint
-        mLaserPaint = new Paint();
-        mLaserPaint.setColor(mDefaultLaserColor);
-        mLaserPaint.setStyle(Paint.Style.FILL);
+        laserPaint = new Paint();
+        laserPaint.setColor(defaultLaserColor);
+        laserPaint.setStyle(Paint.Style.FILL);
 
         //finder mask paint
-        mFinderMaskPaint = new Paint();
-        mFinderMaskPaint.setColor(mDefaultMaskColor);
+        finderMaskPaint = new Paint();
+        finderMaskPaint.setColor(defaultMaskColor);
 
         //border paint
-        mBorderPaint = new Paint();
-        mBorderPaint.setColor(mDefaultBorderColor);
-        mBorderPaint.setStyle(Paint.Style.STROKE);
-        mBorderPaint.setStrokeWidth(mDefaultBorderStrokeWidth);
-        mBorderPaint.setAntiAlias(true);
+        borderPaint = new Paint();
+        borderPaint.setColor(defaultBorderColor);
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(defaultBorderStrokeWidth);
+        borderPaint.setAntiAlias(true);
 
-        mBorderLineLength = mDefaultBorderLineLength;
+        borderLineLength = defaultBorderLineLength;
     }
 
     @Override
     public void setLaserColor(int laserColor) {
-        mLaserPaint.setColor(laserColor);
+        laserPaint.setColor(laserColor);
     }
 
     @Override
     public void setMaskColor(int maskColor) {
-        mFinderMaskPaint.setColor(maskColor);
+        finderMaskPaint.setColor(maskColor);
     }
 
     @Override
     public void setBorderColor(int borderColor) {
-        mBorderPaint.setColor(borderColor);
+        borderPaint.setColor(borderColor);
     }
 
     @Override
     public void setBorderStrokeWidth(int borderStrokeWidth) {
-        mBorderPaint.setStrokeWidth(borderStrokeWidth);
+        borderPaint.setStrokeWidth(borderStrokeWidth);
     }
 
     @Override
     public void setBorderLineLength(int borderLineLength) {
-        mBorderLineLength = borderLineLength;
+        this.borderLineLength = borderLineLength;
     }
 
     @Override
-    public void setLaserEnabled(boolean isLaserEnabled) { mIsLaserEnabled = isLaserEnabled; }
+    public void setLaserEnabled(boolean isLaserEnabled) {
+        this.isLaserEnabled = isLaserEnabled;
+    }
 
     @Override
     public void setBorderCornerRounded(boolean isBorderCornersRounded) {
         if (isBorderCornersRounded) {
-            mBorderPaint.setStrokeJoin(Paint.Join.ROUND);
+            borderPaint.setStrokeJoin(Paint.Join.ROUND);
         } else {
-            mBorderPaint.setStrokeJoin(Paint.Join.BEVEL);
+            borderPaint.setStrokeJoin(Paint.Join.BEVEL);
         }
     }
 
     @Override
     public void setBorderAlpha(float alpha) {
         int colorAlpha = (int) (255 * alpha);
-        mBordersAlpha = alpha;
-        mBorderPaint.setAlpha(colorAlpha);
+        borderPaint.setAlpha(colorAlpha);
     }
 
     @Override
     public void setBorderCornerRadius(int borderCornersRadius) {
-        mBorderPaint.setPathEffect(new CornerPathEffect(borderCornersRadius));
+        borderPaint.setPathEffect(new CornerPathEffect(borderCornersRadius));
     }
 
     @Override
     public void setViewFinderOffset(int offset) {
-        mViewFinderOffset = offset;
+        viewFinderOffset = offset;
     }
 
     // TODO: Need a better way to configure this. Revisit when working on 2.0
     @Override
     public void setSquareViewFinder(boolean set) {
-        mSquareViewFinder = set;
+        squareViewFinder = set;
     }
 
     public void setupViewFinder() {
@@ -141,19 +140,19 @@ public class ViewFinderView extends View implements IViewFinder {
     }
 
     public Rect getFramingRect() {
-        return mFramingRect;
+        return framingRect;
     }
 
     @Override
     public void onDraw(Canvas canvas) {
-        if(getFramingRect() == null) {
+        if (getFramingRect() == null) {
             return;
         }
 
         drawViewFinderMask(canvas);
         drawViewFinderBorder(canvas);
 
-        if (mIsLaserEnabled) {
+        if (isLaserEnabled) {
             drawLaser(canvas);
         }
     }
@@ -162,11 +161,11 @@ public class ViewFinderView extends View implements IViewFinder {
         int width = canvas.getWidth();
         int height = canvas.getHeight();
         Rect framingRect = getFramingRect();
-        
-        canvas.drawRect(0, 0, width, framingRect.top, mFinderMaskPaint);
-        canvas.drawRect(0, framingRect.top, framingRect.left, framingRect.bottom + 1, mFinderMaskPaint);
-        canvas.drawRect(framingRect.right + 1, framingRect.top, width, framingRect.bottom + 1, mFinderMaskPaint);
-        canvas.drawRect(0, framingRect.bottom + 1, width, height, mFinderMaskPaint);
+
+        canvas.drawRect(0, 0, width, framingRect.top, finderMaskPaint);
+        canvas.drawRect(0, framingRect.top, framingRect.left, framingRect.bottom + 1, finderMaskPaint);
+        canvas.drawRect(framingRect.right + 1, framingRect.top, width, framingRect.bottom + 1, finderMaskPaint);
+        canvas.drawRect(0, framingRect.bottom + 1, width, height, finderMaskPaint);
     }
 
     public void drawViewFinderBorder(Canvas canvas) {
@@ -174,38 +173,38 @@ public class ViewFinderView extends View implements IViewFinder {
 
         // Top-left corner
         Path path = new Path();
-        path.moveTo(framingRect.left, framingRect.top + mBorderLineLength);
+        path.moveTo(framingRect.left, framingRect.top + borderLineLength);
         path.lineTo(framingRect.left, framingRect.top);
-        path.lineTo(framingRect.left + mBorderLineLength, framingRect.top);
-        canvas.drawPath(path, mBorderPaint);
+        path.lineTo(framingRect.left + borderLineLength, framingRect.top);
+        canvas.drawPath(path, borderPaint);
 
         // Top-right corner
-        path.moveTo(framingRect.right, framingRect.top + mBorderLineLength);
+        path.moveTo(framingRect.right, framingRect.top + borderLineLength);
         path.lineTo(framingRect.right, framingRect.top);
-        path.lineTo(framingRect.right - mBorderLineLength, framingRect.top);
-        canvas.drawPath(path, mBorderPaint);
+        path.lineTo(framingRect.right - borderLineLength, framingRect.top);
+        canvas.drawPath(path, borderPaint);
 
         // Bottom-right corner
-        path.moveTo(framingRect.right, framingRect.bottom - mBorderLineLength);
+        path.moveTo(framingRect.right, framingRect.bottom - borderLineLength);
         path.lineTo(framingRect.right, framingRect.bottom);
-        path.lineTo(framingRect.right - mBorderLineLength, framingRect.bottom);
-        canvas.drawPath(path, mBorderPaint);
+        path.lineTo(framingRect.right - borderLineLength, framingRect.bottom);
+        canvas.drawPath(path, borderPaint);
 
         // Bottom-left corner
-        path.moveTo(framingRect.left, framingRect.bottom - mBorderLineLength);
+        path.moveTo(framingRect.left, framingRect.bottom - borderLineLength);
         path.lineTo(framingRect.left, framingRect.bottom);
-        path.lineTo(framingRect.left + mBorderLineLength, framingRect.bottom);
-        canvas.drawPath(path, mBorderPaint);
+        path.lineTo(framingRect.left + borderLineLength, framingRect.bottom);
+        canvas.drawPath(path, borderPaint);
     }
 
     public void drawLaser(Canvas canvas) {
         Rect framingRect = getFramingRect();
-        
+
         // Draw a red "laser scanner" line through the middle to show decoding is active
-        mLaserPaint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
+        laserPaint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
         scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
         int middle = framingRect.height() / 2 + framingRect.top;
-        canvas.drawRect(framingRect.left + 2, middle - 1, framingRect.right - 1, middle + 2, mLaserPaint);
+        canvas.drawRect(framingRect.left + 2, middle - 1, framingRect.right - 1, middle + 2, laserPaint);
 
         postInvalidateDelayed(ANIMATION_DELAY,
                 framingRect.left - POINT_SIZE,
@@ -225,8 +224,8 @@ public class ViewFinderView extends View implements IViewFinder {
         int height;
         int orientation = DisplayUtils.getScreenOrientation(getContext());
 
-        if(mSquareViewFinder) {
-            if(orientation != Configuration.ORIENTATION_PORTRAIT) {
+        if (squareViewFinder) {
+            if (orientation != Configuration.ORIENTATION_PORTRAIT) {
                 height = (int) (getHeight() * DEFAULT_SQUARE_DIMENSION_RATIO);
                 width = height;
             } else {
@@ -234,7 +233,7 @@ public class ViewFinderView extends View implements IViewFinder {
                 height = width;
             }
         } else {
-            if(orientation != Configuration.ORIENTATION_PORTRAIT) {
+            if (orientation != Configuration.ORIENTATION_PORTRAIT) {
                 height = (int) (getHeight() * LANDSCAPE_HEIGHT_RATIO);
                 width = (int) (LANDSCAPE_WIDTH_HEIGHT_RATIO * height);
             } else {
@@ -243,17 +242,16 @@ public class ViewFinderView extends View implements IViewFinder {
             }
         }
 
-        if(width > getWidth()) {
+        if (width > getWidth()) {
             width = getWidth() - MIN_DIMENSION_DIFF;
         }
 
-        if(height > getHeight()) {
+        if (height > getHeight()) {
             height = getHeight() - MIN_DIMENSION_DIFF;
         }
 
         int leftOffset = (viewResolution.x - width) / 2;
         int topOffset = (viewResolution.y - height) / 2;
-        mFramingRect = new Rect(leftOffset + mViewFinderOffset, topOffset + mViewFinderOffset, leftOffset + width - mViewFinderOffset, topOffset + height - mViewFinderOffset);
+        framingRect = new Rect(leftOffset + viewFinderOffset, topOffset + viewFinderOffset, leftOffset + width - viewFinderOffset, topOffset + height - viewFinderOffset);
     }
 }
-

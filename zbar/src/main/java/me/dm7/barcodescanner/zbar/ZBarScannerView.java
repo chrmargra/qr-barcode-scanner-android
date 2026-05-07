@@ -24,19 +24,16 @@ import me.dm7.barcodescanner.core.BarcodeScannerView;
 import me.dm7.barcodescanner.core.DisplayUtils;
 
 public class ZBarScannerView extends BarcodeScannerView {
-    private static final String TAG = "ZBarScannerView";
 
-    public interface ResultHandler {
-        public void handleResult(Result rawResult);
-    }
+    private static final String TAG = "ZBarScannerView";
 
     static {
         System.loadLibrary("iconv");
     }
 
-    private ImageScanner mScanner;
-    private List<BarcodeFormat> mFormats;
-    private ResultHandler mResultHandler;
+    private ImageScanner scanner;
+    private List<BarcodeFormat> formats;
+    private ResultHandler resultHandler;
 
     public ZBarScannerView(Context context) {
         super(context);
@@ -49,35 +46,35 @@ public class ZBarScannerView extends BarcodeScannerView {
     }
 
     public void setFormats(List<BarcodeFormat> formats) {
-        mFormats = formats;
+        this.formats = formats;
         setupScanner();
     }
 
     public void setResultHandler(ResultHandler resultHandler) {
-        mResultHandler = resultHandler;
+        this.resultHandler = resultHandler;
     }
 
     public Collection<BarcodeFormat> getFormats() {
-        if(mFormats == null) {
+        if (formats == null) {
             return BarcodeFormat.ALL_FORMATS;
         }
-        return mFormats;
+        return formats;
     }
 
     public void setupScanner() {
-        mScanner = new ImageScanner();
-        mScanner.setConfig(0, Config.X_DENSITY, 3);
-        mScanner.setConfig(0, Config.Y_DENSITY, 3);
+        scanner = new ImageScanner();
+        scanner.setConfig(0, Config.X_DENSITY, 3);
+        scanner.setConfig(0, Config.Y_DENSITY, 3);
 
-        mScanner.setConfig(Symbol.NONE, Config.ENABLE, 0);
-        for(BarcodeFormat format : getFormats()) {
-            mScanner.setConfig(format.getId(), Config.ENABLE, 1);
+        scanner.setConfig(Symbol.NONE, Config.ENABLE, 0);
+        for (BarcodeFormat format : getFormats()) {
+            scanner.setConfig(format.getId(), Config.ENABLE, 1);
         }
     }
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-        if(mResultHandler == null) {
+        if (resultHandler == null) {
             return;
         }
 
@@ -102,10 +99,10 @@ public class ZBarScannerView extends BarcodeScannerView {
             barcode.setData(data);
             barcode.setCrop(rect.left, rect.top, rect.width(), rect.height());
 
-            int result = mScanner.scanImage(barcode);
+            int result = scanner.scanImage(barcode);
 
             if (result != 0) {
-                SymbolSet syms = mScanner.getResults();
+                SymbolSet syms = scanner.getResults();
                 final Result rawResult = new Result();
                 for (Symbol sym : syms) {
                     // In order to retreive QR codes containing null bytes we need to
@@ -113,11 +110,7 @@ public class ZBarScannerView extends BarcodeScannerView {
                     // Weirdly ZBar transforms all data to UTF-8, even the data returned
                     // by getDataBytes() so we have to decode it as UTF-8.
                     String symData;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                        symData = new String(sym.getDataBytes(), StandardCharsets.UTF_8);
-                    } else {
-                        symData = sym.getData();
-                    }
+                    symData = new String(sym.getDataBytes(), StandardCharsets.UTF_8);
                     if (!TextUtils.isEmpty(symData)) {
                         rawResult.setContents(symData);
                         rawResult.setBarcodeFormat(BarcodeFormat.getFormatById(sym.getType()));
@@ -126,32 +119,29 @@ public class ZBarScannerView extends BarcodeScannerView {
                 }
 
                 Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Stopping the preview can take a little long.
-                        // So we want to set result handler to null to discard subsequent calls to
-                        // onPreviewFrame.
-                        ResultHandler tmpResultHandler = mResultHandler;
-                        mResultHandler = null;
-                        
-                        stopCameraPreview();
-                        if (tmpResultHandler != null) {
-                            tmpResultHandler.handleResult(rawResult);
-                        }
+                handler.post(() -> {
+                    // Stopping the preview can take a little long.
+                    // So we want to set result handler to null to discard subsequent calls to
+                    // onPreviewFrame.
+                    ResultHandler tmpResultHandler = resultHandler;
+                    resultHandler = null;
+
+                    stopCameraPreview();
+                    if (tmpResultHandler != null) {
+                        tmpResultHandler.handleResult(rawResult);
                     }
                 });
             } else {
                 camera.setOneShotPreviewCallback(this);
             }
-        } catch(RuntimeException e) {
+        } catch (RuntimeException e) {
             // TODO: Terrible hack. It is possible that this method is invoked after camera is released.
             Log.e(TAG, e.toString(), e);
         }
     }
 
     public void resumeCameraPreview(ResultHandler resultHandler) {
-        mResultHandler = resultHandler;
+        this.resultHandler = resultHandler;
         super.resumeCameraPreview();
     }
 }

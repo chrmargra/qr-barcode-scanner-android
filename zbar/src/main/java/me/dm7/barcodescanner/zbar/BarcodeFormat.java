@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class BarcodeFormat {
-    private int mId;
-    private String mName;
+
+    private final int id;
+    private final String name;
 
     public static final BarcodeFormat NONE = new BarcodeFormat(Symbol.NONE, "NONE");
     public static final BarcodeFormat PARTIAL = new BarcodeFormat(Symbol.PARTIAL, "PARTIAL");
@@ -49,21 +50,21 @@ public class BarcodeFormat {
     }
 
     public BarcodeFormat(int id, String name) {
-        mId = id;
-        mName = name;
+        this.id = id;
+        this.name = name;
     }
 
     public int getId() {
-        return mId;
+        return id;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public static BarcodeFormat getFormatById(int id) {
-        for(BarcodeFormat format : ALL_FORMATS) {
-            if(format.getId() == id) {
+        for (BarcodeFormat format : ALL_FORMATS) {
+            if (format.getId() == id) {
                 return format;
             }
         }

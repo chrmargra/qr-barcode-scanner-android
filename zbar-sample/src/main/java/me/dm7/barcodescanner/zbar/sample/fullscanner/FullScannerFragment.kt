@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import me.dm7.barcodescanner.zbar.BarcodeFormat
 import me.dm7.barcodescanner.zbar.Result
+import me.dm7.barcodescanner.zbar.ResultHandler
 import me.dm7.barcodescanner.zbar.ZBarScannerView
 import me.dm7.barcodescanner.zbar.sample.fullscanner.dialog.MessageDialogFragment
 import me.dm7.barcodescanner.zbar.sample.R
@@ -32,7 +33,7 @@ private const val CAMERA_ID = "CAMERA_ID"
 class FullScannerFragment :
     Fragment(),
     MessageDialogListener,
-    ZBarScannerView.ResultHandler,
+    ResultHandler,
     FormatSelectorDialogListener,
     CameraSelectorDialogListener {
 
