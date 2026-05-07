@@ -186,7 +186,7 @@ class FullScannerActivity :
         scannerView?.setAutoFocus(autoFocus)
     }
 
-    fun setupFormats() {
+    private fun setupFormats() {
         val formats = ArrayList<BarcodeFormat>()
 
         if (selectedIndices == null || selectedIndices?.isEmpty() == true) {
