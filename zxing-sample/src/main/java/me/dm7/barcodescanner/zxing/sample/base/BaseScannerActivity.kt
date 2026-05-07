@@ -7,7 +7,7 @@ import androidx.appcompat.widget.Toolbar
 
 open class BaseScannerActivity : AppCompatActivity() {
 
-    fun setupToolbar(toolbar: Toolbar) {
+    fun setupToolbar(toolbar: Toolbar?) {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }

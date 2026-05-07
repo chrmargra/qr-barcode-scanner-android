@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:theme="@style/AppTheme">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
+        app:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:popupTheme="@style/ToolbarPopupTheme"
+            app:theme="@style/TransparentToolbar" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout
@@ -25,7 +29,7 @@
         <FrameLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1" />
 
         <LinearLayout
@@ -35,12 +39,15 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <Button
-                android:layout_width="wrap_content"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_flash"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
                 android:layout_weight="1"
-                android:onClick="toggleFlash"
-                android:text="@string/toggle_flash" />
+                android:text="@string/toggle_flash"
+                android:textAllCaps="false"
+                app:cornerRadius="20dp" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
