@@ -10,6 +10,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
+import me.dm7.barcodescanner.zxing.ResultHandler
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import me.dm7.barcodescanner.zxing.sample.base.BaseScannerActivity
 import me.dm7.barcodescanner.zxing.sample.fullscanner.dialog.CameraSelectorDialogFragment
@@ -29,7 +30,7 @@ private const val CAMERA_ID = "CAMERA_ID"
 class FullScannerActivity :
     BaseScannerActivity(),
     MessageDialogListener,
-    ZXingScannerView.ResultHandler,
+    ResultHandler,
     FormatSelectorDialogListener,
     CameraSelectorDialogListener {
 

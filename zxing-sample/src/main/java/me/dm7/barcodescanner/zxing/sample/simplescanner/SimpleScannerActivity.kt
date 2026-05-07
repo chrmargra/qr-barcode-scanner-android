@@ -5,13 +5,14 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import com.google.zxing.Result
+import me.dm7.barcodescanner.zxing.ResultHandler
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import me.dm7.barcodescanner.zxing.sample.base.BaseScannerActivity
 import me.dm7.barcodescanner.zxing.sample.databinding.ActivitySimpleScannerBinding
 
 private const val DELAY = 2000L
 
-class SimpleScannerActivity : BaseScannerActivity(), ZXingScannerView.ResultHandler {
+class SimpleScannerActivity : BaseScannerActivity(), ResultHandler {
 
     private var scannerView: ZXingScannerView? = null
 
