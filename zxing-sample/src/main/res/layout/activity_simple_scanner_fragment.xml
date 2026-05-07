@@ -10,8 +10,7 @@
         android:id="@+id/scanner_fragment"
         android:name="me.dm7.barcodescanner.zxing.sample.simplescanner.SimpleScannerFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_height="match_parent" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
