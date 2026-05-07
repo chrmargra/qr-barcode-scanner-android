@@ -1,4 +1,4 @@
-package me.dm7.barcodescanner.zxing.sample
+package me.dm7.barcodescanner.zxing.sample.customviewfinder
 
 import android.content.Context
 import android.graphics.Canvas
@@ -15,6 +15,7 @@ import com.google.zxing.Result
 import me.dm7.barcodescanner.core.IViewFinder
 import me.dm7.barcodescanner.core.ViewFinderView
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import me.dm7.barcodescanner.zxing.sample.base.BaseScannerActivity
 import me.dm7.barcodescanner.zxing.sample.databinding.ActivityCustomViewFinderScannerBinding
 
 private const val TRADE_MARK_TEXT = "ZXing"

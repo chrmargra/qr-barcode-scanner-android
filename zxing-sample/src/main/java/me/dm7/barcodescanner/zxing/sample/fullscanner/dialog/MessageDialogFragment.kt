@@ -1,15 +1,12 @@
-package me.dm7.barcodescanner.zxing.sample
+package me.dm7.barcodescanner.zxing.sample.fullscanner.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import me.dm7.barcodescanner.zxing.sample.fullscanner.scannerlistener.MessageDialogListener
 
 class MessageDialogFragment : DialogFragment() {
-
-    interface MessageDialogListener {
-        fun onDialogPositiveClick(dialog: DialogFragment)
-    }
 
     private var title: String? = null
     private var message: String? = null

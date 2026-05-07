@@ -9,7 +9,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import me.dm7.barcodescanner.zxing.sample.customviewfinder.CustomViewFinderScannerActivity
 import me.dm7.barcodescanner.zxing.sample.databinding.ActivityMainBinding
+import me.dm7.barcodescanner.zxing.sample.fullscanner.FullScannerActivity
+import me.dm7.barcodescanner.zxing.sample.fullscanner.FullScannerFragmentActivity
+import me.dm7.barcodescanner.zxing.sample.fullscanner.FullScreenScannerFragmentActivity
+import me.dm7.barcodescanner.zxing.sample.scalingscanner.ScalingScannerActivity
+import me.dm7.barcodescanner.zxing.sample.simplescanner.SimpleScannerActivity
+import me.dm7.barcodescanner.zxing.sample.simplescanner.SimpleScannerFragmentActivity
 
 private const val ZXING_CAMERA_PERMISSION = 1
 

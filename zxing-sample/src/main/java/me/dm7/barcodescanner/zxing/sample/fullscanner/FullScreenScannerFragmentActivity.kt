@@ -1,4 +1,4 @@
-package me.dm7.barcodescanner.zxing.sample
+package me.dm7.barcodescanner.zxing.sample.fullscanner
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

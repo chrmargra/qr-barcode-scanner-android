@@ -1,16 +1,14 @@
-package me.dm7.barcodescanner.zxing.sample
+package me.dm7.barcodescanner.zxing.sample.fullscanner.dialog
 
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import me.dm7.barcodescanner.zxing.ZXingScannerView
+import me.dm7.barcodescanner.zxing.sample.R
+import me.dm7.barcodescanner.zxing.sample.fullscanner.scannerlistener.FormatSelectorDialogListener
 
 class FormatSelectorDialogFragment : DialogFragment() {
-
-    interface FormatSelectorDialogListener {
-        fun onFormatsSaved(selectedIndices: ArrayList<Int>)
-    }
 
     private var selectedIndices: ArrayList<Int>? = null
     private var listener: FormatSelectorDialogListener? = null

@@ -1,6 +1,7 @@
-package me.dm7.barcodescanner.zxing.sample
+package me.dm7.barcodescanner.zxing.sample.fullscanner
 
 import android.os.Bundle
+import me.dm7.barcodescanner.zxing.sample.base.BaseScannerActivity
 import me.dm7.barcodescanner.zxing.sample.databinding.ActivityFullScannerFragmentBinding
 
 class FullScannerFragmentActivity : BaseScannerActivity() {

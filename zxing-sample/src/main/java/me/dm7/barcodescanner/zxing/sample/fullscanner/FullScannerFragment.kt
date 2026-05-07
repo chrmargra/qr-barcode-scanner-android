@@ -1,29 +1,40 @@
-package me.dm7.barcodescanner.zxing.sample
+package me.dm7.barcodescanner.zxing.sample.fullscanner
 
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.MenuItemCompat
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import me.dm7.barcodescanner.zxing.ZXingScannerView
-import me.dm7.barcodescanner.zxing.sample.databinding.ActivitySimpleScannerBinding
+import me.dm7.barcodescanner.zxing.sample.fullscanner.dialog.CameraSelectorDialogFragment
+import me.dm7.barcodescanner.zxing.sample.fullscanner.dialog.FormatSelectorDialogFragment
+import me.dm7.barcodescanner.zxing.sample.fullscanner.dialog.MessageDialogFragment
+import me.dm7.barcodescanner.zxing.sample.R
+import me.dm7.barcodescanner.zxing.sample.fullscanner.scannerlistener.CameraSelectorDialogListener
+import me.dm7.barcodescanner.zxing.sample.fullscanner.scannerlistener.FormatSelectorDialogListener
+import me.dm7.barcodescanner.zxing.sample.fullscanner.scannerlistener.MessageDialogListener
 
 private const val FLASH_STATE = "FLASH_STATE"
 private const val AUTO_FOCUS_STATE = "AUTO_FOCUS_STATE"
 private const val SELECTED_FORMATS = "SELECTED_FORMATS"
 private const val CAMERA_ID = "CAMERA_ID"
 
-class FullScannerActivity :
-    BaseScannerActivity(),
-    MessageDialogFragment.MessageDialogListener,
+class FullScannerFragment :
+    Fragment(),
+    MessageDialogListener,
     ZXingScannerView.ResultHandler,
-    FormatSelectorDialogFragment.FormatSelectorDialogListener,
-    CameraSelectorDialogFragment.CameraSelectorDialogListener {
+    FormatSelectorDialogListener,
+    CameraSelectorDialogListener {
 
     private var scannerView: ZXingScannerView? = null
     private var flash = false
@@ -31,8 +42,13 @@ class FullScannerActivity :
     private var selectedIndices: ArrayList<Int>? = null
     private var cameraId = -1
 
-    override fun onCreate(state: Bundle?) {
-        super.onCreate(state)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        state: Bundle?
+    ): View {
+        val newScannerView = ZXingScannerView(requireActivity())
+        scannerView = newScannerView
 
         if (state != null) {
             flash = state.getBoolean(FLASH_STATE, false)
@@ -46,36 +62,18 @@ class FullScannerActivity :
             cameraId = -1
         }
 
-        val binding = ActivitySimpleScannerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setupToolbar(binding.toolbar)
-
-        val newScannerView = ZXingScannerView(this)
-        scannerView = newScannerView
-
         setupFormats()
-        binding.contentFrame.addView(newScannerView)
+        return newScannerView
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        scannerView?.setResultHandler(this)
-        scannerView?.startCamera(cameraId)
-        scannerView?.setFlash(flash)
-        scannerView?.setAutoFocus(autoFocus)
+    override fun onCreate(state: Bundle?) {
+        super.onCreate(state)
+        setHasOptionsMenu(true)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
 
-        outState.putBoolean(FLASH_STATE, flash)
-        outState.putBoolean(AUTO_FOCUS_STATE, autoFocus)
-        outState.putIntegerArrayList(SELECTED_FORMATS, selectedIndices)
-        outState.putInt(CAMERA_ID, cameraId)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         var menuItem: MenuItem
 
         menuItem = if (flash) {
@@ -97,8 +95,6 @@ class FullScannerActivity :
 
         menuItem = menu.add(Menu.NONE, R.id.menu_camera_selector, 0, R.string.select_camera)
         MenuItemCompat.setShowAsAction(menuItem, MenuItem.SHOW_AS_ACTION_NEVER)
-
-        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -118,16 +114,17 @@ class FullScannerActivity :
             }
 
             R.id.menu_formats -> {
-                val fragment = FormatSelectorDialogFragment.newInstance(this, selectedIndices)
-                fragment.show(supportFragmentManager, "format_selector")
+                val fragment =
+                    FormatSelectorDialogFragment.Companion.newInstance(this, selectedIndices)
+                fragment.show(requireActivity().supportFragmentManager, "format_selector")
                 true
             }
 
             R.id.menu_camera_selector -> {
                 scannerView?.stopCamera()
 
-                val fragment = CameraSelectorDialogFragment.newInstance(this, cameraId)
-                fragment.show(supportFragmentManager, "camera_selector")
+                val fragment = CameraSelectorDialogFragment.Companion.newInstance(this, cameraId)
+                fragment.show(requireActivity().supportFragmentManager, "camera_selector")
                 true
             }
 
@@ -135,10 +132,31 @@ class FullScannerActivity :
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        scannerView?.setResultHandler(this)
+        scannerView?.startCamera(cameraId)
+        scannerView?.setFlash(flash)
+        scannerView?.setAutoFocus(autoFocus)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putBoolean(FLASH_STATE, flash)
+        outState.putBoolean(AUTO_FOCUS_STATE, autoFocus)
+        outState.putIntegerArrayList(SELECTED_FORMATS, selectedIndices)
+        outState.putInt(CAMERA_ID, cameraId)
+    }
+
     override fun handleResult(rawResult: Result) {
         try {
             val notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            val ringtone = RingtoneManager.getRingtone(applicationContext, notification)
+            val ringtone = RingtoneManager.getRingtone(
+                requireActivity().applicationContext,
+                notification
+            )
             ringtone.play()
         } catch (_: Exception) {
         }
@@ -149,8 +167,8 @@ class FullScannerActivity :
     }
 
     fun showMessageDialog(message: String) {
-        val fragment = MessageDialogFragment.newInstance("Scan Results", message, this)
-        fragment.show(supportFragmentManager, "scan_results")
+        val fragment = MessageDialogFragment.Companion.newInstance("Scan Results", message, this)
+        fragment.show(requireActivity().supportFragmentManager, "scan_results")
     }
 
     fun closeMessageDialog() {
@@ -162,7 +180,7 @@ class FullScannerActivity :
     }
 
     fun closeDialog(dialogName: String) {
-        val fragmentManager: FragmentManager = supportFragmentManager
+        val fragmentManager: FragmentManager = requireActivity().supportFragmentManager
         val fragment = fragmentManager.findFragmentByTag(dialogName) as? DialogFragment
         fragment?.dismiss()
     }
@@ -208,5 +226,10 @@ class FullScannerActivity :
         scannerView?.stopCamera()
         closeMessageDialog()
         closeFormatsDialog()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        scannerView = null
     }
 }
