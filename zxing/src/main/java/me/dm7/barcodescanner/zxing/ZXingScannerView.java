@@ -32,10 +32,10 @@ import me.dm7.barcodescanner.core.DisplayUtils;
 public class ZXingScannerView extends BarcodeScannerView {
     private static final String TAG = "ZXingScannerView";
 
-    private MultiFormatReader mMultiFormatReader;
+    private MultiFormatReader multiFormatReader;
     public static final List<BarcodeFormat> ALL_FORMATS = new ArrayList<>();
-    private List<BarcodeFormat> mFormats;
-    private ResultHandler mResultHandler;
+    private List<BarcodeFormat> formats;
+    private ResultHandler resultHandler;
 
     static {
         ALL_FORMATS.add(BarcodeFormat.AZTEC);
@@ -68,31 +68,31 @@ public class ZXingScannerView extends BarcodeScannerView {
     }
 
     public void setFormats(List<BarcodeFormat> formats) {
-        mFormats = formats;
+        this.formats = formats;
         initMultiFormatReader();
     }
 
     public void setResultHandler(ResultHandler resultHandler) {
-        mResultHandler = resultHandler;
+        this.resultHandler = resultHandler;
     }
 
     public Collection<BarcodeFormat> getFormats() {
-        if (mFormats == null) {
+        if (formats == null) {
             return ALL_FORMATS;
         }
-        return mFormats;
+        return formats;
     }
 
     private void initMultiFormatReader() {
         Map<DecodeHintType, Object> hints = new EnumMap<>(DecodeHintType.class);
         hints.put(DecodeHintType.POSSIBLE_FORMATS, getFormats());
-        mMultiFormatReader = new MultiFormatReader();
-        mMultiFormatReader.setHints(hints);
+        multiFormatReader = new MultiFormatReader();
+        multiFormatReader.setHints(hints);
     }
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-        if (mResultHandler == null) {
+        if (resultHandler == null) {
             return;
         }
 
@@ -118,7 +118,7 @@ public class ZXingScannerView extends BarcodeScannerView {
             if (source != null) {
                 BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
                 try {
-                    rawResult = mMultiFormatReader.decodeWithState(bitmap);
+                    rawResult = multiFormatReader.decodeWithState(bitmap);
                 } catch (ReaderException re) {
                     // continue
                 } catch (NullPointerException npe) {
@@ -126,18 +126,18 @@ public class ZXingScannerView extends BarcodeScannerView {
                 } catch (ArrayIndexOutOfBoundsException aoe) {
 
                 } finally {
-                    mMultiFormatReader.reset();
+                    multiFormatReader.reset();
                 }
 
                 if (rawResult == null) {
                     LuminanceSource invertedSource = source.invert();
                     bitmap = new BinaryBitmap(new HybridBinarizer(invertedSource));
                     try {
-                        rawResult = mMultiFormatReader.decodeWithState(bitmap);
+                        rawResult = multiFormatReader.decodeWithState(bitmap);
                     } catch (NotFoundException e) {
                         // continue
                     } finally {
-                        mMultiFormatReader.reset();
+                        multiFormatReader.reset();
                     }
                 }
             }
@@ -150,8 +150,8 @@ public class ZXingScannerView extends BarcodeScannerView {
                     // Stopping the preview can take a little long.
                     // So we want to set result handler to null to discard subsequent calls to
                     // onPreviewFrame.
-                    ResultHandler tmpResultHandler = mResultHandler;
-                    mResultHandler = null;
+                    ResultHandler tmpResultHandler = resultHandler;
+                    resultHandler = null;
 
                     stopCameraPreview();
                     if (tmpResultHandler != null) {
@@ -168,7 +168,7 @@ public class ZXingScannerView extends BarcodeScannerView {
     }
 
     public void resumeCameraPreview(ResultHandler resultHandler) {
-        mResultHandler = resultHandler;
+        this.resultHandler = resultHandler;
         super.resumeCameraPreview();
     }
 
