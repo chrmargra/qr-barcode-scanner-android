@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -28,25 +27,29 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
         setSupportActionBar(binding?.toolbar)
+
+        initListeners()
     }
 
-    fun launchSimpleActivity(view: View) {
-        launchActivity(SimpleScannerActivity::class.java)
+    private fun initListeners() {
+        binding?.buttonSimpleActivity?.setOnClickListener {
+            launchActivity(clss = SimpleScannerActivity::class.java)
+        }
+
+        binding?.buttonSimpleFragment?.setOnClickListener {
+            launchActivity(clss = SimpleScannerFragmentActivity::class.java)
+        }
+
+        binding?.buttonFullActivity?.setOnClickListener {
+            launchActivity(clss = FullScannerActivity::class.java)
+        }
+
+        binding?.buttonFullFragment?.setOnClickListener {
+            launchActivity(clss = FullScannerFragmentActivity::class.java)
+        }
     }
 
-    fun launchSimpleFragmentActivity(view: View) {
-        launchActivity(SimpleScannerFragmentActivity::class.java)
-    }
-
-    fun launchFullActivity(view: View) {
-        launchActivity(FullScannerActivity::class.java)
-    }
-
-    fun launchFullFragmentActivity(view: View) {
-        launchActivity(FullScannerFragmentActivity::class.java)
-    }
-
-    fun launchActivity(clss: Class<*>) {
+    private fun launchActivity(clss: Class<*>) {
         if (
             ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) !=
             PackageManager.PERMISSION_GRANTED
