@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:theme="@style/AppTheme">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
+        app:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:popupTheme="@style/ToolbarPopupTheme"
+            app:theme="@style/TransparentToolbar" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <ScrollView
@@ -23,51 +27,72 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginHorizontal="24dp"
             android:orientation="vertical">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_simple_activity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="launchSimpleActivity"
-                android:text="@string/simple_activity_sample" />
+                android:text="@string/simple_activity_sample"
+                android:textAllCaps="false"
+                app:cornerRadius="20dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_simple_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="launchSimpleFragmentActivity"
-                android:text="@string/simple_fragment_sample" />
+                android:layout_marginTop="12dp"
+                android:text="@string/simple_fragment_sample"
+                android:textAllCaps="false"
+                app:cornerRadius="20dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_full_activity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="launchFullActivity"
-                android:text="@string/activity_sample" />
+                android:layout_marginTop="12dp"
+                android:text="@string/activity_sample"
+                android:textAllCaps="false"
+                app:cornerRadius="20dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_full_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="launchFullFragmentActivity"
-                android:text="@string/fragment_sample" />
+                android:layout_marginTop="12dp"
+                android:text="@string/fragment_sample"
+                android:textAllCaps="false"
+                app:cornerRadius="20dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_full_screen_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="launchFullScreenScannerFragmentActivity"
-                android:text="@string/full_screen_sample" />
+                android:layout_marginTop="12dp"
+                android:text="@string/full_screen_sample"
+                android:textAllCaps="false"
+                app:cornerRadius="20dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_custom_view_finder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="launchCustomViewFinderScannerActivity"
-                android:text="@string/custom_view_finder_sample" />
+                android:layout_marginTop="12dp"
+                android:text="@string/custom_view_finder_sample"
+                android:textAllCaps="false"
+                app:cornerRadius="20dp" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_scaling"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="launchScalingScannerActivity"
-                android:text="@string/scaling_sample" />
+                android:layout_marginTop="12dp"
+                android:text="@string/scaling_sample"
+                android:textAllCaps="false"
+                app:cornerRadius="20dp" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

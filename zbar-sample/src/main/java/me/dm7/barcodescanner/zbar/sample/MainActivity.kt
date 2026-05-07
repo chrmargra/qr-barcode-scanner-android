@@ -32,20 +32,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initListeners() {
-        binding?.buttonSimpleActivity?.setOnClickListener {
-            launchActivity(clss = SimpleScannerActivity::class.java)
-        }
+        binding?.apply {
+            buttonSimpleActivity.setOnClickListener {
+                launchActivity(clss = SimpleScannerActivity::class.java)
+            }
 
-        binding?.buttonSimpleFragment?.setOnClickListener {
-            launchActivity(clss = SimpleScannerFragmentActivity::class.java)
-        }
+            buttonSimpleFragment.setOnClickListener {
+                launchActivity(clss = SimpleScannerFragmentActivity::class.java)
+            }
 
-        binding?.buttonFullActivity?.setOnClickListener {
-            launchActivity(clss = FullScannerActivity::class.java)
-        }
+            buttonFullActivity.setOnClickListener {
+                launchActivity(clss = FullScannerActivity::class.java)
+            }
 
-        binding?.buttonFullFragment?.setOnClickListener {
-            launchActivity(clss = FullScannerFragmentActivity::class.java)
+            buttonFullFragment.setOnClickListener {
+                launchActivity(clss = FullScannerFragmentActivity::class.java)
+            }
         }
     }
 
