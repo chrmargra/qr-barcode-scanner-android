@@ -6,6 +6,26 @@ The original project was archived on July 1, 2020 and is no longer maintained by
 
 All original credits, copyright notices, and license terms are preserved. This fork remains based on the original `dm77/barcodescanner` project and continues to follow the Apache License 2.0 terms that apply to the original code.
 
+## Table of Contents
+
+- [Maintenance status](#maintenance-status)
+- [Original project status](#original-project-status)
+- [Introduction](#introduction)
+- [Screenshots](#screenshots)
+- [Minor BREAKING CHANGE in 1.8.4](#minor-breaking-change-in-184)
+- [ZXing](#zxing)
+    - [Installation](#installation)
+    - [Simple Usage](#simple-usage)
+    - [Advanced Usage](#advanced-usage)
+- [ZBar](#zbar)
+    - [Installation](#installation-1)
+    - [Simple Usage](#simple-usage-1)
+    - [Advanced Usage](#advanced-usage-1)
+- [Rebuilding ZBar Libraries](#rebuilding-zbar-libraries)
+- [Credits](#credits)
+- [Contributors](#contributors)
+- [License](#license)
+
 ## Maintenance status
 
 This fork is maintained primarily for my own Android projects, but the repository is public so others may clone it, inspect it, or use it under the terms of the original license.
