@@ -1,4 +1,4 @@
-# QR / Barcode Scanner Android
+# Android QR / Barcode Scanner Library
 
 > This repository is a maintained fork of the original [dm77/barcodescanner](https://github.com/dm77/barcodescanner) project.
 
