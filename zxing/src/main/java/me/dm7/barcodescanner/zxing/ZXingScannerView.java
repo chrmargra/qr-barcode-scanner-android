@@ -31,6 +31,8 @@ import me.dm7.barcodescanner.core.DisplayUtils;
 
 public class ZXingScannerView extends BarcodeScannerView {
     private static final String TAG = "ZXingScannerView";
+    private static final int ROTATION_COUNT_90_DEGREES = 1;
+    private static final int ROTATION_COUNT_270_DEGREES = 3;
 
     private MultiFormatReader multiFormatReader;
     public static final List<BarcodeFormat> ALL_FORMATS = new ArrayList<>();
@@ -104,7 +106,7 @@ public class ZXingScannerView extends BarcodeScannerView {
 
             if (DisplayUtils.getScreenOrientation(getContext()) == Configuration.ORIENTATION_PORTRAIT) {
                 int rotationCount = getRotationCount();
-                if (rotationCount == 1 || rotationCount == 3) {
+                if (rotationCount == ROTATION_COUNT_90_DEGREES || rotationCount == ROTATION_COUNT_270_DEGREES) {
                     int tmp = width;
                     width = height;
                     height = tmp;

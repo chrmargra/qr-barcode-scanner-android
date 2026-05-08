@@ -26,9 +26,13 @@ import me.dm7.barcodescanner.core.DisplayUtils;
 public class ZBarScannerView extends BarcodeScannerView {
 
     private static final String TAG = "ZBarScannerView";
+    private static final String ICONV_LIBRARY_NAME = "iconv";
+    private static final int ROTATION_COUNT_90_DEGREES = 1;
+    private static final int ROTATION_COUNT_270_DEGREES = 3;
+    private static final String ZBAR_IMAGE_FORMAT_Y800 = "Y800";
 
     static {
-        System.loadLibrary("iconv");
+        System.loadLibrary(ICONV_LIBRARY_NAME);
     }
 
     private ImageScanner scanner;
@@ -86,7 +90,7 @@ public class ZBarScannerView extends BarcodeScannerView {
 
             if (DisplayUtils.getScreenOrientation(getContext()) == Configuration.ORIENTATION_PORTRAIT) {
                 int rotationCount = getRotationCount();
-                if (rotationCount == 1 || rotationCount == 3) {
+                if (rotationCount == ROTATION_COUNT_90_DEGREES || rotationCount == ROTATION_COUNT_270_DEGREES) {
                     int tmp = width;
                     width = height;
                     height = tmp;
@@ -95,7 +99,7 @@ public class ZBarScannerView extends BarcodeScannerView {
             }
 
             Rect rect = getFramingRectInPreview(width, height);
-            Image barcode = new Image(width, height, "Y800");
+            Image barcode = new Image(width, height, ZBAR_IMAGE_FORMAT_Y800);
             barcode.setData(data);
             barcode.setCrop(rect.left, rect.top, rect.width(), rect.height());
 
