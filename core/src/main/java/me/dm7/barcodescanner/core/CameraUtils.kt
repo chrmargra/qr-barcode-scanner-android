@@ -1,67 +1,65 @@
-package me.dm7.barcodescanner.core;
+package me.dm7.barcodescanner.core
 
-import android.hardware.Camera;
+import android.hardware.Camera
 
-import java.util.List;
-
-public class CameraUtils {
+object CameraUtils {
 
     /**
      * A safe way to get an instance of the Camera object.
      */
-    public static Camera getCameraInstance() {
-        return getCameraInstance(getDefaultCameraId());
-    }
+    @JvmStatic
+    fun getCameraInstance(): Camera? = getCameraInstance(cameraId = getDefaultCameraId())
 
     /**
-     * Favor back-facing camera by default. If none exists, fallback to whatever camera is available
-     **/
-    public static int getDefaultCameraId() {
-        int numberOfCameras = Camera.getNumberOfCameras();
-        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-        int defaultCameraId = -1;
-        for (int cameraId = 0; cameraId < numberOfCameras; cameraId++) {
-            defaultCameraId = cameraId;
-            Camera.getCameraInfo(cameraId, cameraInfo);
+     * Favor back-facing camera by default. If none exists, fallback to whatever camera is available.
+     */
+    @JvmStatic
+    fun getDefaultCameraId(): Int {
+        val numberOfCameras = Camera.getNumberOfCameras()
+        val cameraInfo = Camera.CameraInfo()
+        var defaultCameraId = -1
+
+        for (cameraId in 0 until numberOfCameras) {
+            defaultCameraId = cameraId
+            Camera.getCameraInfo(cameraId, cameraInfo)
             if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                return cameraId;
+                return cameraId
             }
         }
-        return defaultCameraId;
+
+        return defaultCameraId
     }
 
     /**
      * A safe way to get an instance of the Camera object.
      */
-    public static Camera getCameraInstance(int cameraId) {
-        Camera camera = null;
-        try {
+    @JvmStatic
+    fun getCameraInstance(cameraId: Int): Camera? {
+        return try {
             if (cameraId == -1) {
-                camera = Camera.open(); // Attempt to get a Camera instance
+                Camera.open() // Attempt to get a Camera instance
             } else {
-                camera = Camera.open(cameraId); // Attempt to get a Camera instance
+                Camera.open(cameraId) // Attempt to get a Camera instance
             }
-        } catch (Exception ex) {
-            // Camera is not available (in use or does not exist)
+        } catch (_: Exception) {
+            // Camera is not available, in use, or does not exist.
+            null
         }
-        return camera; // Returns null if camera is unavailable
     }
 
-    public static boolean isFlashSupported(Camera camera) {
-        /* Credits: Top answer at http://stackoverflow.com/a/19599365/868173 */
-        if (camera != null) {
-            Camera.Parameters parameters = camera.getParameters();
+    @JvmStatic
+    fun isFlashSupported(camera: Camera?): Boolean {
+        // Credits: Top answer at http://stackoverflow.com/a/19599365/868173
+        if (camera == null) return false
 
-            if (parameters.getFlashMode() == null) {
-                return false;
-            }
+        val parameters = camera.parameters
 
-            List<String> supportedFlashModes = parameters.getSupportedFlashModes();
-            return supportedFlashModes != null &&
-                    !supportedFlashModes.isEmpty() &&
-                    (supportedFlashModes.size() != 1 || !supportedFlashModes.get(0).equals(Camera.Parameters.FLASH_MODE_OFF));
-        } else {
-            return false;
-        }
+        if (parameters.flashMode == null) return false
+
+        val supportedFlashModes = parameters.supportedFlashModes
+        return supportedFlashModes != null &&
+                supportedFlashModes.isNotEmpty() &&
+                (supportedFlashModes.size != 1 ||
+                        supportedFlashModes[0] != Camera.Parameters.FLASH_MODE_OFF)
     }
 }

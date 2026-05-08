@@ -122,7 +122,7 @@ public class ZXingScannerView extends BarcodeScannerView {
                 try {
                     rawResult = multiFormatReader.decodeWithState(bitmap);
                 } catch (ReaderException re) {
-                    // continue
+                    // Continue
                 } catch (NullPointerException npe) {
                     // This is terrible
                 } catch (ArrayIndexOutOfBoundsException ignored) {
