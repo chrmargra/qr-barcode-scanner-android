@@ -49,7 +49,23 @@ Installation
 
 This fork is maintained as a local Android library project.  
 The original JCenter/Bintray dependency flow is no longer used.  
-Add the required modules to your project and depend on the scanner implementation you want to use.
+
+To use the ZXing scanner implementation, include the required local modules in your app project.  
+
+In your `settings.gradle.kts`:  
+
+```kotlin
+include(":core")
+project(":core").projectDir = file("../qr-barcode-scanner-android/core")
+include(":zxing")
+project(":zxing").projectDir = file("../qr-barcode-scanner-android/zxing")
+```
+
+> The paths used in `projectDir` must point to the location where you downloaded or cloned this library project.  
+> For example, `../qr-barcode-scanner-android/core` assumes that your app project and `qr-barcode-scanner-android` are sibling folders.  
+> If your folder structure is different, update the path accordingly.  
+
+Then add the ZXing module dependency in the module where you want to use the scanner:  
 
 ```kotlin
 dependencies {
@@ -57,8 +73,21 @@ dependencies {
 }
 ```
 
-Both :zxing and :zbar depend on :core, so you normally do not need to add :core directly.  
-The core module declares the camera permission and required camera feature in its manifest. Apps still need to request the camera permission at runtime before starting the scanner.
+The `:zxing` module depends on `:core`, so you normally do not need to add `:core` directly as a dependency.  
+
+Depending on your project setup, you may also need to declare dependencies used by the local library modules in your own version catalog, for example:  
+
+```toml
+[versions]
+androidxAnnotation = "1.9.1"
+zxing = "3.5.4"
+
+[libraries]
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
+zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
+```
+
+The core module declares the camera permission and required camera feature in its manifest. Apps still need to request the camera permission at runtime before starting the scanner.  
 
 Simple Usage
 ------------
@@ -170,7 +199,23 @@ Installation
 
 This fork is maintained as a local Android library project.  
 The original JCenter/Bintray dependency flow is no longer used.  
-Add the required modules to your project and depend on the scanner implementation you want to use.  
+
+To use the ZBar scanner implementation, include the required local modules in your app project.  
+
+In your `settings.gradle.kts`:  
+
+```kotlin
+include(":core")
+project(":core").projectDir = file("../qr-barcode-scanner-android/core")
+include(":zbar")
+project(":zbar").projectDir = file("../qr-barcode-scanner-android/zbar")
+```
+
+> The paths used in `projectDir` must point to the location where you downloaded or cloned this library project.  
+> For example, `../qr-barcode-scanner-android/core` assumes that your app project and `qr-barcode-scanner-android` are sibling folders.  
+> If your folder structure is different, update the path accordingly.  
+
+Then add the ZBar module dependency in the module where you want to use the scanner:  
 
 ```kotlin
 dependencies {
@@ -178,8 +223,19 @@ dependencies {
 }
 ```
 
-Both :zxing and :zbar depend on :core, so you normally do not need to add :core directly.  
-The core module declares the camera permission and required camera feature in its manifest. Apps still need to request the camera permission at runtime before starting the scanner.
+The `:zbar` module depends on `:core`, so you normally do not need to add `:core` directly as a dependency.  
+
+Depending on your project setup, you may also need to declare dependencies used by the local library modules in your own version catalog, for example:  
+
+```toml
+[versions]
+androidxAnnotation = "1.9.1"
+
+[libraries]
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
+```
+
+The core module declares the camera permission and required camera feature in its manifest. Apps still need to request the camera permission at runtime before starting the scanner.  
 
 Simple Usage
 ------------
