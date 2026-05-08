@@ -6,7 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import com.google.zxing.Result
-import me.dm7.barcodescanner.core.IViewFinder
+import me.dm7.barcodescanner.core.ViewFinder
 import me.dm7.barcodescanner.zxing.ResultHandler
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import me.dm7.barcodescanner.zxing.sample.base.BaseScannerActivity
@@ -27,7 +27,7 @@ class CustomViewFinderScannerActivity : BaseScannerActivity(), ResultHandler {
         setupToolbar(toolbar = binding.toolbar)
 
         val newScannerView = object : ZXingScannerView(this) {
-            override fun createViewFinderView(context: Context): IViewFinder =
+            override fun createViewFinderView(context: Context): ViewFinder =
                 CustomViewFinderView(context)
         }
 

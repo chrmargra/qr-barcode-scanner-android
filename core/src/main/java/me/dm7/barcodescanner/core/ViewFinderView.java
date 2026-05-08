@@ -11,7 +11,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class ViewFinderView extends View implements IViewFinder {
+public class ViewFinderView extends View implements ViewFinder {
 
     private Rect framingRect;
 
