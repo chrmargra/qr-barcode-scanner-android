@@ -51,9 +51,9 @@ An Android library project that provides easy-to-use and extensible barcode scan
 Screenshots
 ===========
 <p align="center">
-    <img src="./screenshots/main_activity.png" width="266" />
-    <img src="./screenshots/scanner.png" width="266" />
-    <img src="./screenshots/scan_results.png" width="266" />
+    <img src="./screenshots/main_activity.png" width="250" />
+    <img src="./screenshots/scanner.png" width="250" />
+    <img src="./screenshots/scan_results.png" width="250" />
 </p>
 
 Minor BREAKING CHANGE in 1.8.4
