@@ -204,7 +204,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     public int getDisplayOrientation() {
         if (cameraWrapper == null) {
-            //If we don't have a camera set there is no orientation so return dummy value
+            // If we don't have a camera set there is no orientation so return dummy value
             return 0;
         }
 
@@ -297,11 +297,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             }
             autoFocus = state;
             if (autoFocus) {
-                if (surfaceCreated) { // check if surface created before using autofocus
+                if (surfaceCreated) { // Check if surface created before using autofocus
                     Log.v(TAG, "Starting autofocus");
                     safeAutoFocus();
                 } else {
-                    scheduleAutoFocus(); // wait 1 sec and then do check again
+                    scheduleAutoFocus(); // Wait 1 sec and then do check again
                 }
             } else {
                 Log.v(TAG, "Cancelling autofocus");

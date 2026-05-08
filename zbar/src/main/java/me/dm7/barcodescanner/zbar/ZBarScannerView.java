@@ -105,10 +105,12 @@ public class ZBarScannerView extends BarcodeScannerView {
                 SymbolSet syms = scanner.getResults();
                 final Result rawResult = new Result();
                 for (Symbol sym : syms) {
-                    // In order to retreive QR codes containing null bytes we need to
-                    // use getDataBytes() rather than getData() which uses C strings.
-                    // Weirdly ZBar transforms all data to UTF-8, even the data returned
-                    // by getDataBytes() so we have to decode it as UTF-8.
+                    /*
+                        In order to retreive QR codes containing null bytes we need to
+                        use getDataBytes() rather than getData() which uses C strings.
+                        Weirdly ZBar transforms all data to UTF-8, even the data returned
+                        by getDataBytes() so we have to decode it as UTF-8.
+                    */
                     String symData;
                     symData = new String(sym.getDataBytes(), StandardCharsets.UTF_8);
                     if (!TextUtils.isEmpty(symData)) {
@@ -120,9 +122,11 @@ public class ZBarScannerView extends BarcodeScannerView {
 
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.post(() -> {
-                    // Stopping the preview can take a little long.
-                    // So we want to set result handler to null to discard subsequent calls to
-                    // onPreviewFrame.
+                    /*
+                        Stopping the preview can take a little long.
+                        So we want to set result handler to null to discard subsequent calls to
+                        onPreviewFrame.
+                    */
                     ResultHandler tmpResultHandler = resultHandler;
                     resultHandler = null;
 

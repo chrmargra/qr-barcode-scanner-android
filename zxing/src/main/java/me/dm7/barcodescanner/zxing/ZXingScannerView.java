@@ -135,7 +135,7 @@ public class ZXingScannerView extends BarcodeScannerView {
                     try {
                         rawResult = multiFormatReader.decodeWithState(bitmap);
                     } catch (NotFoundException e) {
-                        // continue
+                        // Continue
                     } finally {
                         multiFormatReader.reset();
                     }
@@ -147,9 +147,11 @@ public class ZXingScannerView extends BarcodeScannerView {
             if (finalRawResult != null) {
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.post(() -> {
-                    // Stopping the preview can take a little long.
-                    // So we want to set result handler to null to discard subsequent calls to
-                    // onPreviewFrame.
+                    /*
+                        Stopping the preview can take a little long.
+                        So we want to set result handler to null to discard subsequent calls to
+                        onPreviewFrame.
+                    */
                     ResultHandler tmpResultHandler = resultHandler;
                     resultHandler = null;
 

@@ -24,7 +24,7 @@ class CustomViewFinderScannerActivity : BaseScannerActivity(), ResultHandler {
         val binding = ActivityCustomViewFinderScannerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupToolbar(binding.toolbar)
+        setupToolbar(toolbar = binding.toolbar)
 
         val newScannerView = object : ZXingScannerView(this) {
             override fun createViewFinderView(context: Context): IViewFinder =
@@ -56,9 +56,9 @@ class CustomViewFinderScannerActivity : BaseScannerActivity(), ResultHandler {
         ).show()
 
         // Note:
-        // * Wait 2 seconds to resume the preview.
-        // * On older devices continuously stopping and resuming camera preview can result in freezing the app.
-        // * I don't know why this is the case but I don't have the time to figure out.
+        // Wait 2 seconds to resume the preview.
+        // On older devices continuously stopping and resuming camera preview can result in freezing the app.
+        // I don't know why this is the case but I don't have the time to figure out.
         Handler(Looper.getMainLooper()).postDelayed(
             {
                 scannerView?.resumeCameraPreview(this)

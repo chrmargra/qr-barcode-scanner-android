@@ -12,6 +12,6 @@ class FullScannerFragmentActivity : BaseScannerActivity() {
         val binding = ActivityFullScannerFragmentBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupToolbar(binding.toolbar)
+        setupToolbar(toolbar = binding.toolbar)
     }
 }

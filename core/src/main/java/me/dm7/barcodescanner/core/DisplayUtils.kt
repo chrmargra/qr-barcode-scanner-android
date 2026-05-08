@@ -1,35 +1,35 @@
-package me.dm7.barcodescanner.core;
+package me.dm7.barcodescanner.core
 
-import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.Point;
-import android.view.Display;
-import android.view.WindowManager;
+import android.content.Context
+import android.content.res.Configuration
+import android.graphics.Point
+import android.view.WindowManager
 
-public class DisplayUtils {
-    public static Point getScreenResolution(Context context) {
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point screenResolution = new Point();
-        display.getSize(screenResolution);
+object DisplayUtils {
 
-        return screenResolution;
+    @JvmStatic
+    fun getScreenResolution(context: Context): Point {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+        val display = windowManager?.defaultDisplay
+        val screenResolution = Point()
+        display?.getSize(screenResolution)
+
+        return screenResolution
     }
 
-    public static int getScreenOrientation(Context context) {
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
+    @JvmStatic
+    fun getScreenOrientation(context: Context): Int {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+            ?: return Configuration.ORIENTATION_UNDEFINED
 
-        int orientation;
-        if (display.getWidth() == display.getHeight()) {
-            orientation = Configuration.ORIENTATION_SQUARE;
+        val display = windowManager.defaultDisplay
+
+        return if (display.width == display.height) {
+            Configuration.ORIENTATION_SQUARE
+        } else if (display.width < display.height) {
+            Configuration.ORIENTATION_PORTRAIT
         } else {
-            if (display.getWidth() < display.getHeight()) {
-                orientation = Configuration.ORIENTATION_PORTRAIT;
-            } else {
-                orientation = Configuration.ORIENTATION_LANDSCAPE;
-            }
+            Configuration.ORIENTATION_LANDSCAPE
         }
-        return orientation;
     }
 }

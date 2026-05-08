@@ -34,17 +34,17 @@ public class CameraUtils {
      * A safe way to get an instance of the Camera object.
      */
     public static Camera getCameraInstance(int cameraId) {
-        Camera c = null;
+        Camera camera = null;
         try {
             if (cameraId == -1) {
-                c = Camera.open(); // attempt to get a Camera instance
+                camera = Camera.open(); // Attempt to get a Camera instance
             } else {
-                c = Camera.open(cameraId); // attempt to get a Camera instance
+                camera = Camera.open(cameraId); // Attempt to get a Camera instance
             }
-        } catch (Exception e) {
+        } catch (Exception ex) {
             // Camera is not available (in use or does not exist)
         }
-        return c; // returns null if camera is unavailable
+        return camera; // Returns null if camera is unavailable
     }
 
     public static boolean isFlashSupported(Camera camera) {
