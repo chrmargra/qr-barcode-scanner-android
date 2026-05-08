@@ -14,13 +14,13 @@ All original credits, copyright notices, and license terms are preserved. This f
 - [Screenshots](#screenshots)
 - [Minor BREAKING CHANGE in 1.8.4](#minor-breaking-change-in-184)
 - [ZXing](#zxing)
-    - [Installation](#installation)
-    - [Simple Usage](#simple-usage)
-    - [Advanced Usage](#advanced-usage)
+  - [Installation](#installation)
+  - [Simple Usage](#simple-usage)
+  - [Advanced Usage](#advanced-usage)
 - [ZBar](#zbar)
-    - [Installation](#installation-1)
-    - [Simple Usage](#simple-usage-1)
-    - [Advanced Usage](#advanced-usage-1)
+  - [Installation](#installation-1)
+  - [Simple Usage](#simple-usage-1)
+  - [Advanced Usage](#advanced-usage-1)
 - [Rebuilding ZBar Libraries](#rebuilding-zbar-libraries)
 - [Credits](#credits)
 - [Contributors](#contributors)
@@ -46,7 +46,7 @@ This project is no longer maintained. When I first started this project in late 
 Introduction
 ============
 
-Android library projects that provides easy to use and extensible Barcode Scanner views based on ZXing and ZBar.
+An Android library project that provides easy-to-use and extensible barcode scanner views based on ZXing and ZBar.  
 
 Screenshots
 ===========
@@ -339,6 +339,9 @@ fun setAutoFocus(state: Boolean)
 
 // Specify interested barcode formats:
 fun setFormats(formats: List<BarcodeFormat>)
+
+// Specify the cameraId to start with:
+fun startCamera(cameraId: Int)
 ```
 
 Specify front-facing or rear-facing cameras by using the `fun startCamera(cameraId: Int)` method.
