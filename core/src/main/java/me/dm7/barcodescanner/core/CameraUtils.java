@@ -20,11 +20,11 @@ public class CameraUtils {
         int numberOfCameras = Camera.getNumberOfCameras();
         Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
         int defaultCameraId = -1;
-        for (int i = 0; i < numberOfCameras; i++) {
-            defaultCameraId = i;
-            Camera.getCameraInfo(i, cameraInfo);
+        for (int cameraId = 0; cameraId < numberOfCameras; cameraId++) {
+            defaultCameraId = cameraId;
+            Camera.getCameraInfo(cameraId, cameraInfo);
             if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                return i;
+                return cameraId;
             }
         }
         return defaultCameraId;
@@ -57,7 +57,9 @@ public class CameraUtils {
             }
 
             List<String> supportedFlashModes = parameters.getSupportedFlashModes();
-            return supportedFlashModes != null && !supportedFlashModes.isEmpty() && (supportedFlashModes.size() != 1 || !supportedFlashModes.get(0).equals(Camera.Parameters.FLASH_MODE_OFF));
+            return supportedFlashModes != null &&
+                    !supportedFlashModes.isEmpty() &&
+                    (supportedFlashModes.size() != 1 || !supportedFlashModes.get(0).equals(Camera.Parameters.FLASH_MODE_OFF));
         } else {
             return false;
         }

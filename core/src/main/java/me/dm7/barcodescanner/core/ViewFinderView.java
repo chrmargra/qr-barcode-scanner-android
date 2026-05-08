@@ -29,6 +29,10 @@ public class ViewFinderView extends View implements ViewFinder {
     private static final int POINT_SIZE = 10;
     private static final long ANIMATION_DELAY = 80L;
 
+    private static final int MAX_ALPHA = 255;
+
+    private static final int CENTER_DIVISOR = 2;
+
     private final int defaultLaserColor = getResources().getColor(R.color.viewfinder_laser);
     private final int defaultMaskColor = getResources().getColor(R.color.viewfinder_mask);
     private final int defaultBorderColor = getResources().getColor(R.color.viewfinder_border);
@@ -114,7 +118,7 @@ public class ViewFinderView extends View implements ViewFinder {
 
     @Override
     public void setBorderAlpha(float alpha) {
-        int colorAlpha = (int) (255 * alpha);
+        int colorAlpha = (int) (MAX_ALPHA * alpha);
         borderPaint.setAlpha(colorAlpha);
     }
 
@@ -162,10 +166,34 @@ public class ViewFinderView extends View implements ViewFinder {
         int height = canvas.getHeight();
         Rect framingRect = getFramingRect();
 
-        canvas.drawRect(0, 0, width, framingRect.top, finderMaskPaint);
-        canvas.drawRect(0, framingRect.top, framingRect.left, framingRect.bottom + 1, finderMaskPaint);
-        canvas.drawRect(framingRect.right + 1, framingRect.top, width, framingRect.bottom + 1, finderMaskPaint);
-        canvas.drawRect(0, framingRect.bottom + 1, width, height, finderMaskPaint);
+        canvas.drawRect(
+                0,
+                0,
+                width,
+                framingRect.top,
+                finderMaskPaint
+        );
+        canvas.drawRect(
+                0,
+                framingRect.top,
+                framingRect.left,
+                framingRect.bottom + 1,
+                finderMaskPaint
+        );
+        canvas.drawRect(
+                framingRect.right + 1,
+                framingRect.top,
+                width,
+                framingRect.bottom + 1,
+                finderMaskPaint
+        );
+        canvas.drawRect(
+                0,
+                framingRect.bottom + 1,
+                width,
+                height,
+                finderMaskPaint
+        );
     }
 
     public void drawViewFinderBorder(Canvas canvas) {
@@ -204,13 +232,20 @@ public class ViewFinderView extends View implements ViewFinder {
         laserPaint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
         scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
         int middle = framingRect.height() / 2 + framingRect.top;
-        canvas.drawRect(framingRect.left + 2, middle - 1, framingRect.right - 1, middle + 2, laserPaint);
+        canvas.drawRect(
+                framingRect.left + 2,
+                middle - 1,
+                framingRect.right - 1,
+                middle + 2, laserPaint
+        );
 
-        postInvalidateDelayed(ANIMATION_DELAY,
+        postInvalidateDelayed(
+                ANIMATION_DELAY,
                 framingRect.left - POINT_SIZE,
                 framingRect.top - POINT_SIZE,
                 framingRect.right + POINT_SIZE,
-                framingRect.bottom + POINT_SIZE);
+                framingRect.bottom + POINT_SIZE
+        );
     }
 
     @Override
@@ -250,8 +285,13 @@ public class ViewFinderView extends View implements ViewFinder {
             height = getHeight() - MIN_DIMENSION_DIFF;
         }
 
-        int leftOffset = (viewResolution.x - width) / 2;
-        int topOffset = (viewResolution.y - height) / 2;
-        framingRect = new Rect(leftOffset + viewFinderOffset, topOffset + viewFinderOffset, leftOffset + width - viewFinderOffset, topOffset + height - viewFinderOffset);
+        int leftOffset = (viewResolution.x - width) / CENTER_DIVISOR;
+        int topOffset = (viewResolution.y - height) / CENTER_DIVISOR;
+        framingRect = new Rect(
+                leftOffset + viewFinderOffset,
+                topOffset + viewFinderOffset,
+                leftOffset + width - viewFinderOffset,
+                topOffset + height - viewFinderOffset
+        );
     }
 }
