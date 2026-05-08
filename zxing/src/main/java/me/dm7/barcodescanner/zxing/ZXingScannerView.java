@@ -31,6 +31,8 @@ import me.dm7.barcodescanner.core.DisplayUtils;
 
 public class ZXingScannerView extends BarcodeScannerView {
     private static final String TAG = "ZXingScannerView";
+    private static final int ROTATION_COUNT_90_DEGREES = 1;
+    private static final int ROTATION_COUNT_270_DEGREES = 3;
 
     private MultiFormatReader multiFormatReader;
     public static final List<BarcodeFormat> ALL_FORMATS = new ArrayList<>();
@@ -104,7 +106,7 @@ public class ZXingScannerView extends BarcodeScannerView {
 
             if (DisplayUtils.getScreenOrientation(getContext()) == Configuration.ORIENTATION_PORTRAIT) {
                 int rotationCount = getRotationCount();
-                if (rotationCount == 1 || rotationCount == 3) {
+                if (rotationCount == ROTATION_COUNT_90_DEGREES || rotationCount == ROTATION_COUNT_270_DEGREES) {
                     int tmp = width;
                     width = height;
                     height = tmp;
@@ -120,11 +122,11 @@ public class ZXingScannerView extends BarcodeScannerView {
                 try {
                     rawResult = multiFormatReader.decodeWithState(bitmap);
                 } catch (ReaderException re) {
-                    // continue
+                    // Continue
                 } catch (NullPointerException npe) {
                     // This is terrible
-                } catch (ArrayIndexOutOfBoundsException aoe) {
-
+                } catch (ArrayIndexOutOfBoundsException ignored) {
+                    // Ignored
                 } finally {
                     multiFormatReader.reset();
                 }
@@ -185,7 +187,8 @@ public class ZXingScannerView extends BarcodeScannerView {
         try {
             source = new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
                     rect.width(), rect.height(), false);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
+            // Ignored
         }
 
         return source;

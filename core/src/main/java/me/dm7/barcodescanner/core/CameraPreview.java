@@ -20,6 +20,14 @@ import java.util.List;
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
     private static final String TAG = "CameraPreview";
+    private static final int ROTATION_DEGREES_0 = 0;
+    private static final int ROTATION_DEGREES_90 = 90;
+    private static final int ROTATION_DEGREES_180 = 180;
+    private static final int ROTATION_DEGREES_270 = 270;
+    private static final int FULL_ROTATION_DEGREES = 360;
+    private static final int HALF_ROTATION_DEGREES = 180;
+    private static final int NO_ROTATION_DEGREES = 0;
+    private static final Long DELAY = 1000L;
 
     private CameraWrapper cameraWrapper;
     private Handler autoFocusHandler;
@@ -159,7 +167,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     @SuppressWarnings("SuspiciousNameCombination")
     private Point convertSizeToLandscapeOrientation(Point size) {
-        if (getDisplayOrientation() % 180 == 0) {
+        if (getDisplayOrientation() % HALF_ROTATION_DEGREES == NO_ROTATION_DEGREES) {
             return size;
         } else {
             return new Point(size.y, size.x);
@@ -171,7 +179,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         ViewGroup.LayoutParams layoutParams = getLayoutParams();
         int tmpWidth;
         int tmpHeight;
-        if (getDisplayOrientation() % 180 == 0) {
+        if (getDisplayOrientation() % HALF_ROTATION_DEGREES == NO_ROTATION_DEGREES) {
             tmpWidth = width;
             tmpHeight = height;
         } else {
@@ -185,13 +193,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             float ratioWidth = (float) parentWidth / (float) tmpWidth;
             float ratioHeight = (float) parentHeight / (float) tmpHeight;
 
-            float compensation;
-
-            if (ratioWidth > ratioHeight) {
-                compensation = ratioWidth;
-            } else {
-                compensation = ratioHeight;
-            }
+            float compensation = Math.max(ratioWidth, ratioHeight);
 
             tmpWidth = Math.round(tmpWidth * compensation);
             tmpHeight = Math.round(tmpHeight * compensation);
@@ -216,31 +218,27 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
 
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        return getDisplayOrientation(wm, info);
+    }
+
+    private int getDisplayOrientation(WindowManager wm, Camera.CameraInfo info) {
         Display display = wm.getDefaultDisplay();
 
         int rotation = display.getRotation();
-        int degrees = 0;
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                degrees = 0;
-                break;
-            case Surface.ROTATION_90:
-                degrees = 90;
-                break;
-            case Surface.ROTATION_180:
-                degrees = 180;
-                break;
-            case Surface.ROTATION_270:
-                degrees = 270;
-                break;
-        }
+        int degrees = switch (rotation) {
+            case Surface.ROTATION_0 -> ROTATION_DEGREES_0;
+            case Surface.ROTATION_90 -> ROTATION_DEGREES_90;
+            case Surface.ROTATION_180 -> ROTATION_DEGREES_180;
+            case Surface.ROTATION_270 -> ROTATION_DEGREES_270;
+            default -> ROTATION_DEGREES_0;
+        };
 
         int result;
         if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            result = (info.orientation + degrees) % 360;
-            result = (360 - result) % 360;  // compensate the mirror
-        } else {  // back-facing
-            result = (info.orientation - degrees + 360) % 360;
+            result = (info.orientation + degrees) % FULL_ROTATION_DEGREES;
+            result = (FULL_ROTATION_DEGREES - result) % FULL_ROTATION_DEGREES;  // Compensate the mirror
+        } else {  // Back-facing
+            result = (info.orientation - degrees + FULL_ROTATION_DEGREES) % FULL_ROTATION_DEGREES;
         }
         return result;
     }
@@ -251,21 +249,21 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
 
         List<Camera.Size> sizes = cameraWrapper.camera.getParameters().getSupportedPreviewSizes();
-        int w = getWidth();
-        int h = getHeight();
+        int width = getWidth();
+        int height = getHeight();
         if (DisplayUtils.getScreenOrientation(getContext()) == Configuration.ORIENTATION_PORTRAIT) {
-            int portraitWidth = h;
-            h = w;
-            w = portraitWidth;
+            int portraitWidth = height;
+            height = width;
+            width = portraitWidth;
         }
 
-        double targetRatio = (double) w / h;
+        double targetRatio = (double) width / height;
         if (sizes == null) return null;
 
         Camera.Size optimalSize = null;
         double minDiff = Double.MAX_VALUE;
 
-        int targetHeight = h;
+        int targetHeight = height;
 
         // Try to find an size match aspect ratio and size
         for (Camera.Size size : sizes) {
@@ -311,6 +309,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private void scheduleAutoFocus() {
-        autoFocusHandler.postDelayed(doAutoFocus, 1000);
+        autoFocusHandler.postDelayed(doAutoFocus, DELAY);
     }
 }

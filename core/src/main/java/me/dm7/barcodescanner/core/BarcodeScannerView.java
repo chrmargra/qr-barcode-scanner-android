@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 
 public abstract class BarcodeScannerView extends FrameLayout implements Camera.PreviewCallback {
 
+    private static final int NINETY_DEGREES_ROTATION = 90;
     private CameraWrapper cameraWrapper;
     private CameraPreview preview;
     private ViewFinder viewFinderView;
@@ -282,11 +283,7 @@ public abstract class BarcodeScannerView extends FrameLayout implements Camera.P
     public boolean getFlash() {
         if (cameraWrapper != null && CameraUtils.isFlashSupported(cameraWrapper.camera)) {
             Camera.Parameters parameters = cameraWrapper.camera.getParameters();
-            if (parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH)) {
-                return true;
-            } else {
-                return false;
-            }
+            return parameters.getFlashMode().equals(Camera.Parameters.FLASH_MODE_TORCH);
         }
         return false;
     }
@@ -327,16 +324,18 @@ public abstract class BarcodeScannerView extends FrameLayout implements Camera.P
         int rotationCount = getRotationCount();
 
         if (rotationCount == 1 || rotationCount == 3) {
-            for (int i = 0; i < rotationCount; i++) {
+            for (int rotationIndex = 0; rotationIndex < rotationCount; rotationIndex++) {
                 byte[] rotatedData = new byte[data.length];
-                for (int y = 0; y < height; y++) {
-                    for (int x = 0; x < width; x++)
-                        rotatedData[x * height + height - y - 1] = data[x + y * width];
+                for (int row = 0; row < height; row++) {
+                    for (int column = 0; column < width; column++) {
+                        rotatedData[column * height + height - row - 1] = data[column + row * width];
+                    }
                 }
                 data = rotatedData;
-                int tmp = width;
+
+                int previousWidth = width;
                 width = height;
-                height = tmp;
+                height = previousWidth;
             }
         }
 
@@ -345,6 +344,6 @@ public abstract class BarcodeScannerView extends FrameLayout implements Camera.P
 
     public int getRotationCount() {
         int displayOrientation = preview.getDisplayOrientation();
-        return displayOrientation / 90;
+        return displayOrientation / NINETY_DEGREES_ROTATION;
     }
 }
