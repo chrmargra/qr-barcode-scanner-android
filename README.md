@@ -1,10 +1,30 @@
-# QR / Barcode Scanner Android
+# Android QR / Barcode Scanner Library
 
 > This repository is a maintained fork of the original [dm77/barcodescanner](https://github.com/dm77/barcodescanner) project.
 
 The original project was archived on July 1, 2020 and is no longer maintained by its original author. This fork keeps the library available and usable with newer Android tooling, dependencies, and build environments.
 
 All original credits, copyright notices, and license terms are preserved. This fork remains based on the original `dm77/barcodescanner` project and continues to follow the Apache License 2.0 terms that apply to the original code.
+
+## Table of Contents
+
+- [Maintenance status](#maintenance-status)
+- [Original project status](#original-project-status)
+- [Introduction](#introduction)
+- [Screenshots](#screenshots)
+- [Minor BREAKING CHANGE in 1.8.4](#minor-breaking-change-in-184)
+- [ZXing](#zxing)
+  - [Installation](#installation)
+  - [Simple Usage](#simple-usage)
+  - [Advanced Usage](#advanced-usage)
+- [ZBar](#zbar)
+  - [Installation](#installation-1)
+  - [Simple Usage](#simple-usage-1)
+  - [Advanced Usage](#advanced-usage-1)
+- [Rebuilding ZBar Libraries](#rebuilding-zbar-libraries)
+- [Credits](#credits)
+- [Contributors](#contributors)
+- [License](#license)
 
 ## Maintenance status
 
@@ -26,7 +46,7 @@ This project is no longer maintained. When I first started this project in late 
 Introduction
 ============
 
-Android library projects that provides easy to use and extensible Barcode Scanner views based on ZXing and ZBar.
+An Android library project that provides easy-to-use and extensible barcode scanner views based on ZXing and ZBar.  
 
 Screenshots
 ===========
@@ -49,7 +69,23 @@ Installation
 
 This fork is maintained as a local Android library project.  
 The original JCenter/Bintray dependency flow is no longer used.  
-Add the required modules to your project and depend on the scanner implementation you want to use.
+
+To use the ZXing scanner implementation, include the required local modules in your app project.  
+
+In your `settings.gradle.kts`:  
+
+```kotlin
+include(":core")
+project(":core").projectDir = file("../qr-barcode-scanner-android/core")
+include(":zxing")
+project(":zxing").projectDir = file("../qr-barcode-scanner-android/zxing")
+```
+
+> The paths used in `projectDir` must point to the location where you downloaded or cloned this library project.  
+> For example, `../qr-barcode-scanner-android/core` assumes that your app project and `qr-barcode-scanner-android` are sibling folders.  
+> If your folder structure is different, update the path accordingly.  
+
+Then add the ZXing module dependency in the module where you want to use the scanner:  
 
 ```kotlin
 dependencies {
@@ -57,8 +93,21 @@ dependencies {
 }
 ```
 
-Both :zxing and :zbar depend on :core, so you normally do not need to add :core directly.  
-The core module declares the camera permission and required camera feature in its manifest. Apps still need to request the camera permission at runtime before starting the scanner.
+The `:zxing` module depends on `:core`, so you normally do not need to add `:core` directly as a dependency.  
+
+Depending on your project setup, you may also need to declare dependencies used by the local library modules in your own version catalog, for example:  
+
+```toml
+[versions]
+androidxAnnotation = "1.9.1"
+zxing = "3.5.4"
+
+[libraries]
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
+zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
+```
+
+The core module declares the camera permission and required camera feature in its manifest. Apps still need to request the camera permission at runtime before starting the scanner.  
 
 Simple Usage
 ------------
@@ -71,82 +120,88 @@ Simple Usage
 
 2.) A very basic activity would look like this:
 
-```java
-public class SimpleScannerActivity extends Activity implements ZXingScannerView.ResultHandler {
-    private ZXingScannerView mScannerView;
+```kotlin
+import android.app.Activity
+import android.os.Bundle
+import android.util.Log
+import com.google.zxing.Result
+import me.dm7.barcodescanner.zxing.ResultHandler
+import me.dm7.barcodescanner.zxing.ZXingScannerView
 
-    @Override
-    public void onCreate(Bundle state) {
-        super.onCreate(state);
-        mScannerView = new ZXingScannerView(this);   // Programmatically initialize the scanner view
-        setContentView(mScannerView);                // Set the scanner view as the content view
+private const val TAG = "SimpleScannerActivity"
+
+class SimpleScannerActivity : Activity(), ResultHandler {
+
+    private var scannerView: ZXingScannerView? = null
+
+    override fun onCreate(state: Bundle?) {
+        super.onCreate(state)
+        val newScannerView = ZXingScannerView(this) // Programmatically initialize the scanner view
+        scannerView = newScannerView
+        setContentView(newScannerView) // Set the scanner view as the content view
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
-        mScannerView.startCamera();          // Start camera on resume
+    override fun onResume() {
+        super.onResume()
+        scannerView?.setResultHandler(this) // Register ourselves as a handler for scan results.
+        scannerView?.startCamera() // Start camera on resume
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mScannerView.stopCamera();           // Stop camera on pause
+    override fun onPause() {
+        super.onPause()
+        scannerView?.stopCamera() // Stop camera on pause
     }
 
-    @Override
-    public void handleResult(Result rawResult) {
+    override fun handleResult(rawResult: Result) {
         // Do something with the result here
-        Log.v(TAG, rawResult.getText()); // Prints scan results
-        Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
+        Log.v(TAG, rawResult.text) // Prints scan results
+        Log.v(TAG, rawResult.barcodeFormat.toString()) // Prints the scan format (qrcode, pdf417 etc.)
 
         // If you would like to resume scanning, call this method below:
-        mScannerView.resumeCameraPreview(this);
+        scannerView?.resumeCameraPreview(this)
     }
 }
-
 ```
 
-Please take a look at the [zxing-sample](https://github.com/dm77/barcodescanner/tree/master/zxing-sample) project for a full working example.
+Please take a look at the [zxing-sample](./zxing-sample) project for a full working example.  
 
 Advanced Usage
 --------------
 
-Take a look at the [FullScannerActivity.java](https://github.com/dm77/barcodescanner/blob/master/zxing-sample/src/main/java/me/dm7/barcodescanner/zxing/sample/FullScannerActivity.java) or [FullScannerFragment.java](https://github.com/dm77/barcodescanner/blob/master/zxing-sample/src/main/java/me/dm7/barcodescanner/zxing/sample/FullScannerFragment.java) classes to get an idea on advanced usage.
+Take a look at the [FullScannerActivity.kt](./zxing-sample/src/main/java/me/dm7/barcodescanner/zxing/sample/fullscanner/FullScannerActivity.kt) or [FullScannerFragment.kt](./zxing-sample/src/main/java/me/dm7/barcodescanner/zxing/sample/fullscanner/FullScannerFragment.kt) classes to get an idea of advanced usage.  
 
 Interesting methods on the ZXingScannerView include:
 
-```java
+```kotlin
 // Toggle flash:
-void setFlash(boolean);
+fun setFlash(flag: Boolean)
 
-// Toogle autofocus:
-void setAutoFocus(boolean);
+// Toggle autofocus:
+fun setAutoFocus(state: Boolean)
 
 // Specify interested barcode formats:
-void setFormats(List<BarcodeFormat> formats);
+fun setFormats(formats: List<BarcodeFormat>)
 
 // Specify the cameraId to start with:
-void startCamera(int cameraId);
+fun startCamera(cameraId: Int)
 ```
 
-Specify front-facing or rear-facing cameras by using the `void startCamera(int cameraId);` method.
+Specify front-facing or rear-facing cameras by using the `fun startCamera(cameraId: Int)` method.
 
 
 For HUAWEI mobile phone like P9, P10, when scanning using the default settings, it won't work due to the
 "preview size",  please adjust the parameter as below:
 
-```java
-mScannerView = (ZXingScannerView) findViewById(R.id.zx_view);
+```kotlin
+scannerView = findViewById(R.id.zx_view)
 
-// this paramter will make your HUAWEI phone works great!
-mScannerView.setAspectTolerance(0.5f);
+// This parameter helps improve camera preview behavior on some HUAWEI devices.
+scannerView?.setAspectTolerance(0.5f)
 ```
 
 Supported Formats:
 
-```java
+```kotlin
 BarcodeFormat.UPC_A
 BarcodeFormat.UPC_E
 BarcodeFormat.EAN_13
@@ -170,7 +225,23 @@ Installation
 
 This fork is maintained as a local Android library project.  
 The original JCenter/Bintray dependency flow is no longer used.  
-Add the required modules to your project and depend on the scanner implementation you want to use.  
+
+To use the ZBar scanner implementation, include the required local modules in your app project.  
+
+In your `settings.gradle.kts`:  
+
+```kotlin
+include(":core")
+project(":core").projectDir = file("../qr-barcode-scanner-android/core")
+include(":zbar")
+project(":zbar").projectDir = file("../qr-barcode-scanner-android/zbar")
+```
+
+> The paths used in `projectDir` must point to the location where you downloaded or cloned this library project.  
+> For example, `../qr-barcode-scanner-android/core` assumes that your app project and `qr-barcode-scanner-android` are sibling folders.  
+> If your folder structure is different, update the path accordingly.  
+
+Then add the ZBar module dependency in the module where you want to use the scanner:  
 
 ```kotlin
 dependencies {
@@ -178,8 +249,19 @@ dependencies {
 }
 ```
 
-Both :zxing and :zbar depend on :core, so you normally do not need to add :core directly.  
-The core module declares the camera permission and required camera feature in its manifest. Apps still need to request the camera permission at runtime before starting the scanner.
+The `:zbar` module depends on `:core`, so you normally do not need to add `:core` directly as a dependency.  
+
+Depending on your project setup, you may also need to declare dependencies used by the local library modules in your own version catalog, for example:  
+
+```toml
+[versions]
+androidxAnnotation = "1.9.1"
+
+[libraries]
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
+```
+
+The core module declares the camera permission and required camera feature in its manifest. Apps still need to request the camera permission at runtime before starting the scanner.  
 
 Simple Usage
 ------------
@@ -192,69 +274,81 @@ Simple Usage
 
 2.) A very basic activity would look like this:
 
-```java
-public class SimpleScannerActivity extends Activity implements ZBarScannerView.ResultHandler {
-    private ZBarScannerView mScannerView;
+```kotlin
+import android.app.Activity
+import android.os.Bundle
+import android.util.Log
+import me.dm7.barcodescanner.zbar.Result
+import me.dm7.barcodescanner.zbar.ResultHandler
+import me.dm7.barcodescanner.zbar.ZBarScannerView
 
-    @Override
-    public void onCreate(Bundle state) {
-        super.onCreate(state);
-        mScannerView = new ZBarScannerView(this);    // Programmatically initialize the scanner view
-        setContentView(mScannerView);                // Set the scanner view as the content view
+private const val TAG = "SimpleScannerActivity"
+
+class SimpleScannerActivity : Activity(), ResultHandler {
+
+    private var scannerView: ZBarScannerView? = null
+
+    override fun onCreate(state: Bundle?) {
+        super.onCreate(state)
+
+        val newScannerView = ZBarScannerView(this) // Programmatically initialize the scanner view
+        scannerView = newScannerView
+        setContentView(newScannerView) // Set the scanner view as the content view
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
-        mScannerView.startCamera();          // Start camera on resume
+    override fun onResume() {
+        super.onResume()
+
+        scannerView?.setResultHandler(this) // Register ourselves as a handler for scan results.
+        scannerView?.startCamera() // Start camera on resume
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        mScannerView.stopCamera();           // Stop camera on pause
+    override fun onPause() {
+        super.onPause()
+
+        scannerView?.stopCamera() // Stop camera on pause
     }
 
-    @Override
-    public void handleResult(Result rawResult) {
+    override fun handleResult(rawResult: Result) {
         // Do something with the result here
-        Log.v(TAG, rawResult.getContents()); // Prints scan results
-        Log.v(TAG, rawResult.getBarcodeFormat().getName()); // Prints the scan format (qrcode, pdf417 etc.)
+        Log.v(TAG, rawResult.contents.orEmpty()) // Prints scan results
+        Log.v(TAG, rawResult.barcodeFormat?.name.orEmpty()) // Prints the scan format
 
         // If you would like to resume scanning, call this method below:
-        mScannerView.resumeCameraPreview(this);
+        scannerView?.resumeCameraPreview(this)
     }
 }
-
 ```
 
-Please take a look at the [zbar-sample](https://github.com/dm77/barcodescanner/tree/master/zbar-sample)  project for a full working example.
+Please take a look at the [zbar-sample](./zbar-sample) project for a full working example.  
 
 Advanced Usage
 --------------
 
 
-Take a look at the [FullScannerActivity.java](https://github.com/dm77/barcodescanner/blob/master/zbar-sample/src/main/java/me/dm7/barcodescanner/zbar/sample/FullScannerActivity.java) or [FullScannerFragment.java](https://github.com/dm77/barcodescanner/blob/master/zbar-sample/src/main/java/me/dm7/barcodescanner/zbar/sample/FullScannerFragment.java) classes to get an idea on advanced usage.
+Take a look at the [FullScannerActivity.kt](./zbar-sample/src/main/java/me/dm7/barcodescanner/zbar/sample/fullscanner/FullScannerActivity.kt) or [FullScannerFragment.kt](./zbar-sample/src/main/java/me/dm7/barcodescanner/zbar/sample/fullscanner/FullScannerFragment.kt) classes to get an idea of advanced usage.  
 
 Interesting methods on the ZBarScannerView include:
 
-```java
+```kotlin
 // Toggle flash:
-void setFlash(boolean);
+fun setFlash(flag: Boolean)
 
-// Toogle autofocus:
-void setAutoFocus(boolean);
+// Toggle autofocus:
+fun setAutoFocus(state: Boolean)
 
 // Specify interested barcode formats:
-void setFormats(List<BarcodeFormat> formats);
+fun setFormats(formats: List<BarcodeFormat>)
+
+// Specify the cameraId to start with:
+fun startCamera(cameraId: Int)
 ```
 
-Specify front-facing or rear-facing cameras by using the `void startCamera(int cameraId);` method.
+Specify front-facing or rear-facing cameras by using the `fun startCamera(cameraId: Int)` method.
 
 Supported Formats:
 
-```
+```kotlin
 BarcodeFormat.PARTIAL
 BarcodeFormat.EAN8
 BarcodeFormat.UPCE

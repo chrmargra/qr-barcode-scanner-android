@@ -27,7 +27,7 @@ class ScalingScannerActivity : BaseScannerActivity(), ResultHandler {
         binding = ActivityScalingScannerBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-        setupToolbar(binding?.toolbar)
+        setupToolbar(toolbar = binding?.toolbar)
         initListeners()
 
         val newScannerView = ZXingScannerView(this)
@@ -75,9 +75,9 @@ class ScalingScannerActivity : BaseScannerActivity(), ResultHandler {
         ).show()
 
         // Note:
-        // * Wait 2 seconds to resume the preview.
-        // * On older devices continuously stopping and resuming camera preview can result in freezing the app.
-        // * I don't know why this is the case but I don't have the time to figure out.
+        // Wait 2 seconds to resume the preview.
+        // On older devices continuously stopping and resuming camera preview can result in freezing the app.
+        // I don't know why this is the case but I don't have the time to figure out.
         Handler(Looper.getMainLooper()).postDelayed(
             {
                 scannerView?.resumeCameraPreview(this)

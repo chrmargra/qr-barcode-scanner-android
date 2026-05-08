@@ -18,7 +18,7 @@ public abstract class BarcodeScannerView extends FrameLayout implements Camera.P
 
     private CameraWrapper cameraWrapper;
     private CameraPreview preview;
-    private IViewFinder viewFinderView;
+    private ViewFinder viewFinderView;
     private Rect framingRectInPreview;
     private CameraHandlerThread cameraHandlerThread;
     private Boolean flashState;
@@ -109,7 +109,7 @@ public abstract class BarcodeScannerView extends FrameLayout implements Camera.P
      * @param context {@link Context}
      * @return {@link android.view.View} that implements {@link ViewFinderView}
      */
-    protected IViewFinder createViewFinderView(Context context) {
+    protected ViewFinder createViewFinderView(Context context) {
         ViewFinderView viewFinderView = new ViewFinderView(context);
         viewFinderView.setBorderColor(borderColor);
         viewFinderView.setLaserColor(laserColor);

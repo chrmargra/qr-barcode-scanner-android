@@ -43,9 +43,9 @@ class SimpleScannerFragment : Fragment(), ResultHandler {
         ).show()
 
         // Note:
-        // * Wait 2 seconds to resume the preview.
-        // * On older devices continuously stopping and resuming camera preview can result in freezing the app.
-        // * I don't know why this is the case but I don't have the time to figure out.
+        // Wait 2 seconds to resume the preview.
+        // On older devices continuously stopping and resuming camera preview can result in freezing the app.
+        // I don't know why this is the case but I don't have the time to figure out.
         Handler(Looper.getMainLooper()).postDelayed(
             {
                 scannerView?.resumeCameraPreview(this)

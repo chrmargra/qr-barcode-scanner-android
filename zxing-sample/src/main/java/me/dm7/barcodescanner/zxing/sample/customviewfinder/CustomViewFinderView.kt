@@ -44,7 +44,7 @@ class CustomViewFinderView : ViewFinderView {
     }
 
     private fun drawTradeMark(canvas: Canvas) {
-        val framingRect: Rect? = framingRect
+        val framingRect: Rect? = getFramingRect()
 
         val tradeMarkTop: Float
         val tradeMarkLeft: Float

@@ -57,7 +57,7 @@ class FullScannerActivity :
 
         val binding = ActivityFullScannerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupToolbar(binding.toolbar)
+        setupToolbar(toolbar = binding.toolbar)
 
         scannerView = ZBarScannerView(this)
         setupFormats()
@@ -122,15 +122,20 @@ class FullScannerActivity :
             }
 
             R.id.menu_formats -> {
-                val fragment =
-                    FormatSelectorDialogFragment.Companion.newInstance(this, selectedIndices)
+                val fragment = FormatSelectorDialogFragment.newInstance(
+                    listener = this,
+                    selectedIndices = selectedIndices
+                )
                 fragment.show(supportFragmentManager, "format_selector")
                 true
             }
 
             R.id.menu_camera_selector -> {
                 scannerView?.stopCamera()
-                val fragment = CameraSelectorDialogFragment.Companion.newInstance(this, cameraId)
+                val fragment = CameraSelectorDialogFragment.newInstance(
+                    listener = this,
+                    cameraId = cameraId
+                )
                 fragment.show(supportFragmentManager, "camera_selector")
                 true
             }
@@ -148,21 +153,25 @@ class FullScannerActivity :
         }
 
         showMessageDialog(
-            "Contents = ${rawResult.contents}, Format = ${rawResult.barcodeFormat.name}"
+            message = "Contents = ${rawResult.contents}, Format = ${rawResult.barcodeFormat?.name}"
         )
     }
 
     fun showMessageDialog(message: String) {
-        val fragment = MessageDialogFragment.Companion.newInstance("Scan Results", message, this)
+        val fragment = MessageDialogFragment.newInstance(
+            title = "Scan Results",
+            message = message,
+            listener = this
+        )
         fragment.show(supportFragmentManager, "scan_results")
     }
 
     fun closeMessageDialog() {
-        closeDialog("scan_results")
+        closeDialog(dialogName = "scan_results")
     }
 
     fun closeFormatsDialog() {
-        closeDialog("format_selector")
+        closeDialog(dialogName = "format_selector")
     }
 
     fun closeDialog(dialogName: String) {

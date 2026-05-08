@@ -11,7 +11,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class ViewFinderView extends View implements IViewFinder {
+public class ViewFinderView extends View implements ViewFinder {
 
     private Rect framingRect;
 
@@ -54,16 +54,16 @@ public class ViewFinderView extends View implements IViewFinder {
     }
 
     private void init() {
-        //set up laser paint
+        // Set up laser paint
         laserPaint = new Paint();
         laserPaint.setColor(defaultLaserColor);
         laserPaint.setStyle(Paint.Style.FILL);
 
-        //finder mask paint
+        // Finder mask paint
         finderMaskPaint = new Paint();
         finderMaskPaint.setColor(defaultMaskColor);
 
-        //border paint
+        // Border paint
         borderPaint = new Paint();
         borderPaint.setColor(defaultBorderColor);
         borderPaint.setStyle(Paint.Style.STROKE);

@@ -113,8 +113,10 @@ class FullScannerFragment :
             }
 
             R.id.menu_formats -> {
-                val fragment =
-                    FormatSelectorDialogFragment.Companion.newInstance(this, selectedIndices)
+                val fragment = FormatSelectorDialogFragment.newInstance(
+                    listener = this,
+                    selectedIndices = selectedIndices
+                )
                 fragment.show(requireActivity().supportFragmentManager, "format_selector")
                 true
             }
@@ -122,7 +124,10 @@ class FullScannerFragment :
             R.id.menu_camera_selector -> {
                 scannerView?.stopCamera()
 
-                val fragment = CameraSelectorDialogFragment.Companion.newInstance(this, cameraId)
+                val fragment = CameraSelectorDialogFragment.newInstance(
+                    listener = this,
+                    cameraId = cameraId
+                )
                 fragment.show(requireActivity().supportFragmentManager, "camera_selector")
                 true
             }
@@ -161,21 +166,25 @@ class FullScannerFragment :
         }
 
         showMessageDialog(
-            "Contents = ${rawResult.text}, Format = ${rawResult.barcodeFormat}"
+            message = "Contents = ${rawResult.text}, Format = ${rawResult.barcodeFormat}"
         )
     }
 
     private fun showMessageDialog(message: String) {
-        val fragment = MessageDialogFragment.Companion.newInstance("Scan Results", message, this)
+        val fragment = MessageDialogFragment.newInstance(
+            title = "Scan Results",
+            message = message,
+            listener = this
+        )
         fragment.show(requireActivity().supportFragmentManager, "scan_results")
     }
 
     private fun closeMessageDialog() {
-        closeDialog("scan_results")
+        closeDialog(dialogName = "scan_results")
     }
 
     private fun closeFormatsDialog() {
-        closeDialog("format_selector")
+        closeDialog(dialogName = "format_selector")
     }
 
     private fun closeDialog(dialogName: String) {
