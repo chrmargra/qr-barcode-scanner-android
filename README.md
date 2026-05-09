@@ -195,8 +195,6 @@ For HUAWEI mobile phone like P9, P10, when scanning using the default settings, 
 "preview size",  please adjust the parameter as below:
 
 ```kotlin
-scannerView = findViewById(R.id.zx_view)
-
 // This parameter helps improve camera preview behavior on some HUAWEI devices.
 scannerView?.setAspectTolerance(0.5f)
 ```
@@ -372,7 +370,7 @@ BarcodeFormat.CODE128
 Rebuilding ZBar Libraries
 =========================
 
-```
+```bash
 mkdir some_work_dir
 cd work_dir
 wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
@@ -384,12 +382,12 @@ vim libiconv-1.14/libcharset/lib/localcharset.c
 
 On line 48, add the following line of code:
 
-```
-#undef HAVE_LANGINFO_CODESET
+```bash
+# undef HAVE_LANGINFO_CODESET
 ```
 
 Save the file and continue with steps below:
-```
+```bash
 cd libiconv-1.14
 ./configure
 cd ..
@@ -401,7 +399,7 @@ android update project -p . -t 'android-19'
 Open jni/Android.mk file and add fPIC flag to LOCAL_C_FLAGS.
 Open jni/Application.mk file and specify APP_ABI targets as needed.
 
-```
+```bash
 ant -Dndk.dir=$NDK_HOME  -Diconv.src=some_work_dir/libiconv-1.14 zbar-clean zbar-all
 ```
 
