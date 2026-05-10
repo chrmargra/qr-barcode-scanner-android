@@ -1,6 +1,6 @@
 # Change Log
 
-## [2.0.0] - May  9, 2026
+## [2.0.0] - May  10, 2026
 
 This is a major modernization release that updates the archived project to current Android tooling, AndroidX, Kotlin, AGP 9, JDK 21, local modules, Material Components, and refreshed documentation.
 
