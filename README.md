@@ -60,8 +60,8 @@ Minor BREAKING CHANGE in 1.8.4
 ==============================
 Version 1.8.4 introduces a couple of new changes:
 
-* Open Camera and handle preview frames in a separate HandlerThread (#1, #99): Though this has worked fine in my testing on 3 devices, I would advise you to test on your own devices before blindly releasing apps with this version. If you run into any issues please file a bug report.
-* Do not automatically stopCamera after a result is found #115: This means that upon a successful scan only the cameraPreview is stopped but the camera is not released. So previously if your code was calling mScannerView.startCamera() in the handleResult() method, please replace that with a call to mScannerView.resumeCameraPreview(this);
+- Open Camera and handle preview frames in a separate HandlerThread (#1, #99): Though this has worked fine in my testing on 3 devices, I would advise you to test on your own devices before blindly releasing apps with this version. If you run into any issues please file a bug report.
+- Do not automatically stopCamera after a result is found #115: This means that upon a successful scan only the cameraPreview is stopped but the camera is not released. So previously if your code was calling mScannerView.startCamera() in the handleResult() method, please replace that with a call to mScannerView.resumeCameraPreview(this);
 
 ZXing
 =====
@@ -424,5 +424,5 @@ License
 License for code written in this project is: Apache License, Version 2.0
 
 License for zxing and zbar projects is here:
-* https://github.com/zxing/zxing/blob/master/LICENSE
-* https://github.com/ZBar/ZBar/tree/master/android
+- https://github.com/zxing/zxing/blob/master/LICENSE
+- https://github.com/ZBar/ZBar/tree/master/android
