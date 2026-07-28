@@ -1,297 +1,351 @@
-package me.dm7.barcodescanner.core;
+package me.dm7.barcodescanner.core
 
-import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.Canvas;
-import android.graphics.CornerPathEffect;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.util.AttributeSet;
-import android.view.View;
+import android.content.Context
+import android.content.res.Configuration
+import android.graphics.Canvas
+import android.graphics.CornerPathEffect
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Point
+import android.graphics.Rect
+import android.util.AttributeSet
+import android.view.View
+import androidx.core.content.ContextCompat
 
-public class ViewFinderView extends View implements ViewFinder {
+private const val PORTRAIT_WIDTH_RATIO = 6f / 8f
+private const val PORTRAIT_WIDTH_HEIGHT_RATIO = 0.75f
 
-    private Rect framingRect;
+private const val LANDSCAPE_HEIGHT_RATIO = 5f / 8f
+private const val LANDSCAPE_WIDTH_HEIGHT_RATIO = 1.4f
+private const val MIN_DIMENSION_DIFF = 50
 
-    private static final float PORTRAIT_WIDTH_RATIO = 6f / 8;
-    private static final float PORTRAIT_WIDTH_HEIGHT_RATIO = 0.75f;
+private const val DEFAULT_SQUARE_DIMENSION_RATIO = 5f / 8f
 
-    private static final float LANDSCAPE_HEIGHT_RATIO = 5f / 8;
-    private static final float LANDSCAPE_WIDTH_HEIGHT_RATIO = 1.4f;
-    private static final int MIN_DIMENSION_DIFF = 50;
+private const val POINT_SIZE = 10
+private const val ANIMATION_DELAY = 80L
 
-    private static final float DEFAULT_SQUARE_DIMENSION_RATIO = 5f / 8;
+private const val MAX_ALPHA = 255
 
-    private static final int[] SCANNER_ALPHA = {0, 64, 128, 192, 255, 192, 128, 64};
-    private int scannerAlpha;
-    private static final int POINT_SIZE = 10;
-    private static final long ANIMATION_DELAY = 80L;
+private const val CENTER_DIVISOR = 2
 
-    private static final int MAX_ALPHA = 255;
+open class ViewFinderView : View, ViewFinder {
 
-    private static final int CENTER_DIVISOR = 2;
-
-    private final int defaultLaserColor = getResources().getColor(R.color.viewfinder_laser);
-    private final int defaultMaskColor = getResources().getColor(R.color.viewfinder_mask);
-    private final int defaultBorderColor = getResources().getColor(R.color.viewfinder_border);
-    private final int defaultBorderStrokeWidth = getResources().getInteger(R.integer.viewfinder_border_width);
-    private final int defaultBorderLineLength = getResources().getInteger(R.integer.viewfinder_border_length);
-
-    protected Paint laserPaint;
-    protected Paint finderMaskPaint;
-    protected Paint borderPaint;
-    protected int borderLineLength;
-    protected boolean squareViewFinder;
-    private boolean isLaserEnabled;
-    private int viewFinderOffset = 0;
-
-    public ViewFinderView(Context context) {
-        super(context);
-        init();
+    companion object {
+        private val SCANNER_ALPHA = intArrayOf(
+            0,
+            64,
+            128,
+            192,
+            255,
+            192,
+            128,
+            64,
+        )
     }
 
-    public ViewFinderView(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet);
-        init();
+    private var storedFramingRect: Rect? = null
+    private var scannerAlpha = 0
+
+    private val defaultLaserColor = ContextCompat.getColor(context, R.color.viewfinder_laser)
+
+    private val defaultMaskColor = ContextCompat.getColor(context, R.color.viewfinder_mask)
+
+    private val defaultBorderColor = ContextCompat.getColor(context, R.color.viewfinder_border)
+
+    private val defaultBorderStrokeWidth = resources.getInteger(R.integer.viewfinder_border_width)
+
+    private val defaultBorderLineLength = resources.getInteger(R.integer.viewfinder_border_length)
+
+    // Set up laser paint
+    @JvmField
+    protected var laserPaint: Paint = Paint().apply {
+        color = defaultLaserColor
+        style = Paint.Style.FILL
     }
 
-    private void init() {
-        // Set up laser paint
-        laserPaint = new Paint();
-        laserPaint.setColor(defaultLaserColor);
-        laserPaint.setStyle(Paint.Style.FILL);
-
-        // Finder mask paint
-        finderMaskPaint = new Paint();
-        finderMaskPaint.setColor(defaultMaskColor);
-
-        // Border paint
-        borderPaint = new Paint();
-        borderPaint.setColor(defaultBorderColor);
-        borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setStrokeWidth(defaultBorderStrokeWidth);
-        borderPaint.setAntiAlias(true);
-
-        borderLineLength = defaultBorderLineLength;
+    // Finder mask paint
+    @JvmField
+    protected var finderMaskPaint: Paint = Paint().apply {
+        color = defaultMaskColor
     }
 
-    @Override
-    public void setLaserColor(int laserColor) {
-        laserPaint.setColor(laserColor);
+    // Border paint
+    @JvmField
+    protected var borderPaint: Paint = Paint().apply {
+        color = defaultBorderColor
+        style = Paint.Style.STROKE
+        strokeWidth = defaultBorderStrokeWidth.toFloat()
+        isAntiAlias = true
     }
 
-    @Override
-    public void setMaskColor(int maskColor) {
-        finderMaskPaint.setColor(maskColor);
+    @JvmField
+    protected var borderLineLength: Int = defaultBorderLineLength
+
+    @JvmField
+    protected var squareViewFinder: Boolean = false
+
+    private var laserEnabledState = false
+    private var finderOffset = 0
+
+    constructor(context: Context) : super(context)
+
+    constructor(
+        context: Context,
+        attributeSet: AttributeSet?,
+    ) : super(context, attributeSet)
+
+    override fun setLaserColor(laserColor: Int) {
+        laserPaint.color = laserColor
     }
 
-    @Override
-    public void setBorderColor(int borderColor) {
-        borderPaint.setColor(borderColor);
+    override fun setMaskColor(maskColor: Int) {
+        finderMaskPaint.color = maskColor
     }
 
-    @Override
-    public void setBorderStrokeWidth(int borderStrokeWidth) {
-        borderPaint.setStrokeWidth(borderStrokeWidth);
+    override fun setBorderColor(borderColor: Int) {
+        borderPaint.color = borderColor
     }
 
-    @Override
-    public void setBorderLineLength(int borderLineLength) {
-        this.borderLineLength = borderLineLength;
+    override fun setBorderStrokeWidth(borderStrokeWidth: Int) {
+        borderPaint.strokeWidth = borderStrokeWidth.toFloat()
     }
 
-    @Override
-    public void setLaserEnabled(boolean isLaserEnabled) {
-        this.isLaserEnabled = isLaserEnabled;
+    override fun setBorderLineLength(borderLineLength: Int) {
+        this.borderLineLength = borderLineLength
     }
 
-    @Override
-    public void setBorderCornerRounded(boolean isBorderCornersRounded) {
+    override fun setLaserEnabled(isLaserEnabled: Boolean) {
+        laserEnabledState = isLaserEnabled
+    }
+
+    override fun setBorderCornerRounded(isBorderCornersRounded: Boolean) {
         if (isBorderCornersRounded) {
-            borderPaint.setStrokeJoin(Paint.Join.ROUND);
+            borderPaint.strokeJoin = Paint.Join.ROUND
         } else {
-            borderPaint.setStrokeJoin(Paint.Join.BEVEL);
+            borderPaint.strokeJoin = Paint.Join.BEVEL
         }
     }
 
-    @Override
-    public void setBorderAlpha(float alpha) {
-        int colorAlpha = (int) (MAX_ALPHA * alpha);
-        borderPaint.setAlpha(colorAlpha);
+    override fun setBorderAlpha(alpha: Float) {
+        val colorAlpha = (MAX_ALPHA * alpha).toInt()
+        borderPaint.alpha = colorAlpha
     }
 
-    @Override
-    public void setBorderCornerRadius(int borderCornersRadius) {
-        borderPaint.setPathEffect(new CornerPathEffect(borderCornersRadius));
+    override fun setBorderCornerRadius(borderCornersRadius: Int) {
+        borderPaint.pathEffect = CornerPathEffect(borderCornersRadius.toFloat())
     }
 
-    @Override
-    public void setViewFinderOffset(int offset) {
-        viewFinderOffset = offset;
+    override fun setViewFinderOffset(offset: Int) {
+        finderOffset = offset
     }
 
     // TODO: Need a better way to configure this. Revisit when working on 2.0
-    @Override
-    public void setSquareViewFinder(boolean set) {
-        squareViewFinder = set;
+    override fun setSquareViewFinder(isSquareViewFinder: Boolean) {
+        squareViewFinder = isSquareViewFinder
     }
 
-    public void setupViewFinder() {
-        updateFramingRect();
-        invalidate();
+    override fun setupViewFinder() {
+        updateFramingRect()
+        invalidate()
     }
 
-    public Rect getFramingRect() {
-        return framingRect;
-    }
+    override fun getFramingRect(): Rect? = storedFramingRect
 
-    @Override
-    public void onDraw(Canvas canvas) {
-        if (getFramingRect() == null) {
-            return;
-        }
+    public override fun onDraw(canvas: Canvas) {
+        if (getFramingRect() == null) return
 
-        drawViewFinderMask(canvas);
-        drawViewFinderBorder(canvas);
+        drawViewFinderMask(canvas)
+        drawViewFinderBorder(canvas)
 
-        if (isLaserEnabled) {
-            drawLaser(canvas);
+        if (laserEnabledState) {
+            drawLaser(canvas)
         }
     }
 
-    public void drawViewFinderMask(Canvas canvas) {
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
-        Rect framingRect = getFramingRect();
+    open fun drawViewFinderMask(canvas: Canvas) {
+        val width = canvas.width
+        val height = canvas.height
+        val framingRect = getFramingRect() ?: throw NullPointerException()
 
         canvas.drawRect(
-                0,
-                0,
-                width,
-                framingRect.top,
-                finderMaskPaint
-        );
+            0f,
+            0f,
+            width.toFloat(),
+            framingRect.top.toFloat(),
+            finderMaskPaint,
+        )
         canvas.drawRect(
-                0,
-                framingRect.top,
-                framingRect.left,
-                framingRect.bottom + 1,
-                finderMaskPaint
-        );
+            0f,
+            framingRect.top.toFloat(),
+            framingRect.left.toFloat(),
+            (framingRect.bottom + 1).toFloat(),
+            finderMaskPaint,
+        )
         canvas.drawRect(
-                framingRect.right + 1,
-                framingRect.top,
-                width,
-                framingRect.bottom + 1,
-                finderMaskPaint
-        );
+            (framingRect.right + 1).toFloat(),
+            framingRect.top.toFloat(),
+            width.toFloat(),
+            (framingRect.bottom + 1).toFloat(),
+            finderMaskPaint,
+        )
         canvas.drawRect(
-                0,
-                framingRect.bottom + 1,
-                width,
-                height,
-                finderMaskPaint
-        );
+            0f,
+            (framingRect.bottom + 1).toFloat(),
+            width.toFloat(),
+            height.toFloat(),
+            finderMaskPaint
+        )
     }
 
-    public void drawViewFinderBorder(Canvas canvas) {
-        Rect framingRect = getFramingRect();
+    open fun drawViewFinderBorder(canvas: Canvas) {
+        val framingRect = getFramingRect()
 
         // Top-left corner
-        Path path = new Path();
-        path.moveTo(framingRect.left, framingRect.top + borderLineLength);
-        path.lineTo(framingRect.left, framingRect.top);
-        path.lineTo(framingRect.left + borderLineLength, framingRect.top);
-        canvas.drawPath(path, borderPaint);
+        val path = Path()
+        val activeFramingRect = framingRect ?: throw NullPointerException()
+
+        path.moveTo(
+            activeFramingRect.left.toFloat(),
+            (activeFramingRect.top + borderLineLength).toFloat(),
+        )
+        path.lineTo(
+            activeFramingRect.left.toFloat(),
+            activeFramingRect.top.toFloat(),
+        )
+        path.lineTo(
+            (activeFramingRect.left + borderLineLength).toFloat(),
+            activeFramingRect.top.toFloat(),
+        )
+        canvas.drawPath(path, borderPaint)
 
         // Top-right corner
-        path.moveTo(framingRect.right, framingRect.top + borderLineLength);
-        path.lineTo(framingRect.right, framingRect.top);
-        path.lineTo(framingRect.right - borderLineLength, framingRect.top);
-        canvas.drawPath(path, borderPaint);
+        path.moveTo(
+            activeFramingRect.right.toFloat(),
+            (activeFramingRect.top + borderLineLength).toFloat(),
+        )
+        path.lineTo(
+            activeFramingRect.right.toFloat(),
+            activeFramingRect.top.toFloat(),
+        )
+        path.lineTo(
+            (activeFramingRect.right - borderLineLength).toFloat(),
+            activeFramingRect.top.toFloat(),
+        )
+        canvas.drawPath(path, borderPaint)
 
         // Bottom-right corner
-        path.moveTo(framingRect.right, framingRect.bottom - borderLineLength);
-        path.lineTo(framingRect.right, framingRect.bottom);
-        path.lineTo(framingRect.right - borderLineLength, framingRect.bottom);
-        canvas.drawPath(path, borderPaint);
+        path.moveTo(
+            activeFramingRect.right.toFloat(),
+            (activeFramingRect.bottom - borderLineLength).toFloat(),
+        )
+        path.lineTo(
+            activeFramingRect.right.toFloat(),
+            activeFramingRect.bottom.toFloat(),
+        )
+        path.lineTo(
+            (activeFramingRect.right - borderLineLength).toFloat(),
+            activeFramingRect.bottom.toFloat(),
+        )
+        canvas.drawPath(path, borderPaint)
 
         // Bottom-left corner
-        path.moveTo(framingRect.left, framingRect.bottom - borderLineLength);
-        path.lineTo(framingRect.left, framingRect.bottom);
-        path.lineTo(framingRect.left + borderLineLength, framingRect.bottom);
-        canvas.drawPath(path, borderPaint);
+        path.moveTo(
+            activeFramingRect.left.toFloat(),
+            (activeFramingRect.bottom - borderLineLength).toFloat(),
+        )
+        path.lineTo(
+            activeFramingRect.left.toFloat(),
+            activeFramingRect.bottom.toFloat(),
+        )
+        path.lineTo(
+            (activeFramingRect.left + borderLineLength).toFloat(),
+            activeFramingRect.bottom.toFloat(),
+        )
+        canvas.drawPath(path, borderPaint)
     }
 
-    public void drawLaser(Canvas canvas) {
-        Rect framingRect = getFramingRect();
+    open fun drawLaser(canvas: Canvas) {
+        val framingRect = getFramingRect()
 
         // Draw a red "laser scanner" line through the middle to show decoding is active
-        laserPaint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
-        scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
-        int middle = framingRect.height() / 2 + framingRect.top;
+        laserPaint.alpha = SCANNER_ALPHA[scannerAlpha]
+        scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.size
+
+        val activeFramingRect = framingRect ?: throw NullPointerException()
+        val middle =
+            activeFramingRect.height() / CENTER_DIVISOR + activeFramingRect.top
+
         canvas.drawRect(
-                framingRect.left + 2,
-                middle - 1,
-                framingRect.right - 1,
-                middle + 2, laserPaint
-        );
+            (activeFramingRect.left + 2).toFloat(),
+            (middle - 1).toFloat(),
+            (activeFramingRect.right - 1).toFloat(),
+            (middle + 2).toFloat(),
+            laserPaint,
+        )
 
         postInvalidateDelayed(
-                ANIMATION_DELAY,
-                framingRect.left - POINT_SIZE,
-                framingRect.top - POINT_SIZE,
-                framingRect.right + POINT_SIZE,
-                framingRect.bottom + POINT_SIZE
-        );
+            ANIMATION_DELAY,
+            activeFramingRect.left - POINT_SIZE,
+            activeFramingRect.top - POINT_SIZE,
+            activeFramingRect.right + POINT_SIZE,
+            activeFramingRect.bottom + POINT_SIZE,
+        )
     }
 
-    @Override
-    protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld) {
-        updateFramingRect();
+    protected override fun onSizeChanged(
+        xNew: Int,
+        yNew: Int,
+        xOld: Int,
+        yOld: Int,
+    ) {
+        updateFramingRect()
     }
 
-    public synchronized void updateFramingRect() {
-        Point viewResolution = new Point(getWidth(), getHeight());
-        int width;
-        int height;
-        int orientation = DisplayUtils.getScreenOrientation(getContext());
+    @Synchronized
+    open fun updateFramingRect() {
+        val viewResolution = Point(width, height)
+        var framingWidth: Int
+        var framingHeight: Int
+        val orientation = DisplayUtils.getScreenOrientation(context)
 
         if (squareViewFinder) {
             if (orientation != Configuration.ORIENTATION_PORTRAIT) {
-                height = (int) (getHeight() * DEFAULT_SQUARE_DIMENSION_RATIO);
-                width = height;
+                framingHeight = (height * DEFAULT_SQUARE_DIMENSION_RATIO).toInt()
+                framingWidth = framingHeight
             } else {
-                width = (int) (getWidth() * DEFAULT_SQUARE_DIMENSION_RATIO);
-                height = width;
+                framingWidth = (width * DEFAULT_SQUARE_DIMENSION_RATIO).toInt()
+                framingHeight = framingWidth
             }
         } else {
             if (orientation != Configuration.ORIENTATION_PORTRAIT) {
-                height = (int) (getHeight() * LANDSCAPE_HEIGHT_RATIO);
-                width = (int) (LANDSCAPE_WIDTH_HEIGHT_RATIO * height);
+                framingHeight = (height * LANDSCAPE_HEIGHT_RATIO).toInt()
+                framingWidth =
+                    (LANDSCAPE_WIDTH_HEIGHT_RATIO * framingHeight).toInt()
             } else {
-                width = (int) (getWidth() * PORTRAIT_WIDTH_RATIO);
-                height = (int) (PORTRAIT_WIDTH_HEIGHT_RATIO * width);
+                framingWidth = (width * PORTRAIT_WIDTH_RATIO).toInt()
+                framingHeight =
+                    (PORTRAIT_WIDTH_HEIGHT_RATIO * framingWidth).toInt()
             }
         }
 
-        if (width > getWidth()) {
-            width = getWidth() - MIN_DIMENSION_DIFF;
+        if (framingWidth > width) {
+            framingWidth = width - MIN_DIMENSION_DIFF
         }
 
-        if (height > getHeight()) {
-            height = getHeight() - MIN_DIMENSION_DIFF;
+        if (framingHeight > height) {
+            framingHeight = height - MIN_DIMENSION_DIFF
         }
 
-        int leftOffset = (viewResolution.x - width) / CENTER_DIVISOR;
-        int topOffset = (viewResolution.y - height) / CENTER_DIVISOR;
-        framingRect = new Rect(
-                leftOffset + viewFinderOffset,
-                topOffset + viewFinderOffset,
-                leftOffset + width - viewFinderOffset,
-                topOffset + height - viewFinderOffset
-        );
+        val leftOffset =
+            (viewResolution.x - framingWidth) / CENTER_DIVISOR
+        val topOffset =
+            (viewResolution.y - framingHeight) / CENTER_DIVISOR
+
+        storedFramingRect = Rect(
+            leftOffset + finderOffset,
+            topOffset + finderOffset,
+            leftOffset + framingWidth - finderOffset,
+            topOffset + framingHeight - finderOffset,
+        )
     }
 }

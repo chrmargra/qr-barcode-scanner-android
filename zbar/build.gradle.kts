@@ -8,7 +8,9 @@ version = "2.1.0"
 
 android {
     namespace = "me.dm7.barcodescanner.zbar"
-    compileSdk = 36
+    compileSdk {
+        version = release(version = 37)
+    }
 
     defaultConfig {
         minSdk = 26

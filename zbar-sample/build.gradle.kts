@@ -6,7 +6,9 @@ plugins {
 
 android {
     namespace = "me.dm7.barcodescanner.zbar.sample"
-    compileSdk = 36
+    compileSdk {
+        version = release(version = 37)
+    }
 
     defaultConfig {
         applicationId = "me.dm7.barcodescanner.zbar.sample"

@@ -8,7 +8,9 @@ version = "2.1.0"
 
 android {
     namespace = "me.dm7.barcodescanner.core"
-    compileSdk = 36
+    compileSdk {
+        version = release(version = 37)
+    }
 
     defaultConfig {
         minSdk = 26
@@ -30,4 +32,5 @@ kotlin {
 
 dependencies {
     implementation(libs.androidx.annotation)
+    implementation(libs.androidx.core)
 }
