@@ -26,10 +26,11 @@ class CustomViewFinderScannerActivity : BaseScannerActivity(), ResultHandler {
 
         setupToolbar(toolbar = binding.toolbar)
 
-        val newScannerView = object : ZXingScannerView(this) {
-            override fun createViewFinderView(context: Context): ViewFinder =
-                CustomViewFinderView(context)
-        }
+        val newScannerView =
+            object : ZXingScannerView(context = this@CustomViewFinderScannerActivity) {
+                override fun createViewFinderView(context: Context): ViewFinder =
+                    CustomViewFinderView(context)
+            }
 
         scannerView = newScannerView
         binding.contentFrame.addView(newScannerView)

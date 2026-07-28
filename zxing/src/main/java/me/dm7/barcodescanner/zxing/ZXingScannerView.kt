@@ -1,196 +1,206 @@
-package me.dm7.barcodescanner.zxing;
+package me.dm7.barcodescanner.zxing
 
-import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.Rect;
-import android.hardware.Camera;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.AttributeSet;
-import android.util.Log;
+import android.content.Context
+import android.content.res.Configuration
+import android.hardware.Camera
+import android.os.Handler
+import android.os.Looper
+import android.util.AttributeSet
+import android.util.Log
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.BinaryBitmap
+import com.google.zxing.DecodeHintType
+import com.google.zxing.MultiFormatReader
+import com.google.zxing.NotFoundException
+import com.google.zxing.PlanarYUVLuminanceSource
+import com.google.zxing.ReaderException
+import com.google.zxing.Result
+import com.google.zxing.common.HybridBinarizer
+import me.dm7.barcodescanner.core.BarcodeScannerView
+import me.dm7.barcodescanner.core.DisplayUtils
+import java.util.EnumMap
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.DecodeHintType;
-import com.google.zxing.LuminanceSource;
-import com.google.zxing.MultiFormatReader;
-import com.google.zxing.NotFoundException;
-import com.google.zxing.PlanarYUVLuminanceSource;
-import com.google.zxing.ReaderException;
-import com.google.zxing.Result;
-import com.google.zxing.common.HybridBinarizer;
+private const val TAG = "ZXingScannerView"
+private const val ROTATION_COUNT_90_DEGREES = 1
+private const val ROTATION_COUNT_270_DEGREES = 3
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+open class ZXingScannerView : BarcodeScannerView {
 
-import me.dm7.barcodescanner.core.BarcodeScannerView;
-import me.dm7.barcodescanner.core.DisplayUtils;
-
-public class ZXingScannerView extends BarcodeScannerView {
-    private static final String TAG = "ZXingScannerView";
-    private static final int ROTATION_COUNT_90_DEGREES = 1;
-    private static final int ROTATION_COUNT_270_DEGREES = 3;
-
-    private MultiFormatReader multiFormatReader;
-    public static final List<BarcodeFormat> ALL_FORMATS = new ArrayList<>();
-    private List<BarcodeFormat> formats;
-    private ResultHandler resultHandler;
-
-    static {
-        ALL_FORMATS.add(BarcodeFormat.AZTEC);
-        ALL_FORMATS.add(BarcodeFormat.CODABAR);
-        ALL_FORMATS.add(BarcodeFormat.CODE_39);
-        ALL_FORMATS.add(BarcodeFormat.CODE_93);
-        ALL_FORMATS.add(BarcodeFormat.CODE_128);
-        ALL_FORMATS.add(BarcodeFormat.DATA_MATRIX);
-        ALL_FORMATS.add(BarcodeFormat.EAN_8);
-        ALL_FORMATS.add(BarcodeFormat.EAN_13);
-        ALL_FORMATS.add(BarcodeFormat.ITF);
-        ALL_FORMATS.add(BarcodeFormat.MAXICODE);
-        ALL_FORMATS.add(BarcodeFormat.PDF_417);
-        ALL_FORMATS.add(BarcodeFormat.QR_CODE);
-        ALL_FORMATS.add(BarcodeFormat.RSS_14);
-        ALL_FORMATS.add(BarcodeFormat.RSS_EXPANDED);
-        ALL_FORMATS.add(BarcodeFormat.UPC_A);
-        ALL_FORMATS.add(BarcodeFormat.UPC_E);
-        ALL_FORMATS.add(BarcodeFormat.UPC_EAN_EXTENSION);
+    companion object {
+        @JvmField
+        val ALL_FORMATS: MutableList<BarcodeFormat> = arrayListOf(
+            BarcodeFormat.AZTEC,
+            BarcodeFormat.CODABAR,
+            BarcodeFormat.CODE_39,
+            BarcodeFormat.CODE_93,
+            BarcodeFormat.CODE_128,
+            BarcodeFormat.DATA_MATRIX,
+            BarcodeFormat.EAN_8,
+            BarcodeFormat.EAN_13,
+            BarcodeFormat.ITF,
+            BarcodeFormat.MAXICODE,
+            BarcodeFormat.PDF_417,
+            BarcodeFormat.QR_CODE,
+            BarcodeFormat.RSS_14,
+            BarcodeFormat.RSS_EXPANDED,
+            BarcodeFormat.UPC_A,
+            BarcodeFormat.UPC_E,
+            BarcodeFormat.UPC_EAN_EXTENSION,
+        )
     }
 
-    public ZXingScannerView(Context context) {
-        super(context);
-        initMultiFormatReader();
+    private var multiFormatReader: MultiFormatReader? = null
+    private var storedFormats: List<BarcodeFormat>? = null
+    private var storedResultHandler: ResultHandler? = null
+
+    private val activeMultiFormatReader: MultiFormatReader
+        get() = multiFormatReader ?: throw NullPointerException()
+
+    constructor(context: Context) : super(context) {
+        initMultiFormatReader()
     }
 
-    public ZXingScannerView(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet);
-        initMultiFormatReader();
+    constructor(
+        context: Context,
+        attributeSet: AttributeSet?,
+    ) : super(context, attributeSet) {
+        initMultiFormatReader()
     }
 
-    public void setFormats(List<BarcodeFormat> formats) {
-        this.formats = formats;
-        initMultiFormatReader();
+    open fun setFormats(formats: List<BarcodeFormat>?) {
+        storedFormats = formats
+        initMultiFormatReader()
     }
 
-    public void setResultHandler(ResultHandler resultHandler) {
-        this.resultHandler = resultHandler;
+    open fun setResultHandler(resultHandler: ResultHandler?) {
+        storedResultHandler = resultHandler
     }
 
-    public Collection<BarcodeFormat> getFormats() {
-        if (formats == null) {
-            return ALL_FORMATS;
-        }
-        return formats;
+    open fun getFormats(): Collection<BarcodeFormat> =
+        storedFormats ?: ALL_FORMATS
+
+    private fun initMultiFormatReader() {
+        val hints = EnumMap<DecodeHintType, Any>(DecodeHintType::class.java)
+        hints[DecodeHintType.POSSIBLE_FORMATS] = getFormats()
+
+        multiFormatReader = MultiFormatReader()
+        activeMultiFormatReader.setHints(hints)
     }
 
-    private void initMultiFormatReader() {
-        Map<DecodeHintType, Object> hints = new EnumMap<>(DecodeHintType.class);
-        hints.put(DecodeHintType.POSSIBLE_FORMATS, getFormats());
-        multiFormatReader = new MultiFormatReader();
-        multiFormatReader.setHints(hints);
-    }
-
-    @Override
-    public void onPreviewFrame(byte[] data, Camera camera) {
-        if (resultHandler == null) {
-            return;
+    override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
+        if (storedResultHandler == null) {
+            return
         }
 
         try {
-            Camera.Parameters parameters = camera.getParameters();
-            Camera.Size size = parameters.getPreviewSize();
-            int width = size.width;
-            int height = size.height;
+            val activeCamera = camera ?: throw NullPointerException()
+            val parameters = activeCamera.parameters
+            val size = parameters.previewSize
+            var width = size.width
+            var height = size.height
+            var previewData = data
 
-            if (DisplayUtils.getScreenOrientation(getContext()) == Configuration.ORIENTATION_PORTRAIT) {
-                int rotationCount = getRotationCount();
-                if (rotationCount == ROTATION_COUNT_90_DEGREES || rotationCount == ROTATION_COUNT_270_DEGREES) {
-                    int tmp = width;
-                    width = height;
-                    height = tmp;
+            if (
+                DisplayUtils.getScreenOrientation(context) ==
+                Configuration.ORIENTATION_PORTRAIT
+            ) {
+                val rotationCount = rotationCount
+                if (
+                    rotationCount == ROTATION_COUNT_90_DEGREES ||
+                    rotationCount == ROTATION_COUNT_270_DEGREES
+                ) {
+                    val tmp = width
+                    width = height
+                    height = tmp
                 }
-                data = getRotatedData(data, camera);
+                previewData = getRotatedData(previewData, activeCamera)
             }
 
-            Result rawResult = null;
-            PlanarYUVLuminanceSource source = buildLuminanceSource(data, width, height);
+            var rawResult: Result? = null
+            val source = buildLuminanceSource(previewData, width, height)
 
             if (source != null) {
-                BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+                var bitmap = BinaryBitmap(HybridBinarizer(source))
                 try {
-                    rawResult = multiFormatReader.decodeWithState(bitmap);
-                } catch (ReaderException re) {
+                    rawResult = activeMultiFormatReader.decodeWithState(bitmap)
+                } catch (_: ReaderException) {
                     // Continue
-                } catch (NullPointerException npe) {
+                } catch (_: NullPointerException) {
                     // This is terrible
-                } catch (ArrayIndexOutOfBoundsException ignored) {
+                } catch (_: ArrayIndexOutOfBoundsException) {
                     // Ignored
                 } finally {
-                    multiFormatReader.reset();
+                    activeMultiFormatReader.reset()
                 }
 
                 if (rawResult == null) {
-                    LuminanceSource invertedSource = source.invert();
-                    bitmap = new BinaryBitmap(new HybridBinarizer(invertedSource));
+                    val invertedSource = source.invert()
+                    bitmap = BinaryBitmap(HybridBinarizer(invertedSource))
                     try {
-                        rawResult = multiFormatReader.decodeWithState(bitmap);
-                    } catch (NotFoundException e) {
+                        rawResult = activeMultiFormatReader.decodeWithState(bitmap)
+                    } catch (_: NotFoundException) {
                         // Continue
                     } finally {
-                        multiFormatReader.reset();
+                        activeMultiFormatReader.reset()
                     }
                 }
             }
 
-            final Result finalRawResult = rawResult;
+            val finalRawResult = rawResult
 
             if (finalRawResult != null) {
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(() -> {
+                val handler = Handler(Looper.getMainLooper())
+                handler.post {
                     /*
                         Stopping the preview can take a little long.
                         So we want to set result handler to null to discard subsequent calls to
                         onPreviewFrame.
                     */
-                    ResultHandler tmpResultHandler = resultHandler;
-                    resultHandler = null;
+                    val tmpResultHandler = storedResultHandler
+                    storedResultHandler = null
 
-                    stopCameraPreview();
-                    if (tmpResultHandler != null) {
-                        tmpResultHandler.handleResult(finalRawResult);
-                    }
-                });
+                    stopCameraPreview()
+                    tmpResultHandler?.handleResult(finalRawResult)
+                }
             } else {
-                camera.setOneShotPreviewCallback(this);
+                activeCamera.setOneShotPreviewCallback(this)
             }
-        } catch (RuntimeException e) {
+        } catch (e: RuntimeException) {
             // TODO: Terrible hack. It is possible that this method is invoked after camera is released.
-            Log.e(TAG, e.toString(), e);
+            Log.e(TAG, e.toString(), e)
         }
     }
 
-    public void resumeCameraPreview(ResultHandler resultHandler) {
-        this.resultHandler = resultHandler;
-        super.resumeCameraPreview();
+    open fun resumeCameraPreview(resultHandler: ResultHandler?) {
+        storedResultHandler = resultHandler
+        super.resumeCameraPreview()
     }
 
-    public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height) {
-        Rect rect = getFramingRectInPreview(width, height);
-        if (rect == null) {
-            return null;
-        }
+    open fun buildLuminanceSource(
+        data: ByteArray?,
+        width: Int,
+        height: Int,
+    ): PlanarYUVLuminanceSource? {
+        val rect = getFramingRectInPreview(width, height) ?: return null
+
         // Go ahead and assume it's YUV rather than die.
-        PlanarYUVLuminanceSource source = null;
+        var source: PlanarYUVLuminanceSource? = null
 
         try {
-            source = new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,
-                    rect.width(), rect.height(), false);
-        } catch (Exception ignored) {
+            source = PlanarYUVLuminanceSource(
+                data,
+                width,
+                height,
+                rect.left,
+                rect.top,
+                rect.width(),
+                rect.height(),
+                false,
+            )
+        } catch (_: Exception) {
             // Ignored
         }
 
-        return source;
+        return source
     }
 }
