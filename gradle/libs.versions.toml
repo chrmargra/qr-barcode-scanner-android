@@ -1,9 +1,9 @@
 [versions]
-agp = "9.2.1"
-kotlin = "2.3.21"
+agp = "9.3.1"
+kotlin = "2.4.10"
 androidxAnnotation = "1.10.0"
 androidxAppcompat = "1.7.1"
-material = "1.13.0"
+material = "1.14.0"
 zxing = "3.5.4"
 
 [libraries]
