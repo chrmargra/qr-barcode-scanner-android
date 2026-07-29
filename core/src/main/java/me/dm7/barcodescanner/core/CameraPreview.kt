@@ -24,6 +24,7 @@ private const val FULL_ROTATION_DEGREES = 360
 private const val HALF_ROTATION_DEGREES = 180
 private const val NO_ROTATION_DEGREES = 0
 private const val DELAY = 1000L
+private const val DEFAULT_CAMERA_ID = -1
 
 open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
 
@@ -54,15 +55,44 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
     }
 
     // Mimic continuous auto-focusing
-    private var autoFocusCB =
-        Camera.AutoFocusCallback { _, _ ->
-            scheduleAutoFocus()
+    private var autoFocusCB = Camera.AutoFocusCallback { _, _ ->
+        scheduleAutoFocus()
+    }
+
+    open val displayOrientation: Int
+        get() {
+            val currentCameraWrapper = cameraWrapper
+                ?: return 0 // If we don't have a camera set there is no orientation so return dummy value
+
+
+            val info = Camera.CameraInfo()
+
+            if (currentCameraWrapper.cameraId == DEFAULT_CAMERA_ID) {
+                Camera.getCameraInfo(
+                    Camera.CameraInfo.CAMERA_FACING_BACK,
+                    info
+                )
+            } else {
+                Camera.getCameraInfo(
+                    currentCameraWrapper.cameraId,
+                    info
+                )
+            }
+
+            val service =
+                context.getSystemService(Context.WINDOW_SERVICE) ?: throw NullPointerException()
+            val windowManager = service as WindowManager
+
+            return getDisplayOrientation(
+                windowManager = windowManager,
+                info = info
+            )
         }
 
     constructor(
         context: Context,
         cameraWrapper: CameraWrapper?,
-        previewCallback: Camera.PreviewCallback?,
+        previewCallback: Camera.PreviewCallback?
     ) : super(context) {
         init(cameraWrapper, previewCallback)
     }
@@ -71,16 +101,19 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         context: Context,
         attrs: AttributeSet?,
         cameraWrapper: CameraWrapper?,
-        previewCallback: Camera.PreviewCallback?,
+        previewCallback: Camera.PreviewCallback?
     ) : super(context, attrs) {
         init(cameraWrapper, previewCallback)
     }
 
     open fun init(
         cameraWrapper: CameraWrapper?,
-        previewCallback: Camera.PreviewCallback?,
+        previewCallback: Camera.PreviewCallback?
     ) {
-        setCamera(cameraWrapper, previewCallback)
+        setCamera(
+            cameraWrapper = cameraWrapper,
+            previewCallback = previewCallback
+        )
         autoFocusHandler = Handler()
         holder.addCallback(this)
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS)
@@ -110,7 +143,7 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         surfaceHolder: SurfaceHolder,
         i: Int,
         i2: Int,
-        i3: Int,
+        i3: Int
     ) {
         if (surfaceHolder.surface == null) return
 
@@ -131,12 +164,8 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
                 setupCameraParameters()
 
                 activeCameraWrapper.camera.setPreviewDisplay(holder)
-                activeCameraWrapper.camera.setDisplayOrientation(
-                    displayOrientation,
-                )
-                activeCameraWrapper.camera.setOneShotPreviewCallback(
-                    previewCallback,
-                )
+                activeCameraWrapper.camera.setDisplayOrientation(displayOrientation)
+                activeCameraWrapper.camera.setOneShotPreviewCallback(previewCallback)
                 activeCameraWrapper.camera.startPreview()
 
                 if (autoFocusState) {
@@ -181,61 +210,51 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
     open fun setupCameraParameters() {
         val optimalSize = getOptimalPreviewSize()
         val parameters = activeCameraWrapper.camera.parameters
-        val activeOptimalSize =
-            optimalSize ?: throw NullPointerException()
+        val activeOptimalSize = optimalSize ?: throw NullPointerException()
 
         parameters.setPreviewSize(
             activeOptimalSize.width,
-            activeOptimalSize.height,
+            activeOptimalSize.height
         )
 
         activeCameraWrapper.camera.parameters = parameters
-        adjustViewSize(activeOptimalSize)
+        adjustViewSize(cameraSize = activeOptimalSize)
     }
 
     private fun adjustViewSize(cameraSize: Camera.Size) {
         val previewSize = convertSizeToLandscapeOrientation(
-            Point(width, height),
+            size = Point(width, height)
         )
 
-        val cameraRatio =
-            cameraSize.width.toFloat() / cameraSize.height.toFloat()
-        val screenRatio =
-            previewSize.x.toFloat() / previewSize.y.toFloat()
+        val cameraRatio = cameraSize.width.toFloat() / cameraSize.height.toFloat()
+        val screenRatio = previewSize.x.toFloat() / previewSize.y.toFloat()
 
         if (screenRatio > cameraRatio) {
             setViewSize(
-                (previewSize.y * cameraRatio).toInt(),
-                previewSize.y,
+                width = (previewSize.y * cameraRatio).toInt(),
+                height = previewSize.y
             )
         } else {
             setViewSize(
-                previewSize.x,
-                (previewSize.x / cameraRatio).toInt(),
+                width = previewSize.x,
+                height = (previewSize.x / cameraRatio).toInt()
             )
         }
     }
 
-    private fun convertSizeToLandscapeOrientation(size: Point): Point {
-        return if (
-            displayOrientation % HALF_ROTATION_DEGREES ==
-            NO_ROTATION_DEGREES
-        ) {
+    private fun convertSizeToLandscapeOrientation(size: Point): Point =
+        if (displayOrientation % HALF_ROTATION_DEGREES == NO_ROTATION_DEGREES) {
             size
         } else {
             Point(size.y, size.x)
         }
-    }
 
     private fun setViewSize(width: Int, height: Int) {
         val currentLayoutParams = layoutParams
         var tmpWidth: Int
         var tmpHeight: Int
 
-        if (
-            displayOrientation % HALF_ROTATION_DEGREES ==
-            NO_ROTATION_DEGREES
-        ) {
+        if (displayOrientation % HALF_ROTATION_DEGREES == NO_ROTATION_DEGREES) {
             tmpWidth = width
             tmpHeight = height
         } else {
@@ -248,56 +267,25 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
             val parentView = currentParent as View
             val parentWidth = parentView.width
             val parentHeight = parentView.height
-            val ratioWidth =
-                parentWidth.toFloat() / tmpWidth.toFloat()
-            val ratioHeight =
-                parentHeight.toFloat() / tmpHeight.toFloat()
+            val ratioWidth = parentWidth.toFloat() / tmpWidth.toFloat()
+            val ratioHeight = parentHeight.toFloat() / tmpHeight.toFloat()
 
-            val compensation = max(ratioWidth, ratioHeight)
+            val compensation = max(a = ratioWidth, b = ratioHeight)
 
             tmpWidth = Math.round(tmpWidth * compensation)
             tmpHeight = Math.round(tmpHeight * compensation)
         }
 
-        val activeLayoutParams =
-            currentLayoutParams ?: throw NullPointerException()
+        val activeLayoutParams = currentLayoutParams ?: throw NullPointerException()
 
         activeLayoutParams.width = tmpWidth
         activeLayoutParams.height = tmpHeight
         layoutParams = activeLayoutParams
     }
 
-    open val displayOrientation: Int
-        get() {
-            val currentCameraWrapper = cameraWrapper
-                ?: // If we don't have a camera set there is no orientation so return dummy value
-                return 0
-
-            val info = Camera.CameraInfo()
-
-            if (currentCameraWrapper.cameraId == -1) {
-                Camera.getCameraInfo(
-                    Camera.CameraInfo.CAMERA_FACING_BACK,
-                    info,
-                )
-            } else {
-                Camera.getCameraInfo(
-                    currentCameraWrapper.cameraId,
-                    info,
-                )
-            }
-
-            val service =
-                context.getSystemService(Context.WINDOW_SERVICE)
-                    ?: throw NullPointerException()
-            val windowManager = service as WindowManager
-
-            return getDisplayOrientation(windowManager, info)
-        }
-
     private fun getDisplayOrientation(
         windowManager: WindowManager,
-        info: Camera.CameraInfo,
+        info: Camera.CameraInfo
     ): Int {
         val display = windowManager.defaultDisplay
 
@@ -312,42 +300,33 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         val result: Int
 
         if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            val cameraRotation =
-                (info.orientation + degrees) % FULL_ROTATION_DEGREES
+            val cameraRotation = (info.orientation + degrees) % FULL_ROTATION_DEGREES
 
             result =
                 (FULL_ROTATION_DEGREES - cameraRotation) % FULL_ROTATION_DEGREES // Compensate the mirror
         } else {
             // Back-facing
-            result =
-                (info.orientation - degrees + FULL_ROTATION_DEGREES) % FULL_ROTATION_DEGREES
+            result = (info.orientation - degrees + FULL_ROTATION_DEGREES) % FULL_ROTATION_DEGREES
         }
 
         return result
     }
 
     private fun getOptimalPreviewSize(): Camera.Size? {
-        if (cameraWrapper == null) {
-            return null
-        }
+        if (cameraWrapper == null) return null
 
-        val sizes: List<Camera.Size>? =
-            activeCameraWrapper.camera.parameters.supportedPreviewSizes
+        val sizes: List<Camera.Size>? = activeCameraWrapper.camera.parameters.supportedPreviewSizes
 
         var width = width
         var height = height
 
-        if (
-            DisplayUtils.getScreenOrientation(context) ==
-            Configuration.ORIENTATION_PORTRAIT
-        ) {
+        if (DisplayUtils.getScreenOrientation(context) == Configuration.ORIENTATION_PORTRAIT) {
             val portraitWidth = height
             height = width
             width = portraitWidth
         }
 
-        val targetRatio =
-            width.toDouble() / height.toDouble()
+        val targetRatio = width.toDouble() / height.toDouble()
 
         if (sizes == null) return null
 
@@ -360,9 +339,9 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
             val ratio =
                 size.width.toDouble() / size.height.toDouble()
 
-            if (abs(ratio - targetRatio) > storedAspectTolerance) continue
+            if (abs(x = ratio - targetRatio) > storedAspectTolerance) continue
 
-            val heightDifference = abs(size.height - targetHeight).toDouble()
+            val heightDifference = abs(n = size.height - targetHeight).toDouble()
 
             if (heightDifference < minDiff) {
                 optimalSize = size
@@ -375,7 +354,7 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
             minDiff = Double.MAX_VALUE
 
             for (size in sizes) {
-                val heightDifference = abs(size.height - targetHeight).toDouble()
+                val heightDifference = abs(n = size.height - targetHeight).toDouble()
 
                 if (heightDifference < minDiff) {
                     optimalSize = size
