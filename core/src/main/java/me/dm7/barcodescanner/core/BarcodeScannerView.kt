@@ -72,70 +72,70 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
                 attributeSet,
                 R.styleable.BarcodeScannerView,
                 0,
-                0,
+                0
             )
 
         try {
             setShouldScaleToFill(
                 attributes.getBoolean(
                     R.styleable.BarcodeScannerView_shouldScaleToFill,
-                    true,
+                    true
                 ),
             )
 
             laserEnabledState = attributes.getBoolean(
                 R.styleable.BarcodeScannerView_laserEnabled,
-                laserEnabledState,
+                laserEnabledState
             )
 
             storedLaserColor = attributes.getColor(
                 R.styleable.BarcodeScannerView_laserColor,
-                storedLaserColor,
+                storedLaserColor
             )
 
             storedBorderColor = attributes.getColor(
                 R.styleable.BarcodeScannerView_borderColor,
-                storedBorderColor,
+                storedBorderColor
             )
 
             storedMaskColor = attributes.getColor(
                 R.styleable.BarcodeScannerView_maskColor,
-                storedMaskColor,
+                storedMaskColor
             )
 
             storedBorderWidth = attributes.getDimensionPixelSize(
                 R.styleable.BarcodeScannerView_borderWidth,
-                storedBorderWidth,
+                storedBorderWidth
             )
 
             storedBorderLength = attributes.getDimensionPixelSize(
                 R.styleable.BarcodeScannerView_borderLength,
-                storedBorderLength,
+                storedBorderLength
             )
 
             borderCornersRounded = attributes.getBoolean(
                 R.styleable.BarcodeScannerView_roundedCorner,
-                borderCornersRounded,
+                borderCornersRounded
             )
 
             storedCornerRadius = attributes.getDimensionPixelSize(
                 R.styleable.BarcodeScannerView_cornerRadius,
-                storedCornerRadius,
+                storedCornerRadius
             )
 
             squareFinder = attributes.getBoolean(
                 R.styleable.BarcodeScannerView_squaredFinder,
-                squareFinder,
+                squareFinder
             )
 
             storedBorderAlpha = attributes.getFloat(
                 R.styleable.BarcodeScannerView_borderAlpha,
-                storedBorderAlpha,
+                storedBorderAlpha
             )
 
             storedViewFinderOffset = attributes.getDimensionPixelSize(
                 R.styleable.BarcodeScannerView_finderOffset,
-                storedViewFinderOffset,
+                storedViewFinderOffset
             )
         } finally {
             attributes.recycle()
