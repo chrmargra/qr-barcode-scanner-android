@@ -26,28 +26,6 @@ private const val ROTATION_COUNT_270_DEGREES = 3
 
 open class ZXingScannerView : BarcodeScannerView {
 
-    companion object {
-        val ALL_FORMATS: MutableList<BarcodeFormat> = arrayListOf(
-            BarcodeFormat.AZTEC,
-            BarcodeFormat.CODABAR,
-            BarcodeFormat.CODE_39,
-            BarcodeFormat.CODE_93,
-            BarcodeFormat.CODE_128,
-            BarcodeFormat.DATA_MATRIX,
-            BarcodeFormat.EAN_8,
-            BarcodeFormat.EAN_13,
-            BarcodeFormat.ITF,
-            BarcodeFormat.MAXICODE,
-            BarcodeFormat.PDF_417,
-            BarcodeFormat.QR_CODE,
-            BarcodeFormat.RSS_14,
-            BarcodeFormat.RSS_EXPANDED,
-            BarcodeFormat.UPC_A,
-            BarcodeFormat.UPC_E,
-            BarcodeFormat.UPC_EAN_EXTENSION,
-        )
-    }
-
     private var multiFormatReader: MultiFormatReader? = null
     private var storedFormats: List<BarcodeFormat>? = null
     private var storedResultHandler: ResultHandler? = null
@@ -86,10 +64,11 @@ open class ZXingScannerView : BarcodeScannerView {
         activeMultiFormatReader.setHints(hints)
     }
 
-    override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
-        if (storedResultHandler == null) {
-            return
-        }
+    override fun onPreviewFrame(
+        data: ByteArray?,
+        camera: Camera?
+    ) {
+        if (storedResultHandler == null) return
 
         try {
             val activeCamera = camera ?: throw NullPointerException()
@@ -99,10 +78,7 @@ open class ZXingScannerView : BarcodeScannerView {
             var height = size.height
             var previewData = data
 
-            if (
-                DisplayUtils.getScreenOrientation(context) ==
-                Configuration.ORIENTATION_PORTRAIT
-            ) {
+            if (DisplayUtils.getScreenOrientation(context) == Configuration.ORIENTATION_PORTRAIT) {
                 val rotationCount = rotationCount
                 if (
                     rotationCount == ROTATION_COUNT_90_DEGREES ||
@@ -112,11 +88,18 @@ open class ZXingScannerView : BarcodeScannerView {
                     width = height
                     height = tmp
                 }
-                previewData = getRotatedData(previewData, activeCamera)
+                previewData = getRotatedData(
+                    data = previewData,
+                    camera = activeCamera
+                )
             }
 
             var rawResult: Result? = null
-            val source = buildLuminanceSource(previewData, width, height)
+            val source = buildLuminanceSource(
+                data = previewData,
+                width = width,
+                height = height
+            )
 
             if (source != null) {
                 var bitmap = BinaryBitmap(HybridBinarizer(source))
@@ -159,7 +142,7 @@ open class ZXingScannerView : BarcodeScannerView {
                     storedResultHandler = null
 
                     stopCameraPreview()
-                    tmpResultHandler?.handleResult(finalRawResult)
+                    tmpResultHandler?.handleResult(rawResult = finalRawResult)
                 }
             } else {
                 activeCamera.setOneShotPreviewCallback(this)
@@ -178,9 +161,12 @@ open class ZXingScannerView : BarcodeScannerView {
     open fun buildLuminanceSource(
         data: ByteArray?,
         width: Int,
-        height: Int,
+        height: Int
     ): PlanarYUVLuminanceSource? {
-        val rect = getFramingRectInPreview(width, height) ?: return null
+        val rect = getFramingRectInPreview(
+            previewWidth = width,
+            previewHeight = height
+        ) ?: return null
 
         // Go ahead and assume it's YUV rather than die.
         var source: PlanarYUVLuminanceSource? = null
@@ -201,5 +187,27 @@ open class ZXingScannerView : BarcodeScannerView {
         }
 
         return source
+    }
+
+    companion object {
+        val ALL_FORMATS: MutableList<BarcodeFormat> = arrayListOf(
+            BarcodeFormat.AZTEC,
+            BarcodeFormat.CODABAR,
+            BarcodeFormat.CODE_39,
+            BarcodeFormat.CODE_93,
+            BarcodeFormat.CODE_128,
+            BarcodeFormat.DATA_MATRIX,
+            BarcodeFormat.EAN_8,
+            BarcodeFormat.EAN_13,
+            BarcodeFormat.ITF,
+            BarcodeFormat.MAXICODE,
+            BarcodeFormat.PDF_417,
+            BarcodeFormat.QR_CODE,
+            BarcodeFormat.RSS_14,
+            BarcodeFormat.RSS_EXPANDED,
+            BarcodeFormat.UPC_A,
+            BarcodeFormat.UPC_E,
+            BarcodeFormat.UPC_EAN_EXTENSION
+        )
     }
 }

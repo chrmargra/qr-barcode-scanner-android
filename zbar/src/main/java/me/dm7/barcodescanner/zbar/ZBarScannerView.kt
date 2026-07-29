@@ -62,7 +62,10 @@ open class ZBarScannerView : BarcodeScannerView {
         }
     }
 
-    override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
+    override fun onPreviewFrame(
+        data: ByteArray?,
+        camera: Camera?
+    ) {
         if (storedResultHandler == null) return
 
         try {
