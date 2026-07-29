@@ -30,19 +30,6 @@ private const val CENTER_DIVISOR = 2
 
 open class ViewFinderView : View, ViewFinder {
 
-    companion object {
-        private val SCANNER_ALPHA = intArrayOf(
-            0,
-            64,
-            128,
-            192,
-            255,
-            192,
-            128,
-            64,
-        )
-    }
-
     private var storedFramingRect: Rect? = null
     private var scannerAlpha = 0
 
@@ -88,7 +75,7 @@ open class ViewFinderView : View, ViewFinder {
 
     constructor(
         context: Context,
-        attributeSet: AttributeSet?,
+        attributeSet: AttributeSet?
     ) : super(context, attributeSet)
 
     override fun setLaserColor(laserColor: Int) {
@@ -151,12 +138,10 @@ open class ViewFinderView : View, ViewFinder {
     public override fun onDraw(canvas: Canvas) {
         if (getFramingRect() == null) return
 
-        drawViewFinderMask(canvas)
-        drawViewFinderBorder(canvas)
+        drawViewFinderMask(canvas = canvas)
+        drawViewFinderBorder(canvas = canvas)
 
-        if (laserEnabledState) {
-            drawLaser(canvas)
-        }
+        if (laserEnabledState) drawLaser(canvas)
     }
 
     open fun drawViewFinderMask(canvas: Canvas) {
@@ -169,21 +154,21 @@ open class ViewFinderView : View, ViewFinder {
             0f,
             width.toFloat(),
             framingRect.top.toFloat(),
-            finderMaskPaint,
+            finderMaskPaint
         )
         canvas.drawRect(
             0f,
             framingRect.top.toFloat(),
             framingRect.left.toFloat(),
             (framingRect.bottom + 1).toFloat(),
-            finderMaskPaint,
+            finderMaskPaint
         )
         canvas.drawRect(
             (framingRect.right + 1).toFloat(),
             framingRect.top.toFloat(),
             width.toFloat(),
             (framingRect.bottom + 1).toFloat(),
-            finderMaskPaint,
+            finderMaskPaint
         )
         canvas.drawRect(
             0f,
@@ -203,60 +188,60 @@ open class ViewFinderView : View, ViewFinder {
 
         path.moveTo(
             activeFramingRect.left.toFloat(),
-            (activeFramingRect.top + borderLineLength).toFloat(),
+            (activeFramingRect.top + borderLineLength).toFloat()
         )
         path.lineTo(
             activeFramingRect.left.toFloat(),
-            activeFramingRect.top.toFloat(),
+            activeFramingRect.top.toFloat()
         )
         path.lineTo(
             (activeFramingRect.left + borderLineLength).toFloat(),
-            activeFramingRect.top.toFloat(),
+            activeFramingRect.top.toFloat()
         )
         canvas.drawPath(path, borderPaint)
 
         // Top-right corner
         path.moveTo(
             activeFramingRect.right.toFloat(),
-            (activeFramingRect.top + borderLineLength).toFloat(),
+            (activeFramingRect.top + borderLineLength).toFloat()
         )
         path.lineTo(
             activeFramingRect.right.toFloat(),
-            activeFramingRect.top.toFloat(),
+            activeFramingRect.top.toFloat()
         )
         path.lineTo(
             (activeFramingRect.right - borderLineLength).toFloat(),
-            activeFramingRect.top.toFloat(),
+            activeFramingRect.top.toFloat()
         )
         canvas.drawPath(path, borderPaint)
 
         // Bottom-right corner
         path.moveTo(
             activeFramingRect.right.toFloat(),
-            (activeFramingRect.bottom - borderLineLength).toFloat(),
+            (activeFramingRect.bottom - borderLineLength).toFloat()
         )
         path.lineTo(
             activeFramingRect.right.toFloat(),
-            activeFramingRect.bottom.toFloat(),
+            activeFramingRect.bottom.toFloat()
         )
         path.lineTo(
             (activeFramingRect.right - borderLineLength).toFloat(),
-            activeFramingRect.bottom.toFloat(),
+            activeFramingRect.bottom.toFloat()
         )
         canvas.drawPath(path, borderPaint)
 
         // Bottom-left corner
         path.moveTo(
             activeFramingRect.left.toFloat(),
-            (activeFramingRect.bottom - borderLineLength).toFloat(),
+            (activeFramingRect.bottom - borderLineLength).toFloat()
         )
         path.lineTo(
             activeFramingRect.left.toFloat(),
-            activeFramingRect.bottom.toFloat(),
+            activeFramingRect.bottom.toFloat()
         )
         path.lineTo(
             (activeFramingRect.left + borderLineLength).toFloat(),
-            activeFramingRect.bottom.toFloat(),
+            activeFramingRect.bottom.toFloat()
         )
         canvas.drawPath(path, borderPaint)
     }
@@ -269,15 +254,14 @@ open class ViewFinderView : View, ViewFinder {
         scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.size
 
         val activeFramingRect = framingRect ?: throw NullPointerException()
-        val middle =
-            activeFramingRect.height() / CENTER_DIVISOR + activeFramingRect.top
+        val middle = activeFramingRect.height() / CENTER_DIVISOR + activeFramingRect.top
 
         canvas.drawRect(
             (activeFramingRect.left + 2).toFloat(),
             (middle - 1).toFloat(),
             (activeFramingRect.right - 1).toFloat(),
             (middle + 2).toFloat(),
-            laserPaint,
+            laserPaint
         )
 
         postInvalidateDelayed(
@@ -285,7 +269,7 @@ open class ViewFinderView : View, ViewFinder {
             activeFramingRect.left - POINT_SIZE,
             activeFramingRect.top - POINT_SIZE,
             activeFramingRect.right + POINT_SIZE,
-            activeFramingRect.bottom + POINT_SIZE,
+            activeFramingRect.bottom + POINT_SIZE
         )
     }
 
@@ -293,7 +277,7 @@ open class ViewFinderView : View, ViewFinder {
         xNew: Int,
         yNew: Int,
         xOld: Int,
-        yOld: Int,
+        yOld: Int
     ) {
         updateFramingRect()
     }
@@ -303,7 +287,7 @@ open class ViewFinderView : View, ViewFinder {
         val viewResolution = Point(width, height)
         var framingWidth: Int
         var framingHeight: Int
-        val orientation = DisplayUtils.getScreenOrientation(context)
+        val orientation = DisplayUtils.getScreenOrientation(context = context)
 
         if (squareViewFinder) {
             if (orientation != Configuration.ORIENTATION_PORTRAIT) {
@@ -316,12 +300,10 @@ open class ViewFinderView : View, ViewFinder {
         } else {
             if (orientation != Configuration.ORIENTATION_PORTRAIT) {
                 framingHeight = (height * LANDSCAPE_HEIGHT_RATIO).toInt()
-                framingWidth =
-                    (LANDSCAPE_WIDTH_HEIGHT_RATIO * framingHeight).toInt()
+                framingWidth = (LANDSCAPE_WIDTH_HEIGHT_RATIO * framingHeight).toInt()
             } else {
                 framingWidth = (width * PORTRAIT_WIDTH_RATIO).toInt()
-                framingHeight =
-                    (PORTRAIT_WIDTH_HEIGHT_RATIO * framingWidth).toInt()
+                framingHeight = (PORTRAIT_WIDTH_HEIGHT_RATIO * framingWidth).toInt()
             }
         }
 
@@ -333,16 +315,27 @@ open class ViewFinderView : View, ViewFinder {
             framingHeight = height - MIN_DIMENSION_DIFF
         }
 
-        val leftOffset =
-            (viewResolution.x - framingWidth) / CENTER_DIVISOR
-        val topOffset =
-            (viewResolution.y - framingHeight) / CENTER_DIVISOR
+        val leftOffset = (viewResolution.x - framingWidth) / CENTER_DIVISOR
+        val topOffset = (viewResolution.y - framingHeight) / CENTER_DIVISOR
 
         storedFramingRect = Rect(
             leftOffset + finderOffset,
             topOffset + finderOffset,
             leftOffset + framingWidth - finderOffset,
-            topOffset + framingHeight - finderOffset,
+            topOffset + framingHeight - finderOffset
+        )
+    }
+
+    companion object {
+        private val SCANNER_ALPHA = intArrayOf(
+            0,
+            64,
+            128,
+            192,
+            255,
+            192,
+            128,
+            64
         )
     }
 }
