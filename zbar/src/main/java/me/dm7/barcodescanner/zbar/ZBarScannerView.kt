@@ -99,7 +99,8 @@ open class ZBarScannerView : BarcodeScannerView {
                 previewData = getRotatedData(previewData, activeCamera)
             }
 
-            val rect = getFramingRectInPreview(width, height)
+            val rect =
+                getFramingRectInPreview(width, height) ?: throw NullPointerException()
             val barcode = Image(width, height, ZBAR_IMAGE_FORMAT_Y800)
             barcode.data = previewData
             barcode.setCrop(rect.left, rect.top, rect.width(), rect.height())
