@@ -27,20 +27,15 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
 
     private var laserEnabledState = true
 
-    private var storedLaserColor =
-        ContextCompat.getColor(context, R.color.viewfinder_laser)
+    private var storedLaserColor = ContextCompat.getColor(context, R.color.viewfinder_laser)
 
-    private var storedBorderColor =
-        ContextCompat.getColor(context, R.color.viewfinder_border)
+    private var storedBorderColor = ContextCompat.getColor(context, R.color.viewfinder_border)
 
-    private var storedMaskColor =
-        ContextCompat.getColor(context, R.color.viewfinder_mask)
+    private var storedMaskColor = ContextCompat.getColor(context, R.color.viewfinder_mask)
 
-    private var storedBorderWidth =
-        resources.getInteger(R.integer.viewfinder_border_width)
+    private var storedBorderWidth = resources.getInteger(R.integer.viewfinder_border_width)
 
-    private var storedBorderLength =
-        resources.getInteger(R.integer.viewfinder_border_length)
+    private var storedBorderLength = resources.getInteger(R.integer.viewfinder_border_length)
 
     private var borderCornersRounded = false
     private var storedCornerRadius = 0
@@ -70,7 +65,7 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
 
     constructor(
         context: Context,
-        attributeSet: AttributeSet?,
+        attributeSet: AttributeSet?
     ) : super(context, attributeSet) {
         val attributes: TypedArray =
             context.theme.obtainStyledAttributes(
@@ -150,17 +145,21 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
     }
 
     private fun init() {
-        viewFinderView = createViewFinderView(context)
+        viewFinderView = createViewFinderView(context = context)
     }
 
     fun setupLayout(cameraWrapper: CameraWrapper?) {
         removeAllViews()
 
-        val newPreview = CameraPreview(context, cameraWrapper, this)
+        val newPreview = CameraPreview(
+            context = context,
+            cameraWrapper = cameraWrapper,
+            previewCallback = this
+        )
         preview = newPreview
 
-        newPreview.setAspectTolerance(storedAspectTolerance)
-        newPreview.setShouldScaleToFill(scaleToFillState)
+        newPreview.setAspectTolerance(aspectTolerance = storedAspectTolerance)
+        newPreview.setShouldScaleToFill(scaleToFill = scaleToFillState)
 
         if (!scaleToFillState) {
             val relativeLayout = RelativeLayout(context)
@@ -191,102 +190,101 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
      * @return {@link android.view.View} that implements {@link ViewFinderView}
      */
     protected open fun createViewFinderView(context: Context): ViewFinder {
-        val newViewFinderView = ViewFinderView(context)
-        newViewFinderView.setBorderColor(storedBorderColor)
-        newViewFinderView.setLaserColor(storedLaserColor)
-        newViewFinderView.setLaserEnabled(laserEnabledState)
-        newViewFinderView.setBorderStrokeWidth(storedBorderWidth)
-        newViewFinderView.setBorderLineLength(storedBorderLength)
-        newViewFinderView.setMaskColor(storedMaskColor)
+        val newViewFinderView = ViewFinderView(context = context)
+        newViewFinderView.setBorderColor(borderColor = storedBorderColor)
+        newViewFinderView.setLaserColor(laserColor = storedLaserColor)
+        newViewFinderView.setLaserEnabled(isEnabled = laserEnabledState)
+        newViewFinderView.setBorderStrokeWidth(borderStrokeWidth = storedBorderWidth)
+        newViewFinderView.setBorderLineLength(borderLineLength = storedBorderLength)
+        newViewFinderView.setMaskColor(maskColor = storedMaskColor)
 
-        newViewFinderView.setBorderCornerRounded(borderCornersRounded)
-        newViewFinderView.setBorderCornerRadius(storedCornerRadius)
-        newViewFinderView.setSquareViewFinder(squareFinder)
-        newViewFinderView.setViewFinderOffset(storedViewFinderOffset)
+        newViewFinderView.setBorderCornerRounded(isBorderCornersRounded = borderCornersRounded)
+        newViewFinderView.setBorderCornerRadius(borderCornersRadius = storedCornerRadius)
+        newViewFinderView.setSquareViewFinder(isSquareViewFinder = squareFinder)
+        newViewFinderView.setViewFinderOffset(offset = storedViewFinderOffset)
         return newViewFinderView
     }
 
     open fun setLaserColor(laserColor: Int) {
         storedLaserColor = laserColor
-        activeViewFinderView.setLaserColor(storedLaserColor)
+        activeViewFinderView.setLaserColor(laserColor = storedLaserColor)
         activeViewFinderView.setupViewFinder()
     }
 
     open fun setMaskColor(maskColor: Int) {
         storedMaskColor = maskColor
-        activeViewFinderView.setMaskColor(storedMaskColor)
+        activeViewFinderView.setMaskColor(maskColor = storedMaskColor)
         activeViewFinderView.setupViewFinder()
     }
 
     open fun setBorderColor(borderColor: Int) {
         storedBorderColor = borderColor
-        activeViewFinderView.setBorderColor(storedBorderColor)
+        activeViewFinderView.setBorderColor(borderColor = storedBorderColor)
         activeViewFinderView.setupViewFinder()
     }
 
     open fun setBorderStrokeWidth(borderStrokeWidth: Int) {
         storedBorderWidth = borderStrokeWidth
-        activeViewFinderView.setBorderStrokeWidth(storedBorderWidth)
+        activeViewFinderView.setBorderStrokeWidth(borderStrokeWidth = storedBorderWidth)
         activeViewFinderView.setupViewFinder()
     }
 
     open fun setBorderLineLength(borderLineLength: Int) {
         storedBorderLength = borderLineLength
-        activeViewFinderView.setBorderLineLength(storedBorderLength)
+        activeViewFinderView.setBorderLineLength(borderLineLength = storedBorderLength)
         activeViewFinderView.setupViewFinder()
     }
 
     open fun setLaserEnabled(isLaserEnabled: Boolean) {
         laserEnabledState = isLaserEnabled
-        activeViewFinderView.setLaserEnabled(laserEnabledState)
+        activeViewFinderView.setLaserEnabled(isEnabled = laserEnabledState)
         activeViewFinderView.setupViewFinder()
     }
 
     open fun setIsBorderCornerRounded(isBorderCornerRounded: Boolean) {
         borderCornersRounded = isBorderCornerRounded
-        activeViewFinderView.setBorderCornerRounded(borderCornersRounded)
+        activeViewFinderView.setBorderCornerRounded(isBorderCornersRounded = borderCornersRounded)
         activeViewFinderView.setupViewFinder()
     }
 
     open fun setBorderCornerRadius(borderCornerRadius: Int) {
         storedCornerRadius = borderCornerRadius
-        activeViewFinderView.setBorderCornerRadius(storedCornerRadius)
+        activeViewFinderView.setBorderCornerRadius(borderCornersRadius = storedCornerRadius)
         activeViewFinderView.setupViewFinder()
     }
 
     open fun setSquareViewFinder(isSquareViewFinder: Boolean) {
         squareFinder = isSquareViewFinder
-        activeViewFinderView.setSquareViewFinder(squareFinder)
+        activeViewFinderView.setSquareViewFinder(isSquareViewFinder = squareFinder)
         activeViewFinderView.setupViewFinder()
     }
 
     open fun setBorderAlpha(borderAlpha: Float) {
         storedBorderAlpha = borderAlpha
-        activeViewFinderView.setBorderAlpha(storedBorderAlpha)
+        activeViewFinderView.setBorderAlpha(alpha = storedBorderAlpha)
         activeViewFinderView.setupViewFinder()
     }
 
     open fun startCamera(cameraId: Int) {
         if (cameraHandlerThread == null) {
-            cameraHandlerThread = CameraHandlerThread(this)
+            cameraHandlerThread = CameraHandlerThread(scannerView = this)
         }
 
-        val currentCameraHandlerThread =
-            cameraHandlerThread ?: throw NullPointerException()
+        val currentCameraHandlerThread = cameraHandlerThread ?: throw NullPointerException()
 
-        currentCameraHandlerThread.startCamera(cameraId)
+        currentCameraHandlerThread.startCamera(cameraId = cameraId)
     }
 
     open fun setupCameraPreview(cameraWrapper: CameraWrapper?) {
         this.cameraWrapper = cameraWrapper
 
         if (this.cameraWrapper != null) {
-            setupLayout(activeCameraWrapper)
+            setupLayout(cameraWrapper = activeCameraWrapper)
             activeViewFinderView.setupViewFinder()
 
             val currentFlashState = flashState
             if (currentFlashState != null) {
-                setFlash(currentFlashState)
+                setFlash(isEnabled = currentFlashState)
             }
 
             setAutoFocus(autoFocusState)
@@ -294,7 +292,7 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
     }
 
     open fun startCamera() {
-        startCamera(CameraUtils.getDefaultCameraId())
+        startCamera(cameraId = CameraUtils.getDefaultCameraId())
     }
 
     open fun stopCamera() {
@@ -302,7 +300,10 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
 
         if (currentCameraWrapper != null) {
             activePreview.stopCameraPreview()
-            activePreview.setCamera(null, null)
+            activePreview.setCamera(
+                cameraWrapper = null,
+                previewCallback = null
+            )
             currentCameraWrapper.camera.release()
             cameraWrapper = null
         }
@@ -333,28 +334,20 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
             val viewFinderViewWidth = currentViewFinderView.getWidth()
             val viewFinderViewHeight = currentViewFinderView.getHeight()
 
-            if (
-                framingRect == null ||
-                viewFinderViewWidth == 0 ||
-                viewFinderViewHeight == 0
-            ) {
+            if (framingRect == null || viewFinderViewWidth == 0 || viewFinderViewHeight == 0) {
                 return null
             }
 
             val rect = Rect(framingRect)
 
             if (previewWidth < viewFinderViewWidth) {
-                rect.left =
-                    rect.left * previewWidth / viewFinderViewWidth
-                rect.right =
-                    rect.right * previewWidth / viewFinderViewWidth
+                rect.left = rect.left * previewWidth / viewFinderViewWidth
+                rect.right = rect.right * previewWidth / viewFinderViewWidth
             }
 
             if (previewHeight < viewFinderViewHeight) {
-                rect.top =
-                    rect.top * previewHeight / viewFinderViewHeight
-                rect.bottom =
-                    rect.bottom * previewHeight / viewFinderViewHeight
+                rect.top = rect.top * previewHeight / viewFinderViewHeight
+                rect.bottom = rect.bottom * previewHeight / viewFinderViewHeight
             }
 
             framingRectInPreview = rect
@@ -369,26 +362,20 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
         val currentCameraWrapper = cameraWrapper
         if (
             currentCameraWrapper != null &&
-            CameraUtils.isFlashSupported(currentCameraWrapper.camera)
+            CameraUtils.isFlashSupported(camera = currentCameraWrapper.camera)
         ) {
             val parameters = currentCameraWrapper.camera.parameters
 
             if (isEnabled) {
-                val flashMode =
-                    parameters.flashMode ?: throw NullPointerException()
+                val flashMode = parameters.flashMode ?: throw NullPointerException()
 
-                if (flashMode == Camera.Parameters.FLASH_MODE_TORCH) {
-                    return
-                }
+                if (flashMode == Camera.Parameters.FLASH_MODE_TORCH) return
 
                 parameters.flashMode = Camera.Parameters.FLASH_MODE_TORCH
             } else {
-                val flashMode =
-                    parameters.flashMode ?: throw NullPointerException()
+                val flashMode = parameters.flashMode ?: throw NullPointerException()
 
-                if (flashMode == Camera.Parameters.FLASH_MODE_OFF) {
-                    return
-                }
+                if (flashMode == Camera.Parameters.FLASH_MODE_OFF) return
 
                 parameters.flashMode = Camera.Parameters.FLASH_MODE_OFF
             }
@@ -402,11 +389,10 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
 
         if (
             currentCameraWrapper != null &&
-            CameraUtils.isFlashSupported(currentCameraWrapper.camera)
+            CameraUtils.isFlashSupported(camera = currentCameraWrapper.camera)
         ) {
             val parameters = currentCameraWrapper.camera.parameters
-            val flashMode =
-                parameters.flashMode ?: throw NullPointerException()
+            val flashMode = parameters.flashMode ?: throw NullPointerException()
 
             return flashMode == Camera.Parameters.FLASH_MODE_TORCH
         }
@@ -419,11 +405,10 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
 
         if (
             currentCameraWrapper != null &&
-            CameraUtils.isFlashSupported(currentCameraWrapper.camera)
+            CameraUtils.isFlashSupported(camera = currentCameraWrapper.camera)
         ) {
             val parameters = currentCameraWrapper.camera.parameters
-            val flashMode =
-                parameters.flashMode ?: throw NullPointerException()
+            val flashMode = parameters.flashMode ?: throw NullPointerException()
 
             if (flashMode == Camera.Parameters.FLASH_MODE_TORCH) {
                 parameters.flashMode = Camera.Parameters.FLASH_MODE_OFF
@@ -463,8 +448,7 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
 
         if (rotations == 1 || rotations == 3) {
             for (rotationIndex in 0 until rotations) {
-                val currentData =
-                    previewData ?: throw NullPointerException()
+                val currentData = previewData ?: throw NullPointerException()
 
                 val rotatedData = ByteArray(currentData.size)
 

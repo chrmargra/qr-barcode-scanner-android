@@ -111,8 +111,8 @@ open class ViewFinderView : View, ViewFinder {
         this.borderLineLength = borderLineLength
     }
 
-    override fun setLaserEnabled(isLaserEnabled: Boolean) {
-        laserEnabledState = isLaserEnabled
+    override fun setLaserEnabled(isEnabled: Boolean) {
+        laserEnabledState = isEnabled
     }
 
     override fun setBorderCornerRounded(isBorderCornersRounded: Boolean) {

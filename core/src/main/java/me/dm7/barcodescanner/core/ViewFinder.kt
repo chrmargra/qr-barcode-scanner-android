@@ -14,7 +14,7 @@ interface ViewFinder {
 
     fun setBorderLineLength(borderLineLength: Int)
 
-    fun setLaserEnabled(isLaserEnabled: Boolean)
+    fun setLaserEnabled(isEnabled: Boolean)
 
     fun setBorderCornerRounded(isBorderCornersRounded: Boolean)
 
