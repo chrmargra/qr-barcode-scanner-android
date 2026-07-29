@@ -8,39 +8,39 @@ open class BarcodeFormat(
 ) {
 
     companion object {
-        val NONE = BarcodeFormat(Symbol.NONE, "NONE")
+        val NONE = BarcodeFormat(id = Symbol.NONE, name = "NONE")
 
-        val PARTIAL = BarcodeFormat(Symbol.PARTIAL, "PARTIAL")
+        val PARTIAL = BarcodeFormat(id = Symbol.PARTIAL, name = "PARTIAL")
 
-        val EAN8 = BarcodeFormat(Symbol.EAN8, "EAN8")
+        val EAN8 = BarcodeFormat(id = Symbol.EAN8, name = "EAN8")
 
-        val UPCE = BarcodeFormat(Symbol.UPCE, "UPCE")
+        val UPCE = BarcodeFormat(id = Symbol.UPCE, name = "UPCE")
 
-        val ISBN10 = BarcodeFormat(Symbol.ISBN10, "ISBN10")
+        val ISBN10 = BarcodeFormat(id = Symbol.ISBN10, name = "ISBN10")
 
-        val UPCA = BarcodeFormat(Symbol.UPCA, "UPCA")
+        val UPCA = BarcodeFormat(id = Symbol.UPCA, name = "UPCA")
 
-        val EAN13 = BarcodeFormat(Symbol.EAN13, "EAN13")
+        val EAN13 = BarcodeFormat(id = Symbol.EAN13, name = "EAN13")
 
-        val ISBN13 = BarcodeFormat(Symbol.ISBN13, "ISBN13")
+        val ISBN13 = BarcodeFormat(id = Symbol.ISBN13, name = "ISBN13")
 
-        val I25 = BarcodeFormat(Symbol.I25, "I25")
+        val I25 = BarcodeFormat(id = Symbol.I25, name = "I25")
 
-        val DATABAR = BarcodeFormat(Symbol.DATABAR, "DATABAR")
+        val DATABAR = BarcodeFormat(id = Symbol.DATABAR, name = "DATABAR")
 
-        val DATABAR_EXP = BarcodeFormat(Symbol.DATABAR_EXP, "DATABAR_EXP")
+        val DATABAR_EXP = BarcodeFormat(id = Symbol.DATABAR_EXP, name = "DATABAR_EXP")
 
-        val CODABAR = BarcodeFormat(Symbol.CODABAR, "CODABAR")
+        val CODABAR = BarcodeFormat(id = Symbol.CODABAR, name = "CODABAR")
 
-        val CODE39 = BarcodeFormat(Symbol.CODE39, "CODE39")
+        val CODE39 = BarcodeFormat(id = Symbol.CODE39, name = "CODE39")
 
-        val PDF417 = BarcodeFormat(Symbol.PDF417, "PDF417")
+        val PDF417 = BarcodeFormat(id = Symbol.PDF417, name = "PDF417")
 
-        val QRCODE = BarcodeFormat(Symbol.QRCODE, "QRCODE")
+        val QRCODE = BarcodeFormat(id = Symbol.QRCODE, name = "QRCODE")
 
-        val CODE93 = BarcodeFormat(Symbol.CODE93, "CODE93")
+        val CODE93 = BarcodeFormat(id = Symbol.CODE93, name = "CODE93")
 
-        val CODE128 = BarcodeFormat(Symbol.CODE128, "CODE128")
+        val CODE128 = BarcodeFormat(id = Symbol.CODE128, name = "CODE128")
 
         val ALL_FORMATS: MutableList<BarcodeFormat> = arrayListOf(
             PARTIAL,

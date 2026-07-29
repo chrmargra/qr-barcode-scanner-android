@@ -15,26 +15,19 @@ import net.sourceforge.zbar.Image
 import net.sourceforge.zbar.ImageScanner
 import net.sourceforge.zbar.Symbol
 
+private const val TAG = "ZBarScannerView"
+private const val ICONV_LIBRARY_NAME = "iconv"
+private const val ROTATION_COUNT_90_DEGREES = 1
+private const val ROTATION_COUNT_270_DEGREES = 3
+private const val ZBAR_IMAGE_FORMAT_Y800 = "Y800"
+
 open class ZBarScannerView : BarcodeScannerView {
-
-    companion object {
-        private const val TAG = "ZBarScannerView"
-        private const val ICONV_LIBRARY_NAME = "iconv"
-        private const val ROTATION_COUNT_90_DEGREES = 1
-        private const val ROTATION_COUNT_270_DEGREES = 3
-        private const val ZBAR_IMAGE_FORMAT_Y800 = "Y800"
-
-        init {
-            System.loadLibrary(ICONV_LIBRARY_NAME)
-        }
-    }
 
     private var scanner: ImageScanner? = null
     private var storedFormats: List<BarcodeFormat>? = null
     private var storedResultHandler: ResultHandler? = null
 
-    private val activeScanner: ImageScanner
-        get() = scanner ?: throw NullPointerException()
+    private val activeScanner: ImageScanner get() = scanner ?: throw NullPointerException()
 
     constructor(context: Context) : super(context) {
         setupScanner()
@@ -70,9 +63,7 @@ open class ZBarScannerView : BarcodeScannerView {
     }
 
     override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
-        if (storedResultHandler == null) {
-            return
-        }
+        if (storedResultHandler == null) return
 
         try {
             val activeCamera = camera ?: throw NullPointerException()
@@ -82,10 +73,7 @@ open class ZBarScannerView : BarcodeScannerView {
             var height = size.height
             var previewData = data
 
-            if (
-                DisplayUtils.getScreenOrientation(context) ==
-                Configuration.ORIENTATION_PORTRAIT
-            ) {
+            if (DisplayUtils.getScreenOrientation(context) == Configuration.ORIENTATION_PORTRAIT) {
                 val rotationCount = rotationCount
                 if (
                     rotationCount == ROTATION_COUNT_90_DEGREES ||
@@ -98,8 +86,10 @@ open class ZBarScannerView : BarcodeScannerView {
                 previewData = getRotatedData(previewData, activeCamera)
             }
 
-            val rect =
-                getFramingRectInPreview(width, height) ?: throw NullPointerException()
+            val rect = getFramingRectInPreview(
+                previewWidth = width,
+                previewHeight = height
+            ) ?: throw NullPointerException()
             val barcode = Image(width, height, ZBAR_IMAGE_FORMAT_Y800)
             barcode.data = previewData
             barcode.setCrop(rect.left, rect.top, rect.width(), rect.height())
@@ -135,7 +125,7 @@ open class ZBarScannerView : BarcodeScannerView {
                     storedResultHandler = null
 
                     stopCameraPreview()
-                    tmpResultHandler?.handleResult(rawResult)
+                    tmpResultHandler?.handleResult(rawResult = rawResult)
                 }
             } else {
                 activeCamera.setOneShotPreviewCallback(this)
@@ -149,5 +139,11 @@ open class ZBarScannerView : BarcodeScannerView {
     open fun resumeCameraPreview(resultHandler: ResultHandler?) {
         storedResultHandler = resultHandler
         super.resumeCameraPreview()
+    }
+
+    companion object {
+        init {
+            System.loadLibrary(ICONV_LIBRARY_NAME)
+        }
     }
 }
