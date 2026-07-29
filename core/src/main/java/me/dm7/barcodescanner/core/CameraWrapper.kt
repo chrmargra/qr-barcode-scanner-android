@@ -11,12 +11,13 @@ class CameraWrapper private constructor(
         fun getWrapper(
             camera: Camera?,
             cameraId: Int
-        ): CameraWrapper? {
-            return if (camera == null) {
-                null
-            } else {
-                CameraWrapper(camera, cameraId)
-            }
+        ): CameraWrapper? = if (camera == null) {
+            null
+        } else {
+            CameraWrapper(
+                camera = camera,
+                cameraId = cameraId
+            )
         }
     }
 }
