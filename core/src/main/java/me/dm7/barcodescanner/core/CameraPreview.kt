@@ -387,11 +387,11 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         return optimalSize
     }
 
-    open fun setAutoFocus(state: Boolean) {
+    open fun setAutoFocus(isEnabled: Boolean) {
         if (cameraWrapper != null && previewing) {
-            if (state == autoFocusState) return
+            if (isEnabled == autoFocusState) return
 
-            autoFocusState = state
+            autoFocusState = isEnabled
 
             if (autoFocusState) {
                 if (surfaceCreatedState) {

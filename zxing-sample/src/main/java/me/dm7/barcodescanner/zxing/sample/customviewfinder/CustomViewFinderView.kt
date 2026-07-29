@@ -35,12 +35,12 @@ class CustomViewFinderView : ViewFinderView {
         )
 
         paint.textSize = textPixelSize
-        setSquareViewFinder(true)
+        setSquareViewFinder(isSquareViewFinder = true)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        drawTradeMark(canvas)
+        drawTradeMark(canvas = canvas)
     }
 
     private fun drawTradeMark(canvas: Canvas) {

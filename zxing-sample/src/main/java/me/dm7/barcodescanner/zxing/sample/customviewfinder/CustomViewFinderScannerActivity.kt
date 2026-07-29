@@ -18,6 +18,11 @@ class CustomViewFinderScannerActivity : BaseScannerActivity(), ResultHandler {
 
     private var scannerView: ZXingScannerView? = null
 
+    val newScannerView = object : ZXingScannerView(context = this@CustomViewFinderScannerActivity) {
+        override fun createViewFinderView(context: Context): ViewFinder =
+            CustomViewFinderView(context = context)
+    }
+
     override fun onCreate(state: Bundle?) {
         super.onCreate(state)
 
@@ -26,12 +31,6 @@ class CustomViewFinderScannerActivity : BaseScannerActivity(), ResultHandler {
 
         setupToolbar(toolbar = binding.toolbar)
 
-        val newScannerView =
-            object : ZXingScannerView(context = this@CustomViewFinderScannerActivity) {
-                override fun createViewFinderView(context: Context): ViewFinder =
-                    CustomViewFinderView(context)
-            }
-
         scannerView = newScannerView
         binding.contentFrame.addView(newScannerView)
     }
@@ -39,13 +38,12 @@ class CustomViewFinderScannerActivity : BaseScannerActivity(), ResultHandler {
     override fun onResume() {
         super.onResume()
 
-        scannerView?.setResultHandler(this)
+        scannerView?.setResultHandler(resultHandler = this)
         scannerView?.startCamera()
     }
 
     override fun onPause() {
         super.onPause()
-
         scannerView?.stopCamera()
     }
 
@@ -62,7 +60,7 @@ class CustomViewFinderScannerActivity : BaseScannerActivity(), ResultHandler {
         // I don't know why this is the case but I don't have the time to figure out.
         Handler(Looper.getMainLooper()).postDelayed(
             {
-                scannerView?.resumeCameraPreview(this)
+                scannerView?.resumeCameraPreview(resultHandler = this)
             },
             DELAY
         )

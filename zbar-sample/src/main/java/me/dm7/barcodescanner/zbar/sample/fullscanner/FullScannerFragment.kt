@@ -140,8 +140,8 @@ class FullScannerFragment :
         super.onResume()
         scannerView?.setResultHandler(resultHandler = this)
         scannerView?.startCamera(cameraId = cameraId)
-        scannerView?.setFlash(flag = flash)
-        scannerView?.setAutoFocus(state = autoFocus)
+        scannerView?.setFlash(isEnabled = flash)
+        scannerView?.setAutoFocus(isEnabled = autoFocus)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -203,8 +203,8 @@ class FullScannerFragment :
     override fun onCameraSelected(cameraId: Int) {
         this.cameraId = cameraId
         scannerView?.startCamera(cameraId = this.cameraId)
-        scannerView?.setFlash(flag = flash)
-        scannerView?.setAutoFocus(state = autoFocus)
+        scannerView?.setFlash(isEnabled = flash)
+        scannerView?.setAutoFocus(isEnabled = autoFocus)
     }
 
     private fun setupFormats() {

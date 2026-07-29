@@ -363,8 +363,8 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
         return framingRectInPreview
     }
 
-    open fun setFlash(flag: Boolean) {
-        flashState = flag
+    open fun setFlash(isEnabled: Boolean) {
+        flashState = isEnabled
 
         val currentCameraWrapper = cameraWrapper
         if (
@@ -373,7 +373,7 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
         ) {
             val parameters = currentCameraWrapper.camera.parameters
 
-            if (flag) {
+            if (isEnabled) {
                 val flashMode =
                     parameters.flashMode ?: throw NullPointerException()
 
@@ -435,9 +435,9 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
         }
     }
 
-    open fun setAutoFocus(state: Boolean) {
-        autoFocusState = state
-        preview?.setAutoFocus(state)
+    open fun setAutoFocus(isEnabled: Boolean) {
+        autoFocusState = isEnabled
+        preview?.setAutoFocus(isEnabled = isEnabled)
     }
 
     open fun setShouldScaleToFill(shouldScaleToFill: Boolean) {
