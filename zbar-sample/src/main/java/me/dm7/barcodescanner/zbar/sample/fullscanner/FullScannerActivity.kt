@@ -59,17 +59,17 @@ class FullScannerActivity :
         setContentView(binding.root)
         setupToolbar(toolbar = binding.toolbar)
 
-        scannerView = ZBarScannerView(this)
+        scannerView = ZBarScannerView(context = this)
         setupFormats()
         binding.contentFrame.addView(scannerView)
     }
 
     override fun onResume() {
         super.onResume()
-        scannerView?.setResultHandler(this)
-        scannerView?.startCamera(cameraId)
-        scannerView?.setFlash(flash)
-        scannerView?.setAutoFocus(autoFocus)
+        scannerView?.setResultHandler(resultHandler = this)
+        scannerView?.startCamera(cameraId = cameraId)
+        scannerView?.setFlash(flag = flash)
+        scannerView?.setAutoFocus(state = autoFocus)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -181,7 +181,7 @@ class FullScannerActivity :
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        scannerView?.resumeCameraPreview(this)
+        scannerView?.resumeCameraPreview(resultHandler = this)
     }
 
     override fun onFormatsSaved(selectedIndices: ArrayList<Int>) {
@@ -191,9 +191,9 @@ class FullScannerActivity :
 
     override fun onCameraSelected(cameraId: Int) {
         this.cameraId = cameraId
-        scannerView?.startCamera(this.cameraId)
-        scannerView?.setFlash(flash)
-        scannerView?.setAutoFocus(autoFocus)
+        scannerView?.startCamera(cameraId = this.cameraId)
+        scannerView?.setFlash(flag = flash)
+        scannerView?.setAutoFocus(state = autoFocus)
     }
 
     private fun setupFormats() {
@@ -201,8 +201,8 @@ class FullScannerActivity :
 
         if (selectedIndices == null || selectedIndices?.isEmpty() == true) {
             selectedIndices = ArrayList()
-            for (i in BarcodeFormat.ALL_FORMATS.indices) {
-                selectedIndices?.add(i)
+            for (index in BarcodeFormat.ALL_FORMATS.indices) {
+                selectedIndices?.add(index)
             }
         }
 
@@ -212,7 +212,7 @@ class FullScannerActivity :
             }
         }
 
-        scannerView?.setFormats(formats)
+        scannerView?.setFormats(formats = formats)
     }
 
     override fun onPause() {

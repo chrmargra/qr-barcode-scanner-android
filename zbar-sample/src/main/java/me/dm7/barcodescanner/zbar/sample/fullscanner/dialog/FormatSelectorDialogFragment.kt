@@ -56,11 +56,9 @@ class FormatSelectorDialogFragment : DialogFragment() {
         fun newInstance(
             listener: FormatSelectorDialogListener,
             selectedIndices: ArrayList<Int>?
-        ): FormatSelectorDialogFragment {
-            return FormatSelectorDialogFragment().apply {
-                this.selectedIndices = ArrayList(selectedIndices ?: emptyList())
-                this.listener = listener
-            }
+        ): FormatSelectorDialogFragment = FormatSelectorDialogFragment().apply {
+            this.selectedIndices = ArrayList(selectedIndices.orEmpty())
+            this.listener = listener
         }
     }
 }

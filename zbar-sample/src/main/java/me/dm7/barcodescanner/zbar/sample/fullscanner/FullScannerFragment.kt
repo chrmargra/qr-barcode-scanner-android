@@ -48,7 +48,7 @@ class FullScannerFragment :
         container: ViewGroup?,
         state: Bundle?
     ): View? {
-        scannerView = ZBarScannerView(requireActivity())
+        scannerView = ZBarScannerView(context = requireActivity())
 
         if (state != null) {
             flash = state.getBoolean(FLASH_STATE, false)
@@ -138,10 +138,10 @@ class FullScannerFragment :
 
     override fun onResume() {
         super.onResume()
-        scannerView?.setResultHandler(this)
-        scannerView?.startCamera(cameraId)
-        scannerView?.setFlash(flash)
-        scannerView?.setAutoFocus(autoFocus)
+        scannerView?.setResultHandler(resultHandler = this)
+        scannerView?.startCamera(cameraId = cameraId)
+        scannerView?.setFlash(flag = flash)
+        scannerView?.setAutoFocus(state = autoFocus)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -192,7 +192,7 @@ class FullScannerFragment :
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        scannerView?.resumeCameraPreview(this)
+        scannerView?.resumeCameraPreview(resultHandler = this)
     }
 
     override fun onFormatsSaved(selectedIndices: ArrayList<Int>) {
@@ -202,9 +202,9 @@ class FullScannerFragment :
 
     override fun onCameraSelected(cameraId: Int) {
         this.cameraId = cameraId
-        scannerView?.startCamera(this.cameraId)
-        scannerView?.setFlash(flash)
-        scannerView?.setAutoFocus(autoFocus)
+        scannerView?.startCamera(cameraId = this.cameraId)
+        scannerView?.setFlash(flag = flash)
+        scannerView?.setAutoFocus(state = autoFocus)
     }
 
     private fun setupFormats() {
@@ -212,8 +212,8 @@ class FullScannerFragment :
 
         if (selectedIndices == null || selectedIndices?.isEmpty() == true) {
             selectedIndices = ArrayList()
-            for (i in BarcodeFormat.ALL_FORMATS.indices) {
-                selectedIndices?.add(i)
+            for (index in BarcodeFormat.ALL_FORMATS.indices) {
+                selectedIndices?.add(index)
             }
         }
 
