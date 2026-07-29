@@ -14,7 +14,6 @@ import net.sourceforge.zbar.Config
 import net.sourceforge.zbar.Image
 import net.sourceforge.zbar.ImageScanner
 import net.sourceforge.zbar.Symbol
-import java.nio.charset.StandardCharsets
 
 open class ZBarScannerView : BarcodeScannerView {
 
@@ -117,7 +116,7 @@ open class ZBarScannerView : BarcodeScannerView {
                         Weirdly ZBar transforms all data to UTF-8, even the data returned
                         by getDataBytes() so we have to decode it as UTF-8.
                     */
-                    val symData = String(sym.dataBytes, StandardCharsets.UTF_8)
+                    val symData = String(sym.dataBytes, Charsets.UTF_8)
                     if (!TextUtils.isEmpty(symData)) {
                         rawResult.contents = symData
                         rawResult.barcodeFormat = BarcodeFormat.getFormatById(sym.type)

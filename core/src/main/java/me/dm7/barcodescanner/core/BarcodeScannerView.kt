@@ -10,7 +10,6 @@ import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
-import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 
 private const val NINETY_DEGREES_ROTATION = 90
@@ -28,11 +27,9 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
 
     private var laserEnabledState = true
 
-    @ColorInt
     private var storedLaserColor =
         ContextCompat.getColor(context, R.color.viewfinder_laser)
 
-    @ColorInt
     private var storedBorderColor =
         ContextCompat.getColor(context, R.color.viewfinder_border)
 

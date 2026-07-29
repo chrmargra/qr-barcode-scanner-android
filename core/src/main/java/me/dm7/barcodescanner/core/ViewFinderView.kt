@@ -57,20 +57,17 @@ open class ViewFinderView : View, ViewFinder {
     private val defaultBorderLineLength = resources.getInteger(R.integer.viewfinder_border_length)
 
     // Set up laser paint
-    @JvmField
     protected var laserPaint: Paint = Paint().apply {
         color = defaultLaserColor
         style = Paint.Style.FILL
     }
 
     // Finder mask paint
-    @JvmField
     protected var finderMaskPaint: Paint = Paint().apply {
         color = defaultMaskColor
     }
 
     // Border paint
-    @JvmField
     protected var borderPaint: Paint = Paint().apply {
         color = defaultBorderColor
         style = Paint.Style.STROKE

@@ -27,7 +27,6 @@ private const val ROTATION_COUNT_270_DEGREES = 3
 open class ZXingScannerView : BarcodeScannerView {
 
     companion object {
-        @JvmField
         val ALL_FORMATS: MutableList<BarcodeFormat> = arrayListOf(
             BarcodeFormat.AZTEC,
             BarcodeFormat.CODABAR,

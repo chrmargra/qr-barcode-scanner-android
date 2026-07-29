@@ -12,6 +12,8 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
 import android.view.WindowManager
+import kotlin.math.abs
+import kotlin.math.max
 
 private const val TAG = "CameraPreview"
 private const val ROTATION_DEGREES_0 = 0
@@ -214,7 +216,6 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         }
     }
 
-    @Suppress("SuspiciousNameCombination")
     private fun convertSizeToLandscapeOrientation(size: Point): Point {
         return if (
             displayOrientation % HALF_ROTATION_DEGREES ==
@@ -226,7 +227,6 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         }
     }
 
-    @Suppress("SuspiciousNameCombination")
     private fun setViewSize(width: Int, height: Int) {
         val currentLayoutParams = layoutParams
         var tmpWidth: Int
@@ -253,7 +253,7 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
             val ratioHeight =
                 parentHeight.toFloat() / tmpHeight.toFloat()
 
-            val compensation = Math.max(ratioWidth, ratioHeight)
+            val compensation = max(ratioWidth, ratioHeight)
 
             tmpWidth = Math.round(tmpWidth * compensation)
             tmpHeight = Math.round(tmpHeight * compensation)
@@ -360,15 +360,9 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
             val ratio =
                 size.width.toDouble() / size.height.toDouble()
 
-            if (
-                Math.abs(ratio - targetRatio) >
-                storedAspectTolerance
-            ) {
-                continue
-            }
+            if (abs(ratio - targetRatio) > storedAspectTolerance) continue
 
-            val heightDifference =
-                Math.abs(size.height - targetHeight).toDouble()
+            val heightDifference = abs(size.height - targetHeight).toDouble()
 
             if (heightDifference < minDiff) {
                 optimalSize = size
@@ -381,8 +375,7 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
             minDiff = Double.MAX_VALUE
 
             for (size in sizes) {
-                val heightDifference =
-                    Math.abs(size.height - targetHeight).toDouble()
+                val heightDifference = abs(size.height - targetHeight).toDouble()
 
                 if (heightDifference < minDiff) {
                     optimalSize = size

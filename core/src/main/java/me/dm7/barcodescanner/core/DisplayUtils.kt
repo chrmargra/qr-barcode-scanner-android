@@ -7,7 +7,6 @@ import android.view.WindowManager
 
 object DisplayUtils {
 
-    @JvmStatic
     fun getScreenResolution(context: Context): Point {
         val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
         val display = windowManager?.defaultDisplay
@@ -17,7 +16,6 @@ object DisplayUtils {
         return screenResolution
     }
 
-    @JvmStatic
     fun getScreenOrientation(context: Context): Int {
         val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
             ?: return Configuration.ORIENTATION_UNDEFINED

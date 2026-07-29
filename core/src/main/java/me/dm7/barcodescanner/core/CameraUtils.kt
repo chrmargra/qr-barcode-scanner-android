@@ -7,13 +7,11 @@ object CameraUtils {
     /**
      * A safe way to get an instance of the Camera object.
      */
-    @JvmStatic
     fun getCameraInstance(): Camera? = getCameraInstance(cameraId = getDefaultCameraId())
 
     /**
      * Favor back-facing camera by default. If none exists, fallback to whatever camera is available.
      */
-    @JvmStatic
     fun getDefaultCameraId(): Int {
         val numberOfCameras = Camera.getNumberOfCameras()
         val cameraInfo = Camera.CameraInfo()
@@ -33,7 +31,6 @@ object CameraUtils {
     /**
      * A safe way to get an instance of the Camera object.
      */
-    @JvmStatic
     fun getCameraInstance(cameraId: Int): Camera? {
         return try {
             if (cameraId == -1) {
@@ -47,7 +44,6 @@ object CameraUtils {
         }
     }
 
-    @JvmStatic
     fun isFlashSupported(camera: Camera?): Boolean {
         // Credits: Top answer at http://stackoverflow.com/a/19599365/868173
         if (camera == null) return false
