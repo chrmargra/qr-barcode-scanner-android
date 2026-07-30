@@ -6,10 +6,12 @@ import android.os.HandlerThread
 import android.os.Looper
 import me.dm7.barcodescanner.core.BarcodeScannerView
 
+private const val HANDLER_THREAD_NAME = "CameraHandlerThread"
+
 // This code is mostly based on the top answer here: http://stackoverflow.com/questions/18149964/best-use-of-handlerthread-over-other-similar-classes
 class CameraHandlerThread(
     private val scannerView: BarcodeScannerView
-) : HandlerThread("CameraHandlerThread") {
+) : HandlerThread(HANDLER_THREAD_NAME) {
 
     init {
         start()
