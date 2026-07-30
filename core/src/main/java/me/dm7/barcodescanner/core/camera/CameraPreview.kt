@@ -1,4 +1,4 @@
-package me.dm7.barcodescanner.core
+package me.dm7.barcodescanner.core.camera
 
 import android.content.Context
 import android.content.res.Configuration
@@ -6,12 +6,13 @@ import android.graphics.Point
 import android.hardware.Camera
 import android.os.Handler
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Surface
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
 import android.view.WindowManager
+import me.dm7.barcodescanner.core.logger.QRBarcodeLogger
+import me.dm7.barcodescanner.core.util.DisplayUtils
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -178,7 +179,11 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
                     }
                 }
             } catch (exception: Exception) {
-                Log.e(TAG, exception.toString(), exception)
+                QRBarcodeLogger.error(
+                    tag = TAG,
+                    message = exception.toString(),
+                    throwable = exception
+                )
             }
         }
     }
@@ -202,7 +207,11 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
                 activeCameraWrapper.camera.setOneShotPreviewCallback(null)
                 activeCameraWrapper.camera.stopPreview()
             } catch (exception: Exception) {
-                Log.e(TAG, exception.toString(), exception)
+                QRBarcodeLogger.error(
+                    tag = TAG,
+                    message = exception.toString(),
+                    throwable = exception
+                )
             }
         }
     }
@@ -375,14 +384,20 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
             if (autoFocusState) {
                 if (surfaceCreatedState) {
                     // Check if surface created before using autofocus
-                    Log.v(TAG, "Starting autofocus")
+                    QRBarcodeLogger.verbose(
+                        tag = TAG,
+                        message = "Starting autofocus"
+                    )
                     safeAutoFocus()
                 } else {
                     // Wait 1 sec and then do check again
                     scheduleAutoFocus()
                 }
             } else {
-                Log.v(TAG, "Cancelling autofocus")
+                QRBarcodeLogger.verbose(
+                    tag = TAG,
+                    message = "Cancelling autofocus"
+                )
                 activeCameraWrapper.camera.cancelAutoFocus()
             }
         }

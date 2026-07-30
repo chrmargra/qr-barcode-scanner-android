@@ -6,7 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import com.google.zxing.Result
-import me.dm7.barcodescanner.core.ViewFinder
+import me.dm7.barcodescanner.core.viewfinder.ViewFinder
 import me.dm7.barcodescanner.zxing.ResultHandler
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import me.dm7.barcodescanner.zxing.sample.base.BaseScannerActivity

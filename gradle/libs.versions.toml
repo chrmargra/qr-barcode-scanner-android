@@ -1,14 +1,12 @@
 [versions]
 agp = "9.3.1"
 kotlin = "2.4.10"
-androidxAnnotation = "1.10.0"
 androidxAppcompat = "1.7.1"
 material = "1.14.0"
 zxing = "3.5.4"
 core = "1.19.0"
 
 [libraries]
-androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }

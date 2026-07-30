@@ -14,7 +14,7 @@ android {
         applicationId = "me.dm7.barcodescanner.zbar.sample"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2000
+        versionCode = 2001
         versionName = "2.1.0"
     }
 

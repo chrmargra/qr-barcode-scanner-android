@@ -6,7 +6,6 @@ import android.hardware.Camera
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
-import android.util.Log
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.DecodeHintType
@@ -17,7 +16,8 @@ import com.google.zxing.ReaderException
 import com.google.zxing.Result
 import com.google.zxing.common.HybridBinarizer
 import me.dm7.barcodescanner.core.BarcodeScannerView
-import me.dm7.barcodescanner.core.DisplayUtils
+import me.dm7.barcodescanner.core.logger.QRBarcodeLogger
+import me.dm7.barcodescanner.core.util.DisplayUtils
 import java.util.EnumMap
 
 private const val TAG = "ZXingScannerView"
@@ -147,9 +147,13 @@ open class ZXingScannerView : BarcodeScannerView {
             } else {
                 activeCamera.setOneShotPreviewCallback(this)
             }
-        } catch (e: RuntimeException) {
+        } catch (exception: RuntimeException) {
             // TODO: Terrible hack. It is possible that this method is invoked after camera is released.
-            Log.e(TAG, e.toString(), e)
+            QRBarcodeLogger.error(
+                tag = TAG,
+                message = exception.toString(),
+                throwable = exception
+            )
         }
     }
 

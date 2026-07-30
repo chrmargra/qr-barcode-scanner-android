@@ -11,6 +11,12 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
+import me.dm7.barcodescanner.core.camera.CameraHandlerThread
+import me.dm7.barcodescanner.core.camera.CameraPreview
+import me.dm7.barcodescanner.core.camera.CameraUtils
+import me.dm7.barcodescanner.core.camera.CameraWrapper
+import me.dm7.barcodescanner.core.viewfinder.ViewFinder
+import me.dm7.barcodescanner.core.viewfinder.ViewFinderView
 
 private const val NINETY_DEGREES_ROTATION = 90
 

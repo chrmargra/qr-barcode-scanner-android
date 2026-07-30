@@ -1,4 +1,4 @@
-package me.dm7.barcodescanner.core
+package me.dm7.barcodescanner.core.viewfinder
 
 import android.graphics.Rect
 

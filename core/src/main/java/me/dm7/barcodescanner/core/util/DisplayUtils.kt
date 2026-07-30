@@ -1,4 +1,4 @@
-package me.dm7.barcodescanner.core
+package me.dm7.barcodescanner.core.util
 
 import android.content.Context
 import android.content.res.Configuration

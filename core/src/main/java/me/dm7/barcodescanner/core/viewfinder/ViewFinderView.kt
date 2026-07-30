@@ -1,4 +1,4 @@
-package me.dm7.barcodescanner.core
+package me.dm7.barcodescanner.core.viewfinder
 
 import android.content.Context
 import android.content.res.Configuration
@@ -11,6 +11,8 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
+import me.dm7.barcodescanner.core.util.DisplayUtils
+import me.dm7.barcodescanner.core.R
 
 private const val PORTRAIT_WIDTH_RATIO = 6f / 8f
 private const val PORTRAIT_WIDTH_HEIGHT_RATIO = 0.75f

@@ -7,9 +7,9 @@ import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.util.Log
 import me.dm7.barcodescanner.core.BarcodeScannerView
-import me.dm7.barcodescanner.core.DisplayUtils
+import me.dm7.barcodescanner.core.logger.QRBarcodeLogger
+import me.dm7.barcodescanner.core.util.DisplayUtils
 import net.sourceforge.zbar.Config
 import net.sourceforge.zbar.Image
 import net.sourceforge.zbar.ImageScanner
@@ -133,9 +133,13 @@ open class ZBarScannerView : BarcodeScannerView {
             } else {
                 activeCamera.setOneShotPreviewCallback(this)
             }
-        } catch (e: RuntimeException) {
+        } catch (exception: RuntimeException) {
             // TODO: Terrible hack. It is possible that this method is invoked after camera is released.
-            Log.e(TAG, e.toString(), e)
+            QRBarcodeLogger.error(
+                tag = TAG,
+                message = exception.toString(),
+                throwable = exception
+            )
         }
     }
 

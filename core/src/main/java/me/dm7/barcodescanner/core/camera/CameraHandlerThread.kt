@@ -1,9 +1,10 @@
-package me.dm7.barcodescanner.core
+package me.dm7.barcodescanner.core.camera
 
 import android.hardware.Camera
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
+import me.dm7.barcodescanner.core.BarcodeScannerView
 
 // This code is mostly based on the top answer here: http://stackoverflow.com/questions/18149964/best-use-of-handlerthread-over-other-similar-classes
 class CameraHandlerThread(
