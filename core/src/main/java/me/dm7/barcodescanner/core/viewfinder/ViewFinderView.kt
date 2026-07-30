@@ -30,6 +30,17 @@ private const val MAX_ALPHA = 255
 
 private const val CENTER_DIVISOR = 2
 
+private val SCANNER_ALPHA = intArrayOf(
+    0,
+    64,
+    128,
+    192,
+    255,
+    192,
+    128,
+    64
+)
+
 open class ViewFinderView : View, ViewFinder {
 
     private var storedFramingRect: Rect? = null
@@ -325,19 +336,6 @@ open class ViewFinderView : View, ViewFinder {
             topOffset + finderOffset,
             leftOffset + framingWidth - finderOffset,
             topOffset + framingHeight - finderOffset
-        )
-    }
-
-    companion object {
-        private val SCANNER_ALPHA = intArrayOf(
-            0,
-            64,
-            128,
-            192,
-            255,
-            192,
-            128,
-            64
         )
     }
 }
