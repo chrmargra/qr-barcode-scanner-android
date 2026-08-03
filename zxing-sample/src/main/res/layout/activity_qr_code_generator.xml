@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:theme="@style/AppTheme">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@color/actionbar_opacity"
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/ToolbarPopupTheme"
+        app:theme="@style/TransparentToolbar" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/qr_code_generator_instruction"
+        android:textSize="16sp" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edit_qr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="24dp"
+        android:hint="@string/qr_code_generator_hint"
+        android:imeOptions="actionDone"
+        android:inputType="text"
+        android:maxLines="1" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_generate_qr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="24dp"
+        android:enabled="false"
+        android:text="@string/qr_code_generator_generate"
+        android:textAllCaps="false"
+        app:cornerRadius="20dp" />
+
+    <ImageView
+        android:id="@+id/image_result"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="24dp" />
+
+    <com.google.android.material.loadingindicator.LoadingIndicator
+        android:id="@+id/loader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="24dp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+</LinearLayout>

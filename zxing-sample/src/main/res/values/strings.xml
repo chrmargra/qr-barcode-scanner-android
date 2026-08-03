@@ -14,6 +14,10 @@
     <string name="full_screen_sample">Full Screen Fragment Sample</string>
     <string name="custom_view_finder_sample">Custom View Finder Sample</string>
     <string name="scaling_sample">Scaling Sample</string>
+    <string name="qr_code_generator_sample">QR Code Generator Sample</string>
+    <string name="qr_code_generator_instruction">Write something to generate a QR Code:</string>
+    <string name="qr_code_generator_hint">Write something</string>
+    <string name="qr_code_generator_generate">Generate QR Code</string>
     <string name="scanner_instructions">Place a barcode in the viewfinder rectangle to scan it.</string>
     <string name="toggle_flash">Flash</string>
     <string name="flash_on">Flash [ON]</string>

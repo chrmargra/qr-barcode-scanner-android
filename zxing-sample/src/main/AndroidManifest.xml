@@ -78,5 +78,11 @@
             android:label="@string/scaling_scanner_activity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".qrcodegenerator.QRCodeGeneratorActivity"
+            android:label="@string/qr_code_generator_sample"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
     </application>
 </manifest>
