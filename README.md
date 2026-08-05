@@ -271,6 +271,8 @@ try {
 
 Because the bitmap uses `Bitmap.Config.RGB_565`, alpha transparency is not preserved.
 
+Please take a look at [QRCodeGeneratorActivity.kt](./zxing-sample/src/main/java/me/dm7/barcodescanner/zxing/sample/qrcodegenerator/QRCodeGeneratorActivity.kt) for a complete working example of QR code generation.
+
 Advanced Usage
 --------------
 
@@ -473,6 +475,8 @@ BarcodeFormat.CODE128
 
 Rebuilding ZBar Libraries
 =========================
+
+> These legacy instructions are preserved from the original project and have not been verified with current Android SDK and NDK tooling.
 
 ```bash
 mkdir some_work_dir
