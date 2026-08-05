@@ -222,9 +222,7 @@ The `:zxing` module can generate QR code bitmaps without requiring an Android `C
 ```kotlin
 import me.dm7.barcodescanner.zxing.encoder.QRCodeEncoder
 
-val bitmap = QRCodeEncoder.encodeQRCode(
-    value = "https://example.com",
-)
+val bitmap = QRCodeEncoder.encodeQRCode(value = "https://example.com")
 
 imageView.setImageBitmap(bitmap)
 ```
@@ -246,7 +244,7 @@ val bitmap = QRCodeEncoder.encodeQRCode(
     value = "https://example.com",
     resolution = 800,
     foregroundColor = Color.BLUE,
-    backgroundColor = Color.WHITE,
+    backgroundColor = Color.WHITE
 )
 ```
 
@@ -257,9 +255,7 @@ import com.google.zxing.WriterException
 import me.dm7.barcodescanner.zxing.encoder.QRCodeEncoder
 
 try {
-    val bitmap = QRCodeEncoder.encodeQRCode(
-        value = value,
-    )
+    val bitmap = QRCodeEncoder.encodeQRCode(value = value)
 
     imageView.setImageBitmap(bitmap)
 } catch (exception: IllegalArgumentException) {
