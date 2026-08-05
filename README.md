@@ -11,11 +11,13 @@ All original credits, copyright notices, and license terms are preserved. This f
 - [Maintenance status](#maintenance-status)
 - [Original project status](#original-project-status)
 - [Introduction](#introduction)
+- [Version catalogs when using local modules](#version-catalogs-when-using-local-modules)
 - [Screenshots](#screenshots)
 - [Minor BREAKING CHANGE in 1.8.4](#minor-breaking-change-in-184)
 - [ZXing](#zxing)
   - [Installation](#installation)
   - [Simple Usage](#simple-usage)
+  - [QR Code Generation](#qr-code-generation)
   - [Advanced Usage](#advanced-usage)
 - [ZBar](#zbar)
   - [Installation](#installation-1)
@@ -46,7 +48,54 @@ This project is no longer maintained. When I first started this project in late 
 Introduction
 ============
 
-An Android library project that provides easy-to-use and extensible barcode scanner views based on ZXing and ZBar.  
+An Android library project that provides easy-to-use and extensible barcode scanner views based on ZXing and ZBar. The ZXing module also provides QR code bitmap generation.
+
+Version catalogs when using local modules
+=========================================
+
+When `:core`, `:zxing`, or `:zbar` are included using `projectDir`, they become subprojects of the consuming application.
+
+As a result, references such as `libs.androidx.core.ktx` inside the library modules are resolved from the consuming application's root `gradle/libs.versions.toml`. The version catalog from this repository is only used when building this repository directly.
+
+The consuming application must therefore provide the aliases required by the included modules:
+
+| Included module | Required aliases |
+| --- | --- |
+| `:core` | `android-library`, `androidx-core-ktx` |
+| `:zxing` | All `:core` aliases plus `zxing-core` |
+| `:zbar` | All `:core` aliases |
+
+Merge the required entries into the application's existing `gradle/libs.versions.toml`:
+
+```toml
+[versions]
+agp = "9.3.1"
+coreKtx = "1.19.0"
+zxing = "3.5.4"
+
+[libraries]
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+zxing-core = { module = "com.google.zxing:core", version.ref = "zxing" }
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "agp" }
+```
+
+If any of these aliases already exist in the application catalog, keep the existing entry instead of declaring it again. The consuming application controls the versions used by all included subprojects.
+
+The alias names on the left must match because Gradle converts hyphens into nested accessors:
+
+| TOML alias | Generated accessor |
+| --- | --- |
+| `androidx-core-ktx` | `libs.androidx.core.ktx` |
+| `zxing-core` | `libs.zxing.core` |
+| `android-library` | `libs.plugins.android.library` |
+
+Use `module = "group:artifact"` when declaring a dependency in compact form. Do not put `group:artifact` inside `group`, because `group` requires a separate `name` property.
+
+Declaring an alias in the version catalog does not add that dependency directly to the application module. It only makes the dependency available to the included library build scripts.
+
+For more information, see the [Gradle version catalog documentation](https://docs.gradle.org/current/userguide/version_catalogs.html).
 
 Screenshots
 ===========
@@ -97,28 +146,26 @@ dependencies {
 
 The `:zxing` module depends on `:core`, so you normally do not need to add `:core` directly as a dependency.  
 
-Depending on your project setup, you may also need to declare dependencies used by the local library modules in your own version catalog, for example:  
+Because these modules are included as subprojects, make sure the consuming application's version catalog provides the aliases required by `:core` and `:zxing`. See [Version catalogs when using local modules](#version-catalogs-when-using-local-modules).
 
-```toml
-[versions]
-androidxAnnotation = "1.9.1"
-zxing = "3.5.4"
+The `:core` module declares the `CAMERA` permission and marks the back-facing camera feature as optional with `android:required="false"`. These declarations are merged into the consuming application's manifest. Apps must still request the camera permission at runtime before starting the scanner.
 
-[libraries]
-androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
-zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
+If the consuming application cannot function without a camera, declare any available camera as required in the application's manifest:
+
+```xml
+<uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="true" />
 ```
-
-The core module declares the camera permission and required camera feature in its manifest. Apps still need to request the camera permission at runtime before starting the scanner.  
 
 Simple Usage
 ------------
 
-1.) Add camera permission to your AndroidManifest.xml file:
+1.) Request the camera permission at runtime before starting the scanner.
 
-```xml
-<uses-permission android:name="android.permission.CAMERA" />
-```
+The `CAMERA` permission is already contributed by the `:core` module and merged into the application's manifest. The example below assumes that the permission has already been granted.
+
+See [MainActivity.kt](./zxing-sample/src/main/java/me/dm7/barcodescanner/zxing/sample/MainActivity.kt) for a complete runtime permission example.
 
 2.) A very basic activity would look like this:
 
@@ -167,6 +214,63 @@ class SimpleScannerActivity : Activity(), ResultHandler {
 
 Please take a look at the [zxing-sample](./zxing-sample) project for a full working example.  
 
+QR Code Generation
+------------------
+
+The `:zxing` module can generate QR code bitmaps without requiring an Android `Context`.
+
+```kotlin
+import me.dm7.barcodescanner.zxing.encoder.QRCodeEncoder
+
+val bitmap = QRCodeEncoder.encodeQRCode(
+    value = "https://example.com",
+)
+
+imageView.setImageBitmap(bitmap)
+```
+
+By default, the generated QR code uses:
+
+- A requested resolution of `500 × 500` pixels.
+- Black QR code modules.
+- A white background.
+- `Bitmap.Config.RGB_565`.
+
+The resolution and colors can be customized:
+
+```kotlin
+import android.graphics.Color
+import me.dm7.barcodescanner.zxing.encoder.QRCodeEncoder
+
+val bitmap = QRCodeEncoder.encodeQRCode(
+    value = "https://example.com",
+    resolution = 800,
+    foregroundColor = Color.BLUE,
+    backgroundColor = Color.WHITE,
+)
+```
+
+The method returns a non-null `Bitmap`. It throws an exception if the input is invalid or ZXing cannot encode the supplied value, allowing the application to decide how to handle the failure:
+
+```kotlin
+import com.google.zxing.WriterException
+import me.dm7.barcodescanner.zxing.encoder.QRCodeEncoder
+
+try {
+    val bitmap = QRCodeEncoder.encodeQRCode(
+        value = value,
+    )
+
+    imageView.setImageBitmap(bitmap)
+} catch (exception: IllegalArgumentException) {
+    // The value is empty or the resolution is not greater than zero.
+} catch (exception: WriterException) {
+    // ZXing could not encode the supplied value.
+}
+```
+
+Because the bitmap uses `Bitmap.Config.RGB_565`, alpha transparency is not preserved.
+
 Advanced Usage
 --------------
 
@@ -176,13 +280,13 @@ Interesting methods on the ZXingScannerView include:
 
 ```kotlin
 // Toggle flash:
-fun setFlash(flag: Boolean)
+fun setFlash(isEnabled: Boolean)
 
 // Toggle autofocus:
-fun setAutoFocus(state: Boolean)
+fun setAutoFocus(isEnabled: Boolean)
 
 // Specify interested barcode formats:
-fun setFormats(formats: List<BarcodeFormat>)
+fun setFormats(formats: List<BarcodeFormat>?)
 
 // Specify the cameraId to start with:
 fun startCamera(cameraId: Int)
@@ -251,26 +355,26 @@ dependencies {
 
 The `:zbar` module depends on `:core`, so you normally do not need to add `:core` directly as a dependency.  
 
-Depending on your project setup, you may also need to declare dependencies used by the local library modules in your own version catalog, for example:  
+Because these modules are included as subprojects, make sure the consuming application's version catalog provides the aliases required by `:core`. The `:zbar` module does not require the `zxing-core` alias. See [Version catalogs when using local modules](#version-catalogs-when-using-local-modules).
 
-```toml
-[versions]
-androidxAnnotation = "1.9.1"
+The `:core` module declares the `CAMERA` permission and marks the back-facing camera feature as optional with `android:required="false"`. These declarations are merged into the consuming application's manifest. Apps must still request the camera permission at runtime before starting the scanner.
 
-[libraries]
-androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
+If the consuming application cannot function without a camera, declare any available camera as required in the application's manifest:
+
+```xml
+<uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="true" />
 ```
-
-The core module declares the camera permission and required camera feature in its manifest. Apps still need to request the camera permission at runtime before starting the scanner.  
 
 Simple Usage
 ------------
 
-1.) Add camera permission to your AndroidManifest.xml file:
+1.) Request the camera permission at runtime before starting the scanner.
 
-```xml
-<uses-permission android:name="android.permission.CAMERA" />
-```
+The `CAMERA` permission is already contributed by the `:core` module and merged into the application's manifest. The example below assumes that the permission has already been granted.
+
+See [MainActivity.kt](./zbar-sample/src/main/java/me/dm7/barcodescanner/zbar/sample/MainActivity.kt) for a complete runtime permission example.
 
 2.) A very basic activity would look like this:
 
@@ -332,13 +436,13 @@ Interesting methods on the ZBarScannerView include:
 
 ```kotlin
 // Toggle flash:
-fun setFlash(flag: Boolean)
+fun setFlash(isEnabled: Boolean)
 
 // Toggle autofocus:
-fun setAutoFocus(state: Boolean)
+fun setAutoFocus(isEnabled: Boolean)
 
 // Specify interested barcode formats:
-fun setFormats(formats: List<BarcodeFormat>)
+fun setFormats(formats: List<BarcodeFormat>?)
 
 // Specify the cameraId to start with:
 fun startCamera(cameraId: Int)
@@ -362,7 +466,7 @@ BarcodeFormat.DATABAR_EXP
 BarcodeFormat.CODABAR
 BarcodeFormat.CODE39
 BarcodeFormat.PDF417
-BarcodeFormat.QR_CODE
+BarcodeFormat.QRCODE
 BarcodeFormat.CODE93
 BarcodeFormat.CODE128
 ```
