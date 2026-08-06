@@ -2,12 +2,20 @@ package me.dm7.barcodescanner.zbar
 
 import net.sourceforge.zbar.Symbol
 
+/**
+ * Describes a barcode format supported by the ZBar scanner.
+ *
+ * @property id Numeric ZBar [Symbol] identifier used to configure the scanner.
+ * @property name Optional human-readable name of the barcode format.
+ */
 open class BarcodeFormat(
     open val id: Int,
     open val name: String?
 ) {
 
     companion object {
+
+        /** Fallback format used when no matching ZBar symbol type is registered. */
         val NONE = BarcodeFormat(id = Symbol.NONE, name = "NONE")
 
         val PARTIAL = BarcodeFormat(id = Symbol.PARTIAL, name = "PARTIAL")
@@ -42,6 +50,11 @@ open class BarcodeFormat(
 
         val CODE128 = BarcodeFormat(id = Symbol.CODE128, name = "CODE128")
 
+        /**
+         * Barcode formats enabled by default in [ZBarScannerView].
+         *
+         * [NONE] is not included because it represents an unknown or unsupported format.
+         */
         val ALL_FORMATS: MutableList<BarcodeFormat> = arrayListOf(
             PARTIAL,
             EAN8,
@@ -61,6 +74,11 @@ open class BarcodeFormat(
             CODE128
         )
 
+        /**
+         * Returns the format from [ALL_FORMATS] matching the specified ZBar symbol [id].
+         *
+         * @return The matching format, or [NONE] if no registered format has that identifier.
+         */
         fun getFormatById(id: Int): BarcodeFormat {
             for (format in ALL_FORMATS) {
                 if (format.id == id) {
