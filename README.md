@@ -103,6 +103,7 @@ Screenshots
     <img src="./screenshots/main_activity.png" width="250" />
     <img src="./screenshots/scanner.png" width="250" />
     <img src="./screenshots/scan_results.png" width="250" />
+    <img src="./screenshots/create_qr_code.png" width="250" />
 </p>
 
 Minor BREAKING CHANGE in 1.8.4
