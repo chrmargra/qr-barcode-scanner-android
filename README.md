@@ -14,7 +14,8 @@ All original credits, copyright notices, and license terms are preserved. This f
 - [Version 3.0.0](#version-300)
 - [Changelog](./CHANGELOG.md)
 - [Version catalogs when using local modules](#version-catalogs-when-using-local-modules)
-- [Screenshots](#screenshots)
+- [ZXing Screenshots](#zxing-screenshots)
+- [ZBar Screenshots](#zbar-screenshots)
 - [ZXing](#zxing)
   - [Installation](#installation)
   - [Simple Usage](#simple-usage)
@@ -105,13 +106,21 @@ Declaring an alias in the version catalog does not add that dependency directly 
 
 For more information, see the [Gradle version catalog documentation](https://docs.gradle.org/current/userguide/version_catalogs.html).
 
-Screenshots
+ZXing Screenshots
 ===========
 <p align="center">
-    <img src="./screenshots/main_activity.png" width="200" />
-    <img src="./screenshots/scanner.png" width="200" />
-    <img src="./screenshots/scan_results.png" width="200" />
-    <img src="./screenshots/create_qr_code.png" width="200" />
+    <img src="./screenshots/zxing_main_activity.png" width="200" />
+    <img src="./screenshots/zxing_scanner.png" width="200" />
+    <img src="./screenshots/zxing_scan_results.png" width="200" />
+    <img src="./screenshots/zxing_create_qr_code.png" width="200" />
+</p>
+
+ZBar Screenshots
+===========
+<p align="center">
+    <img src="./screenshots/zbar_main_activity.png" width="200" />
+    <img src="./screenshots/zbar_scanner.png" width="200" />
+    <img src="./screenshots/zbar_scan_results.png" width="200" />
 </p>
 
 ZXing
