@@ -11,9 +11,10 @@ All original credits, copyright notices, and license terms are preserved. This f
 - [Maintenance status](#maintenance-status)
 - [Original project status](#original-project-status)
 - [Introduction](#introduction)
+- [Version 3.0.0](#version-300)
+- [Changelog](./CHANGELOG.md)
 - [Version catalogs when using local modules](#version-catalogs-when-using-local-modules)
 - [Screenshots](#screenshots)
-- [Minor BREAKING CHANGE in 1.8.4](#minor-breaking-change-in-184)
 - [ZXing](#zxing)
   - [Installation](#installation)
   - [Simple Usage](#simple-usage)
@@ -49,6 +50,13 @@ Introduction
 ============
 
 An Android library project that provides easy-to-use and extensible barcode scanner views based on ZXing and ZBar. The ZXing module also provides QR code bitmap generation.
+
+Version 3.0.0
+=============
+
+Version 3.0.0 completes the migration of the library from Java to Kotlin, reorganizes the core package structure, updates the Android build environment, and introduces QR code bitmap generation.
+
+This major release contains breaking package and Java interoperability changes. See [CHANGELOG.md](./CHANGELOG.md) for the complete release notes, breaking changes, and migration details.
 
 Version catalogs when using local modules
 =========================================
@@ -105,13 +113,6 @@ Screenshots
     <img src="./screenshots/scan_results.png" width="200" />
     <img src="./screenshots/create_qr_code.png" width="200" />
 </p>
-
-Minor BREAKING CHANGE in 1.8.4
-==============================
-Version 1.8.4 introduces a couple of new changes:
-
-- Open Camera and handle preview frames in a separate HandlerThread (#1, #99): Though this has worked fine in my testing on 3 devices, I would advise you to test on your own devices before blindly releasing apps with this version. If you run into any issues please file a bug report.
-- Do not automatically stopCamera after a result is found #115: This means that upon a successful scan only the cameraPreview is stopped but the camera is not released. So previously if your code was calling mScannerView.startCamera() in the handleResult() method, please replace that with a call to mScannerView.resumeCameraPreview(this);
 
 ZXing
 =====

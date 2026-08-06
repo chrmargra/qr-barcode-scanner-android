@@ -1,6 +1,6 @@
 # Change Log
 
-## [2.0.0] - May  10, 2026
+## [2.0.0] - May 10, 2026
 
 This is a major modernization release that updates the archived project to current Android tooling, AndroidX, Kotlin, AGP 9, JDK 21, local modules, Material Components, and refreshed documentation.
 
@@ -78,9 +78,8 @@ This is a major modernization release that updates the archived project to curre
 - Removed obsolete `package` declarations from AndroidManifest files.
 - Moved namespace configuration to Gradle.
 - Replaced dynamic sample `applicationId` values based on `project.group` with explicit application IDs.
-- Moved camera permission and camera feature declarations to the `:core` library manifest so ZXing and ZBar consumers inherit them through manifest merging.
-- Removed duplicated camera permission and camera feature declarations from sample app manifests.
-- Set the camera hardware feature as required for the scanner library.
+- Added camera permission and camera feature declarations to the `:core` library manifest so consumers inherit them through manifest merging.
+- Marked the camera hardware feature as optional with `android:required="false"`.
 - Set `android:screenOrientation="portrait"` for all activities in both ZBar and ZXing sample manifests.
 
 ### Launcher icon updates
@@ -168,7 +167,7 @@ This is a major modernization release that updates the archived project to curre
 - Updated the README title and description to better describe the project as an Android QR/barcode scanner library.
 - Preserved original project credits, archive notice, contributor references, and license information.
 
-## [1.9.13] - February  16, 2019
+## [1.9.13] - February 16, 2019
 - Update plugin, build tools and library versions
 - Min SDK version is now 14
 - Upload artifacts to jcenter/bintray instead of Maven central/Sonatype
@@ -202,11 +201,22 @@ This is a major modernization release that updates the archived project to curre
 - Fix inverted camera in devices with differently oriented back and forward facing cameras. Thanks to @thadcodes for PR #191
 - Add ability switch view finder view to square. Thanks to @squeeish for PR #163
 
-## [1.8.4] - Dec 30, 2015
-- Improve performance by opening camera and handling preview frames in a separate HandlerThread (#1, #99)
-- Do not automatically stopCamera after a result is found #115
-- Update samples to use Material Theme and make sure all samples use the FullScreen theme
-- Update gradle wrapper to v2.10, gradle plugin to v1.5.0, buildToolsVersion to v23.0.2 and targetSdkVersion 23
+## [1.8.4] - December 30, 2015
+
+- Improve performance by opening the camera and handling preview frames in a separate `HandlerThread` (#1, #99).
+- Do not automatically stop the camera after a result is found (#115).
+- Update samples to use Material Theme and make sure all samples use the FullScreen theme.
+- Update Gradle wrapper to 2.10, Gradle plugin to 1.5.0, Build Tools to 23.0.2, and `targetSdkVersion` to 23.
+
+### Migration note
+
+After a successful scan, only the camera preview is stopped. The camera itself is not automatically released.
+
+Applications that previously called `startCamera()` inside `handleResult()` should use `resumeCameraPreview()` instead:
+
+```java
+mScannerView.resumeCameraPreview(this);
+```
 
 ## [1.8.3] - October 3, 2015
 - Rebuild ZBar libraries with position independent code (#123,#119,#94).
