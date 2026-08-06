@@ -24,6 +24,17 @@ private const val TAG = "ZXingScannerView"
 private const val ROTATION_COUNT_90_DEGREES = 1
 private const val ROTATION_COUNT_270_DEGREES = 3
 
+/**
+ * Camera-based barcode scanner view backed by the ZXing decoding engine.
+ *
+ * By default, the scanner attempts to decode every format included in [ALL_FORMATS].
+ * Use [setFormats] to restrict scanning to specific barcode formats and
+ * [setResultHandler] to receive decoded results.
+ *
+ * When a barcode is successfully decoded, the camera preview is stopped and the
+ * result is delivered on the Android main thread. Call [resumeCameraPreview] to
+ * continue scanning.
+ */
 open class ZXingScannerView : BarcodeScannerView {
 
     private var multiFormatReader: MultiFormatReader? = null
@@ -44,17 +55,33 @@ open class ZXingScannerView : BarcodeScannerView {
         initMultiFormatReader()
     }
 
+    /**
+     * Restricts scanning to the specified [formats].
+     *
+     * Passing `null` restores the default formats defined in [ALL_FORMATS].
+     * An empty list does not disable scanning because ZXing falls back to its
+     * default readers.
+     */
     open fun setFormats(formats: List<BarcodeFormat>?) {
         storedFormats = formats
         initMultiFormatReader()
     }
 
+    /**
+     * Sets the handler that receives decoded results.
+     *
+     * Passing `null` clears the current handler, causing subsequent preview frames
+     * to be ignored.
+     */
     open fun setResultHandler(resultHandler: ResultHandler?) {
         storedResultHandler = resultHandler
     }
 
-    open fun getFormats(): Collection<BarcodeFormat> =
-        storedFormats ?: ALL_FORMATS
+    /**
+     * Returns the formats configured through [setFormats], or [ALL_FORMATS] if no
+     * custom formats have been configured.
+     */
+    open fun getFormats(): Collection<BarcodeFormat> = storedFormats ?: ALL_FORMATS
 
     private fun initMultiFormatReader() {
         val hints = EnumMap<DecodeHintType, Any>(DecodeHintType::class.java)
@@ -64,6 +91,18 @@ open class ZXingScannerView : BarcodeScannerView {
         activeMultiFormatReader.setHints(hints)
     }
 
+    /**
+     * Processes a camera preview frame and attempts to decode a barcode inside the
+     * scanner's framing rectangle.
+     *
+     * Decoding is attempted using both the original and inverted luminance data.
+     * When no barcode is found, another one-shot preview frame is requested. When
+     * decoding succeeds, the preview is stopped and the result is delivered to the
+     * registered handler on the Android main thread.
+     *
+     * This callback is invoked by the camera and should not normally be called
+     * directly by applications.
+     */
     override fun onPreviewFrame(
         data: ByteArray?,
         camera: Camera?
@@ -157,11 +196,25 @@ open class ZXingScannerView : BarcodeScannerView {
         }
     }
 
+    /**
+     * Registers the handler and resumes the camera preview.
+     *
+     * Call this method after receiving a result to continue scanning. Passing
+     * `null` resumes the preview without processing scan results.
+     */
     open fun resumeCameraPreview(resultHandler: ResultHandler?) {
         storedResultHandler = resultHandler
         super.resumeCameraPreview()
     }
 
+    /**
+     * Creates a luminance source cropped to the scanner's framing rectangle.
+     *
+     * Override this method to customize how camera preview data is prepared for
+     * decoding.
+     *
+     * @return The cropped luminance source, or `null` if it cannot be created.
+     */
     open fun buildLuminanceSource(
         data: ByteArray?,
         width: Int,
@@ -194,6 +247,8 @@ open class ZXingScannerView : BarcodeScannerView {
     }
 
     companion object {
+
+        /** Default barcode formats used when no custom formats have been configured. */
         val ALL_FORMATS: MutableList<BarcodeFormat> = arrayListOf(
             BarcodeFormat.AZTEC,
             BarcodeFormat.CODABAR,

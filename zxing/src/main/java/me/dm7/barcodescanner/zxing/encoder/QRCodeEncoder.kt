@@ -20,6 +20,7 @@ object QRCodeEncoder {
      *
      * @param value Text to encode. It must contain at least one character.
      * @param resolution Requested width and height in pixels. It must be greater than zero.
+     * Defaults to 500 pixels.
      * @param foregroundColor Color used for the QR code modules.
      * @param backgroundColor Color used for the background and quiet zone.
      *
