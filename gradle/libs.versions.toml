@@ -5,6 +5,7 @@ androidxAppcompat = "1.7.1"
 material = "1.14.0"
 zxing = "3.5.4"
 coreKtx = "1.19.0"
+dokka = "2.2.0"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppcompat" }
@@ -16,3 +17,4 @@ androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx"
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

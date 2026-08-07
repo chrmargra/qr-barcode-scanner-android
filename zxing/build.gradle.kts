@@ -1,7 +1,9 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.dokka)
 }
 
 version = "3.0.0"
@@ -33,4 +35,20 @@ kotlin {
 dependencies {
     api(project(":core"))
     api(libs.zxing.core)
+}
+
+dokka {
+    dokkaPublications.html {
+        moduleName.set("ZXing")
+        moduleVersion.set(project.version.toString())
+    }
+
+    dokkaSourceSets.configureEach {
+        documentedVisibilities.set(
+            setOf(
+                VisibilityModifier.Public,
+                VisibilityModifier.Protected
+            )
+        )
+    }
 }
