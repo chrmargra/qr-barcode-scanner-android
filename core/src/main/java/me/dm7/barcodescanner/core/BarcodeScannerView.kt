@@ -237,6 +237,7 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
         newViewFinderView.setBorderCornerRadius(borderCornersRadius = storedCornerRadius)
         newViewFinderView.setSquareViewFinder(isSquareViewFinder = squareFinder)
         newViewFinderView.setViewFinderOffset(offset = storedViewFinderOffset)
+        newViewFinderView.setBorderAlpha(alpha = storedBorderAlpha)
         return newViewFinderView
     }
 

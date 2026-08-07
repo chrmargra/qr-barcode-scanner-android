@@ -55,7 +55,7 @@ An Android library project that provides easy-to-use and extensible barcode scan
 Version 3.0.0
 =============
 
-Version 3.0.0 completes the migration of the library from Java to Kotlin, reorganizes the core package structure, updates the Android build environment, and introduces QR code bitmap generation.
+Version 3.0.0 completes the migration of the library from Java to Kotlin, reorganizes the core package structure, updates the Android build environment, introduces QR code bitmap generation, and expands the public API documentation across the `:core`, `:zxing`, and `:zbar` modules.
 
 This major release contains breaking package and Java interoperability changes. See [CHANGELOG.md](./CHANGELOG.md) for the complete release notes, breaking changes, and migration details.
 
@@ -328,6 +328,10 @@ BarcodeFormat.CODABAR
 BarcodeFormat.QR_CODE
 BarcodeFormat.DATA_MATRIX
 BarcodeFormat.PDF_417
+BarcodeFormat.AZTEC
+BarcodeFormat.MAXICODE
+BarcodeFormat.RSS_EXPANDED
+BarcodeFormat.UPC_EAN_EXTENSION
 ```
 
 ZBar
