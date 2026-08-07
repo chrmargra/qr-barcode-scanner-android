@@ -16,7 +16,7 @@ private const val HANDLER_THREAD_NAME = "CameraHandlerThread"
  * The thread starts during construction. Camera-open results are delivered back
  * to the associated [BarcodeScannerView] on the main thread.
  */
-class CameraHandlerThread(
+open class CameraHandlerThread(
     private val scannerView: BarcodeScannerView
 ) : HandlerThread(HANDLER_THREAD_NAME) {
 
@@ -30,7 +30,7 @@ class CameraHandlerThread(
      * If the camera cannot be opened, the scanner receives a `null` camera wrapper
      * and no preview is initialized.
      */
-    fun startCamera(cameraId: Int) {
+    open fun startCamera(cameraId: Int) {
         val localHandler = Handler(looper)
         localHandler.post {
             val camera: Camera? = CameraUtils.getCameraInstance(cameraId = cameraId)
