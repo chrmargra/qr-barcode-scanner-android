@@ -52,6 +52,8 @@ Introduction
 
 An Android library project that provides easy-to-use and extensible barcode scanner views based on ZXing and ZBar. The ZXing module also provides QR code bitmap generation.
 
+For detailed API reference documentation for the `:core`, `:zxing`, and `:zbar` modules, see the [API Documentation](https://chrmargra.github.io/qr-barcode-scanner-android/).
+
 Version 3.0.0
 =============
 
