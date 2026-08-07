@@ -53,7 +53,7 @@ The `ViewFinder.setLaserEnabled` parameter has been renamed from `isLaserEnabled
 
 Applications that include `:core`, `:zxing`, or `:zbar` using `projectDir` must expose the version-catalog aliases referenced by those module build scripts.
 
-The `:core` module now uses `androidx-core-ktx` instead of `androidx-annotation`. The Dokka plugin alias is also required by the current module build configuration.
+The `:core` module now uses `androidx-core-ktx` instead of `androidx-annotation`.
 
 See the README section on version catalogs for the complete list of required aliases and generated accessors.
 
@@ -131,6 +131,7 @@ See the README section on version catalogs for the complete list of required ali
 - Added QR code generation examples, customization options, error-handling guidance, and a link to the sample implementation.
 - Clarified camera permission, runtime permission, and optional camera hardware feature behavior.
 - Updated README screenshots and links to reflect the current sample applications.
+- Centralized Dokka configuration in the library root project so applications consuming the local modules do not require the Dokka plugin.
 
 ## [2.0.0] - May 10, 2026
 
