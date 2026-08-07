@@ -41,9 +41,17 @@ private val SCANNER_ALPHA = intArrayOf(
     64
 )
 
+/**
+ * Default [ViewFinder] implementation displayed above the camera preview.
+ *
+ * It draws a mask outside the scanning area, a configurable corner border and
+ * an optional animated laser. Subclasses can override the drawing methods to
+ * customize individual parts of the viewfinder.
+ */
 open class ViewFinderView : View, ViewFinder {
 
     private var storedFramingRect: Rect? = null
+
     private var scannerAlpha = 0
 
     private val defaultLaserColor = ContextCompat.getColor(context, R.color.viewfinder_laser)
@@ -157,6 +165,11 @@ open class ViewFinderView : View, ViewFinder {
         if (laserEnabledState) drawLaser(canvas)
     }
 
+    /**
+     * Draws the mask surrounding the framing rectangle.
+     *
+     * Override this method to customize the area outside the scanner window.
+     */
     open fun drawViewFinderMask(canvas: Canvas) {
         val width = canvas.width
         val height = canvas.height
@@ -192,6 +205,11 @@ open class ViewFinderView : View, ViewFinder {
         )
     }
 
+    /**
+     * Draws the four corners of the framing border.
+     *
+     * Override this method to provide a different border appearance.
+     */
     open fun drawViewFinderBorder(canvas: Canvas) {
         val framingRect = getFramingRect()
 
@@ -259,6 +277,11 @@ open class ViewFinderView : View, ViewFinder {
         canvas.drawPath(path, borderPaint)
     }
 
+    /**
+     * Draws and schedules the next frame of the animated scanner laser.
+     *
+     * Override this method to customize the scanning animation.
+     */
     open fun drawLaser(canvas: Canvas) {
         val framingRect = getFramingRect()
 
@@ -295,6 +318,13 @@ open class ViewFinderView : View, ViewFinder {
         updateFramingRect()
     }
 
+    /**
+     * Recalculates the framing rectangle from the current view size, orientation,
+     * aspect-ratio mode and configured offset.
+     *
+     * This method is called when the view size changes and when the viewfinder is
+     * refreshed.
+     */
     @Synchronized
     open fun updateFramingRect() {
         val viewResolution = Point(width, height)

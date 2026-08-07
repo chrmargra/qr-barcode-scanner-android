@@ -19,7 +19,20 @@ import me.dm7.barcodescanner.core.viewfinder.ViewFinder
 import me.dm7.barcodescanner.core.viewfinder.ViewFinderView
 
 private const val NINETY_DEGREES_ROTATION = 90
+private const val ROTATION_COUNT_90_DEGREES = 1
+private const val ROTATION_COUNT_270_DEGREES = 3
 
+/**
+ * Base camera scanner view shared by the concrete barcode scanner implementations.
+ *
+ * This class manages the legacy Android camera lifecycle, preview orientation,
+ * viewfinder appearance, flash, autofocus and preview-frame rotation. Applications
+ * should normally use a concrete scanner implementation rather than instantiate
+ * this class directly.
+ *
+ * The camera permission must be granted at runtime before calling [startCamera].
+ * Call [stopCamera] when the hosting activity or fragment is paused.
+ */
 abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
 
     private var cameraWrapper: CameraWrapper? = null
@@ -59,6 +72,11 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
     private val activeViewFinderView: ViewFinder
         get() = viewFinderView ?: throw NullPointerException()
 
+    /**
+     * Number of 90-degree rotations required to align camera data with the display.
+     *
+     * This property is only available after the camera preview has been created.
+     */
     open val rotationCount: Int
         get() {
             val displayOrientation = activePreview.displayOrientation
@@ -154,6 +172,15 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
         viewFinderView = createViewFinderView(context = context)
     }
 
+    /**
+     * Rebuilds the camera preview and places the viewfinder overlay above it.
+     *
+     * This method is part of the scanner's camera infrastructure and should not
+     * normally be called directly by applications.
+     *
+     * @throws IllegalArgumentException if [createViewFinderView] returns an object
+     * that is not also an Android [View].
+     */
     fun setupLayout(cameraWrapper: CameraWrapper?) {
         removeAllViews()
 
@@ -189,11 +216,13 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
     }
 
     /**
-     * <p>Method that creates view that represents visual appearance of a barcode scanner</p>
-     * <p>Override it to provide your own view for visual appearance of a barcode scanner</p>
+     * Creates the viewfinder overlay displayed above the camera preview.
      *
-     * @param context {@link Context}
-     * @return {@link android.view.View} that implements {@link ViewFinderView}
+     * Override this method to provide a custom viewfinder. The returned object must
+     * implement [ViewFinder] and must also be an Android [View].
+     *
+     * @param context Context used to create the viewfinder.
+     * @return The viewfinder displayed above the camera preview.
      */
     protected open fun createViewFinderView(context: Context): ViewFinder {
         val newViewFinderView = ViewFinderView(context = context)
@@ -211,66 +240,87 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
         return newViewFinderView
     }
 
+    /** Sets the ARGB color used by the animated scanner laser. */
     open fun setLaserColor(laserColor: Int) {
         storedLaserColor = laserColor
         activeViewFinderView.setLaserColor(laserColor = storedLaserColor)
         activeViewFinderView.setupViewFinder()
     }
 
+    /** Sets the ARGB color drawn outside the scanner's framing rectangle. */
     open fun setMaskColor(maskColor: Int) {
         storedMaskColor = maskColor
         activeViewFinderView.setMaskColor(maskColor = storedMaskColor)
         activeViewFinderView.setupViewFinder()
     }
 
+    /** Sets the ARGB color used to draw the framing rectangle border. */
     open fun setBorderColor(borderColor: Int) {
         storedBorderColor = borderColor
         activeViewFinderView.setBorderColor(borderColor = storedBorderColor)
         activeViewFinderView.setupViewFinder()
     }
 
+    /** Sets the framing border stroke width in pixels. */
     open fun setBorderStrokeWidth(borderStrokeWidth: Int) {
         storedBorderWidth = borderStrokeWidth
         activeViewFinderView.setBorderStrokeWidth(borderStrokeWidth = storedBorderWidth)
         activeViewFinderView.setupViewFinder()
     }
 
+    /** Sets the length of each framing border corner in pixels. */
     open fun setBorderLineLength(borderLineLength: Int) {
         storedBorderLength = borderLineLength
         activeViewFinderView.setBorderLineLength(borderLineLength = storedBorderLength)
         activeViewFinderView.setupViewFinder()
     }
 
+    /** Enables or disables the animated scanner laser. */
     open fun setLaserEnabled(isLaserEnabled: Boolean) {
         laserEnabledState = isLaserEnabled
         activeViewFinderView.setLaserEnabled(isEnabled = laserEnabledState)
         activeViewFinderView.setupViewFinder()
     }
 
+    /** Enables or disables rounded joins on the framing border corners. */
     open fun setIsBorderCornerRounded(isBorderCornerRounded: Boolean) {
         borderCornersRounded = isBorderCornerRounded
         activeViewFinderView.setBorderCornerRounded(isBorderCornersRounded = borderCornersRounded)
         activeViewFinderView.setupViewFinder()
     }
 
+    /** Sets the framing border corner radius in pixels. */
     open fun setBorderCornerRadius(borderCornerRadius: Int) {
         storedCornerRadius = borderCornerRadius
         activeViewFinderView.setBorderCornerRadius(borderCornersRadius = storedCornerRadius)
         activeViewFinderView.setupViewFinder()
     }
 
+    /** Selects whether the framing rectangle should use a square aspect ratio. */
     open fun setSquareViewFinder(isSquareViewFinder: Boolean) {
         squareFinder = isSquareViewFinder
         activeViewFinderView.setSquareViewFinder(isSquareViewFinder = squareFinder)
         activeViewFinderView.setupViewFinder()
     }
 
+    /**
+     * Sets the framing border opacity.
+     *
+     * The expected range is `0.0f` for fully transparent to `1.0f` for fully opaque.
+     * Values are not validated by this method.
+     */
     open fun setBorderAlpha(borderAlpha: Float) {
         storedBorderAlpha = borderAlpha
         activeViewFinderView.setBorderAlpha(alpha = storedBorderAlpha)
         activeViewFinderView.setupViewFinder()
     }
 
+    /**
+     * Opens the camera identified by [cameraId] on a background thread.
+     *
+     * The camera permission must already be granted. If the camera cannot be opened,
+     * no preview is created.
+     */
     open fun startCamera(cameraId: Int) {
         if (cameraHandlerThread == null) {
             cameraHandlerThread = CameraHandlerThread(scannerView = this)
@@ -281,6 +331,12 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
         currentCameraHandlerThread.startCamera(cameraId = cameraId)
     }
 
+    /**
+     * Receives an asynchronously opened camera and initializes its preview.
+     *
+     * Stored flash and autofocus settings are applied when the camera is available.
+     * This method is camera infrastructure and should not normally be called directly.
+     */
     open fun setupCameraPreview(cameraWrapper: CameraWrapper?) {
         this.cameraWrapper = cameraWrapper
 
@@ -297,10 +353,21 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
         }
     }
 
+    /**
+     * Opens the preferred camera on a background thread.
+     *
+     * A back-facing camera is preferred. If none exists, another available camera is
+     * used. The camera permission must already be granted.
+     */
     open fun startCamera() {
         startCamera(cameraId = CameraUtils.getDefaultCameraId())
     }
 
+    /**
+     * Stops the preview, releases the active camera and terminates the camera thread.
+     *
+     * Call this method when the hosting activity or fragment is paused.
+     */
     open fun stopCamera() {
         val currentCameraWrapper = cameraWrapper
 
@@ -321,14 +388,33 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
         }
     }
 
+    /**
+     * Stops the camera preview without releasing the camera.
+     *
+     * The preview can subsequently be restarted by the scanner implementation.
+     */
     open fun stopCameraPreview() {
         preview?.stopCameraPreview()
     }
 
+    /**
+     * Restarts the camera preview using the currently opened camera.
+     *
+     * Concrete scanner implementations use this method when scanning resumes after
+     * delivering a result.
+     */
     protected open fun resumeCameraPreview() {
         preview?.showCameraPreview()
     }
 
+    /**
+     * Maps the viewfinder's framing rectangle into camera-preview coordinates.
+     *
+     * The calculated rectangle is cached for subsequent preview frames.
+     *
+     * @return The framing rectangle in preview pixels, or `null` if the viewfinder
+     * has not been laid out or has no valid dimensions.
+     */
     @Synchronized
     open fun getFramingRectInPreview(
         previewWidth: Int,
@@ -362,6 +448,12 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
         return framingRectInPreview
     }
 
+    /**
+     * Enables or disables torch mode.
+     *
+     * The requested state is remembered and applied when the camera becomes
+     * available. No action is performed if the active camera does not support flash.
+     */
     open fun setFlash(isEnabled: Boolean) {
         flashState = isEnabled
 
@@ -390,6 +482,11 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
         }
     }
 
+    /**
+     * Returns whether the active camera is currently using torch mode.
+     *
+     * @return `false` if no camera is active or flash is not supported.
+     */
     open fun getFlash(): Boolean {
         val currentCameraWrapper = cameraWrapper
 
@@ -406,6 +503,11 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
         return false
     }
 
+    /**
+     * Toggles torch mode on the active camera.
+     *
+     * No action is performed if no camera is active or flash is not supported.
+     */
     open fun toggleFlash() {
         val currentCameraWrapper = cameraWrapper
 
@@ -426,19 +528,52 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
         }
     }
 
+    /**
+     * Enables or disables autofocus.
+     *
+     * The requested state is remembered and applied when the camera preview becomes
+     * available.
+     */
     open fun setAutoFocus(isEnabled: Boolean) {
         autoFocusState = isEnabled
         preview?.setAutoFocus(isEnabled = isEnabled)
     }
 
+    /**
+     * Selects whether the camera preview should fill its parent.
+     *
+     * When enabled, part of the preview may be cropped to preserve its aspect ratio.
+     * When disabled, the complete preview is centered with unused space shown in
+     * black. Call this method before starting the camera.
+     */
     open fun setShouldScaleToFill(shouldScaleToFill: Boolean) {
         scaleToFillState = shouldScaleToFill
     }
 
+    /**
+     * Sets the maximum aspect-ratio difference accepted when selecting a camera
+     * preview size.
+     *
+     * If no supported size falls within this tolerance, the size with the closest
+     * height is used. Call this method before starting the camera.
+     */
     open fun setAspectTolerance(aspectTolerance: Float) {
         storedAspectTolerance = aspectTolerance
     }
 
+    /**
+     * Rotates raw camera preview data to match the current display orientation.
+     *
+     * This method is used by scanner implementations before decoding portrait camera
+     * frames.
+     *
+     * @return The rotated preview data when [rotationCount] is `1` or `3`, the
+     * original data for any other rotation count, or `null` when the supplied data
+     * is `null` and no rotation is applied.
+     *
+     * @throws NullPointerException if [camera] is `null`, or if [data] is `null`
+     * when rotation is required.
+     */
     open fun getRotatedData(
         data: ByteArray?,
         camera: Camera?,
@@ -452,7 +587,10 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
 
         val rotations = rotationCount
 
-        if (rotations == 1 || rotations == 3) {
+        if (
+            rotations == ROTATION_COUNT_90_DEGREES ||
+            rotations == ROTATION_COUNT_270_DEGREES
+        ) {
             for (rotationIndex in 0 until rotations) {
                 val currentData = previewData ?: throw NullPointerException()
 

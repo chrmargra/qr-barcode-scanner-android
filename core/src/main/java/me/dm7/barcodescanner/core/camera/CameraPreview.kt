@@ -27,6 +27,13 @@ private const val NO_ROTATION_DEGREES = 0
 private const val DELAY = 1000L
 private const val DEFAULT_CAMERA_ID = -1
 
+/**
+ * Surface responsible for displaying and configuring the legacy camera preview.
+ *
+ * It calculates display orientation, selects an appropriate preview size,
+ * controls preview scaling and provides periodic autofocus. Instances are
+ * normally created and managed by [me.dm7.barcodescanner.core.BarcodeScannerView].
+ */
 open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
 
     private var cameraWrapper: CameraWrapper? = null
@@ -60,6 +67,11 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         scheduleAutoFocus()
     }
 
+    /**
+     * Camera preview orientation in degrees for the current display rotation.
+     *
+     * @return One of `0`, `90`, `180` or `270`, or `0` when no camera is attached.
+     */
     open val displayOrientation: Int
         get() {
             val currentCameraWrapper = cameraWrapper
@@ -107,6 +119,12 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         init(cameraWrapper, previewCallback)
     }
 
+    /**
+     * Initializes the surface holder, camera and preview callback.
+     *
+     * This method is called during construction. Overrides must not depend on
+     * subclass properties having already been initialized.
+     */
     open fun init(
         cameraWrapper: CameraWrapper?,
         previewCallback: Camera.PreviewCallback?
@@ -120,6 +138,12 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS)
     }
 
+    /**
+     * Replaces the camera and preview callback used by this surface.
+     *
+     * Passing `null` detaches the corresponding value but does not start or stop the
+     * preview by itself.
+     */
     open fun setCamera(
         cameraWrapper: CameraWrapper?,
         previewCallback: Camera.PreviewCallback?
@@ -128,10 +152,22 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         this.previewCallback = previewCallback
     }
 
+    /**
+     * Selects whether the preview should fill its parent while preserving its aspect
+     * ratio.
+     *
+     * Filling the parent may crop part of the preview.
+     */
     open fun setShouldScaleToFill(scaleToFill: Boolean) {
         scaleToFillState = scaleToFill
     }
 
+    /**
+     * Sets the maximum aspect-ratio difference accepted when selecting a supported
+     * camera preview size.
+     *
+     * If no size matches, the size with the closest height is selected.
+     */
     open fun setAspectTolerance(aspectTolerance: Float) {
         storedAspectTolerance = aspectTolerance
     }
@@ -157,6 +193,12 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         stopCameraPreview()
     }
 
+    /**
+     * Configures and starts the camera preview.
+     *
+     * Display orientation, preview size, one-shot frame callback and autofocus are
+     * configured automatically. Camera errors are caught and logged in debug builds.
+     */
     open fun showCameraPreview() {
         if (cameraWrapper != null) {
             try {
@@ -188,6 +230,12 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         }
     }
 
+    /**
+     * Attempts to focus the camera safely.
+     *
+     * If the camera throws a runtime autofocus error, another attempt is scheduled
+     * instead of propagating the exception.
+     */
     open fun safeAutoFocus() {
         try {
             activeCameraWrapper.camera.autoFocus(autoFocusCB)
@@ -198,6 +246,12 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         }
     }
 
+    /**
+     * Cancels autofocus and stops the camera preview.
+     *
+     * The camera itself remains attached and can be restarted with
+     * [showCameraPreview]. Camera errors are caught and logged in debug builds.
+     */
     open fun stopCameraPreview() {
         if (cameraWrapper != null) {
             try {
@@ -216,6 +270,10 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         }
     }
 
+    /**
+     * Selects the most appropriate supported preview size and adjusts this view to
+     * preserve the camera aspect ratio.
+     */
     open fun setupCameraParameters() {
         val optimalSize = getOptimalPreviewSize()
         val parameters = activeCameraWrapper.camera.parameters
@@ -375,6 +433,12 @@ open class CameraPreview : SurfaceView, SurfaceHolder.Callback {
         return optimalSize
     }
 
+    /**
+     * Enables or disables periodic autofocus for the active preview.
+     *
+     * No action is performed when no camera is attached or the preview is not
+     * running.
+     */
     open fun setAutoFocus(isEnabled: Boolean) {
         if (cameraWrapper != null && previewing) {
             if (isEnabled == autoFocusState) return
