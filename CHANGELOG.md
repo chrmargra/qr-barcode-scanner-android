@@ -1,6 +1,6 @@
 # Change Log
 
-## [3.0.0] - Unreleased
+## [3.0.0] - August 9, 2026
 
 This is a major Kotlin migration and API modernization release. It completes the migration of the library modules from Java to Kotlin, reorganizes the public core package structure, updates the Android build environment, introduces QR code bitmap generation, and adds comprehensive multi-module API documentation.
 
