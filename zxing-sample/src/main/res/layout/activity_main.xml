@@ -93,6 +93,15 @@
                 android:text="@string/scaling_sample"
                 android:textAllCaps="false"
                 app:cornerRadius="20dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_qr_code_generator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/qr_code_generator_sample"
+                android:textAllCaps="false"
+                app:cornerRadius="20dp" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -61,11 +61,9 @@ class CameraSelectorDialogFragment : DialogFragment() {
         fun newInstance(
             listener: CameraSelectorDialogListener,
             cameraId: Int
-        ): CameraSelectorDialogFragment {
-            return CameraSelectorDialogFragment().apply {
-                this.cameraId = cameraId
-                this.listener = listener
-            }
+        ): CameraSelectorDialogFragment = CameraSelectorDialogFragment().apply {
+            this.cameraId = cameraId
+            this.listener = listener
         }
     }
 }

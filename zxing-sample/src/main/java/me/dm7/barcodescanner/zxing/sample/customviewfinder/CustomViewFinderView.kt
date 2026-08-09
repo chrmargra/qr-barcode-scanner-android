@@ -7,7 +7,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.util.TypedValue
-import me.dm7.barcodescanner.core.ViewFinderView
+import me.dm7.barcodescanner.core.viewfinder.ViewFinderView
 
 private const val TRADE_MARK_TEXT = "ZXing"
 private const val TRADE_MARK_TEXT_SIZE_SP = 40
@@ -35,12 +35,12 @@ class CustomViewFinderView : ViewFinderView {
         )
 
         paint.textSize = textPixelSize
-        setSquareViewFinder(true)
+        setSquareViewFinder(isSquareViewFinder = true)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        drawTradeMark(canvas)
+        drawTradeMark(canvas = canvas)
     }
 
     private fun drawTradeMark(canvas: Canvas) {

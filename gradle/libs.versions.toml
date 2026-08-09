@@ -1,18 +1,20 @@
 [versions]
-agp = "9.2.1"
-kotlin = "2.3.21"
-androidxAnnotation = "1.10.0"
+agp = "9.3.1"
+kotlin = "2.4.10"
 androidxAppcompat = "1.7.1"
-material = "1.13.0"
+material = "1.14.0"
 zxing = "3.5.4"
+coreKtx = "1.19.0"
+dokka = "2.2.0"
 
 [libraries]
-androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppcompat" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+zxing-core = { module = "com.google.zxing:core", version.ref = "zxing" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

@@ -4,11 +4,13 @@ plugins {
     alias(libs.plugins.android.library)
 }
 
-version = "2.0.0"
+version = "3.0.0"
 
 android {
     namespace = "me.dm7.barcodescanner.zbar"
-    compileSdk = 36
+    compileSdk {
+        version = release(version = 37)
+    }
 
     defaultConfig {
         minSdk = 26

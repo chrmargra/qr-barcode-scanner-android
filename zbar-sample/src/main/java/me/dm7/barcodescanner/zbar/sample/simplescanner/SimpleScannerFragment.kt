@@ -23,7 +23,7 @@ class SimpleScannerFragment : Fragment(), ResultHandler {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val newScannerView = ZBarScannerView(requireActivity())
+        val newScannerView = ZBarScannerView(context = requireActivity())
         scannerView = newScannerView
         return newScannerView
     }
@@ -31,7 +31,7 @@ class SimpleScannerFragment : Fragment(), ResultHandler {
     override fun onResume() {
         super.onResume()
 
-        scannerView?.setResultHandler(this)
+        scannerView?.setResultHandler(resultHandler = this)
         scannerView?.startCamera()
     }
 
@@ -48,7 +48,7 @@ class SimpleScannerFragment : Fragment(), ResultHandler {
         // I don't know why this is the case but I don't have the time to figure out.
         Handler(Looper.getMainLooper()).postDelayed(
             {
-                scannerView?.resumeCameraPreview(this)
+                scannerView?.resumeCameraPreview(resultHandler = this)
             },
             DELAY
         )
@@ -56,13 +56,11 @@ class SimpleScannerFragment : Fragment(), ResultHandler {
 
     override fun onPause() {
         super.onPause()
-
         scannerView?.stopCamera()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-
         scannerView = null
     }
 }

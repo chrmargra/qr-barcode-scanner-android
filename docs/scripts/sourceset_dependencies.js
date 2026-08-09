@@ -1,0 +1,1 @@
+sourceset_dependencies = '{":zbar/release":[],":zxing/release":[],":core/release":[]}'

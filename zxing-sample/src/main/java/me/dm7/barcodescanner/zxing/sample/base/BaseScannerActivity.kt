@@ -12,12 +12,11 @@ open class BaseScannerActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == R.id.home) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        if (item.itemId == R.id.home) {
             finish()
             true
         } else {
             super.onOptionsItemSelected(item)
         }
-    }
 }

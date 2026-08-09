@@ -4,11 +4,13 @@ plugins {
     alias(libs.plugins.android.library)
 }
 
-version = "2.0.0"
+version = "3.0.0"
 
 android {
     namespace = "me.dm7.barcodescanner.core"
-    compileSdk = 36
+    compileSdk {
+        version = release(version = 37)
+    }
 
     defaultConfig {
         minSdk = 26
@@ -17,6 +19,10 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -29,5 +35,5 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.androidx.annotation)
+    implementation(libs.androidx.core.ktx)
 }

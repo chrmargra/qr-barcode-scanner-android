@@ -24,7 +24,7 @@ class SimpleScannerActivity : BaseScannerActivity(), ResultHandler {
 
         setupToolbar(toolbar = binding.toolbar)
 
-        val newScannerView = ZXingScannerView(this)
+        val newScannerView = ZXingScannerView(context = this)
         scannerView = newScannerView
         binding.contentFrame.addView(newScannerView)
     }
@@ -32,13 +32,12 @@ class SimpleScannerActivity : BaseScannerActivity(), ResultHandler {
     override fun onResume() {
         super.onResume()
 
-        scannerView?.setResultHandler(this)
+        scannerView?.setResultHandler(resultHandler = this)
         scannerView?.startCamera()
     }
 
     override fun onPause() {
         super.onPause()
-
         scannerView?.stopCamera()
     }
 
@@ -55,7 +54,7 @@ class SimpleScannerActivity : BaseScannerActivity(), ResultHandler {
         // I don't know why this is the case but I don't have the time to figure out.
         Handler(Looper.getMainLooper()).postDelayed(
             {
-                scannerView?.resumeCameraPreview(this)
+                scannerView?.resumeCameraPreview(resultHandler = this)
             },
             DELAY
         )
