@@ -48,7 +48,7 @@ class FullScannerFragment :
         container: ViewGroup?,
         state: Bundle?
     ): View {
-        val newScannerView = ZXingScannerView(requireActivity())
+        val newScannerView = ZXingScannerView(context = requireActivity())
         scannerView = newScannerView
 
         if (state != null) {
@@ -194,7 +194,7 @@ class FullScannerFragment :
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        scannerView?.resumeCameraPreview(this)
+        scannerView?.resumeCameraPreview(resultHandler = this)
     }
 
     override fun onFormatsSaved(selectedIndices: ArrayList<Int>) {
@@ -205,9 +205,9 @@ class FullScannerFragment :
     override fun onCameraSelected(cameraId: Int) {
         this.cameraId = cameraId
 
-        scannerView?.startCamera(this.cameraId)
-        scannerView?.setFlash(flash)
-        scannerView?.setAutoFocus(autoFocus)
+        scannerView?.startCamera(cameraId = this.cameraId)
+        scannerView?.setFlash(isEnabled = flash)
+        scannerView?.setAutoFocus(isEnabled = autoFocus)
     }
 
     private fun setupFormats() {
@@ -215,8 +215,8 @@ class FullScannerFragment :
 
         if (selectedIndices == null || selectedIndices?.isEmpty() == true) {
             selectedIndices = ArrayList<Int>().apply {
-                for (i in ZXingScannerView.ALL_FORMATS.indices) {
-                    add(i)
+                for (index in ZXingScannerView.ALL_FORMATS.indices) {
+                    add(index)
                 }
             }
         }
@@ -225,7 +225,7 @@ class FullScannerFragment :
             formats.add(ZXingScannerView.ALL_FORMATS[index])
         }
 
-        scannerView?.setFormats(formats)
+        scannerView?.setFormats(formats = formats)
     }
 
     override fun onPause() {

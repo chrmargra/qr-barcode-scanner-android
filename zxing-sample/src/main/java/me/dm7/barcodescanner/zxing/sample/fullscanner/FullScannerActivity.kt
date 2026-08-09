@@ -59,7 +59,7 @@ class FullScannerActivity :
         setContentView(binding.root)
         setupToolbar(toolbar = binding.toolbar)
 
-        val newScannerView = ZXingScannerView(this)
+        val newScannerView = ZXingScannerView(context = this)
         scannerView = newScannerView
 
         setupFormats()
@@ -69,10 +69,10 @@ class FullScannerActivity :
     override fun onResume() {
         super.onResume()
 
-        scannerView?.setResultHandler(this)
-        scannerView?.startCamera(cameraId)
-        scannerView?.setFlash(flash)
-        scannerView?.setAutoFocus(autoFocus)
+        scannerView?.setResultHandler(resultHandler = this)
+        scannerView?.startCamera(cameraId = cameraId)
+        scannerView?.setFlash(isEnabled = flash)
+        scannerView?.setAutoFocus(isEnabled = autoFocus)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -85,9 +85,7 @@ class FullScannerActivity :
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        var menuItem: MenuItem
-
-        menuItem = if (flash) {
+        var menuItem: MenuItem = if (flash) {
             menu.add(Menu.NONE, R.id.menu_flash, 0, R.string.flash_on)
         } else {
             menu.add(Menu.NONE, R.id.menu_flash, 0, R.string.flash_off)
@@ -187,7 +185,7 @@ class FullScannerActivity :
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        scannerView?.resumeCameraPreview(this)
+        scannerView?.resumeCameraPreview(resultHandler = this)
     }
 
     override fun onFormatsSaved(selectedIndices: ArrayList<Int>) {
@@ -198,9 +196,9 @@ class FullScannerActivity :
     override fun onCameraSelected(cameraId: Int) {
         this.cameraId = cameraId
 
-        scannerView?.startCamera(this.cameraId)
-        scannerView?.setFlash(flash)
-        scannerView?.setAutoFocus(autoFocus)
+        scannerView?.startCamera(cameraId = this.cameraId)
+        scannerView?.setFlash(isEnabled = flash)
+        scannerView?.setAutoFocus(isEnabled = autoFocus)
     }
 
     private fun setupFormats() {
@@ -208,8 +206,8 @@ class FullScannerActivity :
 
         if (selectedIndices == null || selectedIndices?.isEmpty() == true) {
             selectedIndices = ArrayList<Int>().apply {
-                for (i in ZXingScannerView.ALL_FORMATS.indices) {
-                    add(i)
+                for (index in ZXingScannerView.ALL_FORMATS.indices) {
+                    add(index)
                 }
             }
         }
@@ -218,7 +216,7 @@ class FullScannerActivity :
             formats.add(ZXingScannerView.ALL_FORMATS[index])
         }
 
-        scannerView?.setFormats(formats)
+        scannerView?.setFormats(formats = formats)
     }
 
     override fun onPause() {

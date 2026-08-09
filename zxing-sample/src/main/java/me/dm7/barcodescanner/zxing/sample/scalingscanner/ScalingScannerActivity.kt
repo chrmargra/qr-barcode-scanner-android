@@ -30,7 +30,7 @@ class ScalingScannerActivity : BaseScannerActivity(), ResultHandler {
         setupToolbar(toolbar = binding?.toolbar)
         initListeners()
 
-        val newScannerView = ZXingScannerView(this)
+        val newScannerView = ZXingScannerView(context = this)
         scannerView = newScannerView
         binding?.contentFrame?.addView(newScannerView)
     }
@@ -38,32 +38,30 @@ class ScalingScannerActivity : BaseScannerActivity(), ResultHandler {
     private fun initListeners() {
         binding?.buttonFlash?.setOnClickListener {
             flash = !flash
-            scannerView?.setFlash(flash)
+            scannerView?.setFlash(isEnabled = flash)
         }
     }
 
     override fun onResume() {
         super.onResume()
 
-        scannerView?.setResultHandler(this)
+        scannerView?.setResultHandler(resultHandler = this)
 
         // You can optionally set aspect ratio tolerance level
         // that is used in calculating the optimal Camera preview size
-        scannerView?.setAspectTolerance(0.2f)
+        scannerView?.setAspectTolerance(aspectTolerance = 0.2f)
 
         scannerView?.startCamera()
-        scannerView?.setFlash(flash)
+        scannerView?.setFlash(isEnabled = flash)
     }
 
     override fun onPause() {
         super.onPause()
-
         scannerView?.stopCamera()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-
         outState.putBoolean(FLASH_STATE, flash)
     }
 
@@ -80,7 +78,7 @@ class ScalingScannerActivity : BaseScannerActivity(), ResultHandler {
         // I don't know why this is the case but I don't have the time to figure out.
         Handler(Looper.getMainLooper()).postDelayed(
             {
-                scannerView?.resumeCameraPreview(this)
+                scannerView?.resumeCameraPreview(resultHandler = this)
             },
             DELAY
         )

@@ -6,7 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import com.google.zxing.Result
-import me.dm7.barcodescanner.core.ViewFinder
+import me.dm7.barcodescanner.core.viewfinder.ViewFinder
 import me.dm7.barcodescanner.zxing.ResultHandler
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import me.dm7.barcodescanner.zxing.sample.base.BaseScannerActivity
@@ -26,10 +26,11 @@ class CustomViewFinderScannerActivity : BaseScannerActivity(), ResultHandler {
 
         setupToolbar(toolbar = binding.toolbar)
 
-        val newScannerView = object : ZXingScannerView(this) {
-            override fun createViewFinderView(context: Context): ViewFinder =
-                CustomViewFinderView(context)
-        }
+        val newScannerView =
+            object : ZXingScannerView(context = this@CustomViewFinderScannerActivity) {
+                override fun createViewFinderView(context: Context): ViewFinder =
+                    CustomViewFinderView(context = context)
+            }
 
         scannerView = newScannerView
         binding.contentFrame.addView(newScannerView)
@@ -38,13 +39,12 @@ class CustomViewFinderScannerActivity : BaseScannerActivity(), ResultHandler {
     override fun onResume() {
         super.onResume()
 
-        scannerView?.setResultHandler(this)
+        scannerView?.setResultHandler(resultHandler = this)
         scannerView?.startCamera()
     }
 
     override fun onPause() {
         super.onPause()
-
         scannerView?.stopCamera()
     }
 
@@ -61,7 +61,7 @@ class CustomViewFinderScannerActivity : BaseScannerActivity(), ResultHandler {
         // I don't know why this is the case but I don't have the time to figure out.
         Handler(Looper.getMainLooper()).postDelayed(
             {
-                scannerView?.resumeCameraPreview(this)
+                scannerView?.resumeCameraPreview(resultHandler = this)
             },
             DELAY
         )

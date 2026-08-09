@@ -26,7 +26,7 @@ class CameraSelectorDialogFragment : DialogFragment() {
         }
 
         val numberOfCameras = Camera.getNumberOfCameras()
-        val cameraNames = Array(numberOfCameras) { index ->
+        val cameraNames = Array(size = numberOfCameras) { index ->
             val info = Camera.CameraInfo()
             Camera.getCameraInfo(index, info)
 
@@ -61,11 +61,9 @@ class CameraSelectorDialogFragment : DialogFragment() {
         fun newInstance(
             listener: CameraSelectorDialogListener,
             cameraId: Int
-        ): CameraSelectorDialogFragment {
-            return CameraSelectorDialogFragment().apply {
-                this.cameraId = cameraId
-                this.listener = listener
-            }
+        ): CameraSelectorDialogFragment = CameraSelectorDialogFragment().apply {
+            this.cameraId = cameraId
+            this.listener = listener
         }
     }
 }

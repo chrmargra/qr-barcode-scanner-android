@@ -1,0 +1,14 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+module:Core
+me.dm7.barcodescanner.core
+me.dm7.barcodescanner.core.camera
+me.dm7.barcodescanner.core.logger
+me.dm7.barcodescanner.core.util
+me.dm7.barcodescanner.core.viewfinder
+module:ZBar
+me.dm7.barcodescanner.zbar
+module:ZXing
+me.dm7.barcodescanner.zxing
+me.dm7.barcodescanner.zxing.encoder

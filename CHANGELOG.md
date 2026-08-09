@@ -1,6 +1,139 @@
 # Change Log
 
-## [2.0.0] - May  10, 2026
+## [3.0.0] - August 9, 2026
+
+This is a major Kotlin migration and API modernization release. It completes the migration of the library modules from Java to Kotlin, reorganizes the public core package structure, updates the Android build environment, introduces QR code bitmap generation, and adds comprehensive multi-module API documentation.
+
+This release preserves the existing scanner behavior, but contains breaking package and Java interoperability changes that may require source updates.
+
+### Breaking changes
+
+#### Core package reorganization
+
+Several core classes have moved into dedicated packages:
+
+| Version 2.0.0 | Version 3.0.0 |
+| --- | --- |
+| `me.dm7.barcodescanner.core.CameraHandlerThread` | `me.dm7.barcodescanner.core.camera.CameraHandlerThread` |
+| `me.dm7.barcodescanner.core.CameraPreview` | `me.dm7.barcodescanner.core.camera.CameraPreview` |
+| `me.dm7.barcodescanner.core.CameraUtils` | `me.dm7.barcodescanner.core.camera.CameraUtils` |
+| `me.dm7.barcodescanner.core.CameraWrapper` | `me.dm7.barcodescanner.core.camera.CameraWrapper` |
+| `me.dm7.barcodescanner.core.DisplayUtils` | `me.dm7.barcodescanner.core.util.DisplayUtils` |
+| `me.dm7.barcodescanner.core.ViewFinder` | `me.dm7.barcodescanner.core.viewfinder.ViewFinder` |
+| `me.dm7.barcodescanner.core.ViewFinderView` | `me.dm7.barcodescanner.core.viewfinder.ViewFinderView` |
+
+Kotlin and Java consumers that reference these classes directly must update their imports. The package names of `BarcodeScannerView`, `ZXingScannerView`, `ZBarScannerView`, their result handlers, and ZBar result classes remain unchanged.
+
+#### Java interoperability
+
+The migration to Kotlin removes unnecessary `@JvmField` and `@JvmStatic` annotations. Kotlin call sites remain concise, but Java consumers must update direct static and field access where applicable.
+
+Examples include:
+
+| Previous Java access | Version 3.0.0 Java access |
+| --- | --- |
+| `BarcodeFormat.QRCODE` | `BarcodeFormat.Companion.getQRCODE()` |
+| `BarcodeFormat.getFormatById(id)` | `BarcodeFormat.Companion.getFormatById(id)` |
+| `ZXingScannerView.ALL_FORMATS` | `ZXingScannerView.Companion.getALL_FORMATS()` |
+| `CameraWrapper.getWrapper(camera, cameraId)` | `CameraWrapper.Companion.getWrapper(camera, cameraId)` |
+| `CameraUtils.getCameraInstance()` | `CameraUtils.INSTANCE.getCameraInstance()` |
+| `DisplayUtils.getScreenOrientation(context)` | `DisplayUtils.INSTANCE.getScreenOrientation(context)` |
+| `cameraWrapper.camera` | `cameraWrapper.getCamera()` |
+| `cameraWrapper.cameraId` | `cameraWrapper.getCameraId()` |
+
+The protected `laserPaint`, `finderMaskPaint`, and `borderPaint` members in `ViewFinderView` are now Kotlin properties. Java subclasses must access them through their protected getters and setters.
+
+`CameraHandlerThread`, scanner views, `CameraPreview`, `ViewFinderView`, and `BarcodeFormat` remain extensible.
+
+Nullability is now explicitly represented by the Kotlin API. Kotlin consumers may therefore receive stricter compile-time null-safety checks than with the previous Java platform types.
+
+The `ViewFinder.setLaserEnabled` parameter has been renamed from `isLaserEnabled` to `isEnabled`. Kotlin callers using a named argument must update the parameter name.
+
+#### Version catalogs for local modules
+
+Applications that include `:core`, `:zxing`, or `:zbar` using `projectDir` must expose the version-catalog aliases referenced by those module build scripts.
+
+The `:core` module now uses `androidx-core-ktx` instead of `androidx-annotation`.
+
+See the README section on version catalogs for the complete list of required aliases and generated accessors.
+
+### Kotlin migration
+
+- Completed the migration of all remaining production library sources from Java to Kotlin.
+- Migrated `CameraHandlerThread`, `CameraWrapper`, `CameraPreview`, `BarcodeScannerView`, and `ViewFinderView` in the core module.
+- Migrated `BarcodeFormat` and `ZBarScannerView` in the ZBar module.
+- Migrated `ZXingScannerView` in the ZXing module.
+- Preserved the existing camera lifecycle, preview handling, barcode decoding, result delivery, rotation, autofocus, flash, and viewfinder behavior.
+- Preserved the original implementation comments where they remain relevant.
+- Improved null safety without introducing `lateinit` properties or non-null assertion operators.
+- Retained synchronization for framing-rectangle calculations that may be accessed across camera and UI threads.
+- Replaced Java utility calls with Kotlin equivalents where they preserve the same semantics.
+- Improved parameter names, local variable names, named arguments, expression bodies, and constant naming throughout the migrated code.
+
+### QR code generation
+
+- Added `QRCodeEncoder` to the `:zxing` module.
+- Added support for generating QR codes as Android `Bitmap` instances without requiring an Android `Context`.
+- Added configurable resolution, foreground color, and background color.
+- Added a default resolution of `500 × 500` pixels with black modules and a white background.
+- Generated bitmaps use `Bitmap.Config.RGB_565`.
+- Added validation for empty values and non-positive resolutions.
+- Exposed invalid input and encoding failures through `IllegalArgumentException` and ZXing's `WriterException`, respectively.
+- Added KDoc describing parameters, return values, bitmap configuration, validation, and failure behavior.
+
+### Core scanner improvements
+
+- Reorganized camera, display utility, viewfinder, and logging classes into dedicated packages.
+- Added `QRBarcodeLogger` as a shared logging utility for the scanner modules.
+- Restricted library logging to debug builds and removed direct production logging from ZXing and ZBar scanner views.
+- Enabled `BuildConfig` generation in the core module to support debug-only logging.
+- Replaced camera rotation magic numbers with descriptive constants.
+- Extracted constants for the camera handler thread name, scanner animation values, image formats, and rotation states.
+- Improved camera preview sizing and orientation calculations while preserving their existing behavior.
+- Improved naming around camera state, preview data, dimensions, rotation, autofocus, flash, and viewfinder drawing.
+- Ensured the configured border alpha is applied when a viewfinder is created or recreated.
+- Retained the required `@JvmField` declarations for protected `ViewFinderView` properties whose generated setters would otherwise clash with existing JVM method signatures.
+- Removed the unused AndroidX Annotation dependency.
+
+### Build system and dependency updates
+
+- Raised the library version from `2.0.0` to `3.0.0`.
+- Updated sample application `versionCode` from `2000` to `2001`.
+- Updated `compileSdk` from API 36 to API 37.
+- Updated the Gradle wrapper from `9.5.0` to `9.6.1`.
+- Updated Android Gradle Plugin from `9.2.1` to `9.3.1`.
+- Updated Kotlin from `2.3.21` to `2.4.10`.
+- Updated Material Components from `1.13.0` to `1.14.0`.
+- Added AndroidX Core KTX `1.19.0`.
+- Added Dokka `2.2.0`.
+- Replaced expanded version-catalog dependency declarations with compact `module = "group:artifact"` notation.
+- Updated the version-catalog documentation for applications that consume the library as local modules.
+
+### Sample applications
+
+- Added `QRCodeGeneratorActivity` to the ZXing sample application.
+- Added a QR code generator screen with text input, bitmap generation, validation handling, and preview output.
+- Added a QR code generator entry point to the ZXing sample main screen.
+- Updated the sample manifest, layouts, strings, and screenshots for the new generator.
+- Refreshed the ZXing and ZBar screenshots.
+- Refactored both sample applications with clearer named arguments, expression bodies, collection handling, parameter names, and loop variable names.
+- Improved sample activity, fragment, dialog, and scanner setup readability without changing their behavior.
+
+### Documentation
+
+- Added comprehensive KDoc to the public and protected APIs in `:core`, `:zxing`, and `:zbar`.
+- Documented scanner lifecycle, result delivery, supported formats, camera preview behavior, viewfinder customization, utility functions, and QR code generation.
+- Added Dokka configuration for generating combined HTML documentation for all three library modules.
+- Added generated multi-module API documentation under `docs/` for future publication through GitHub Pages.
+- Added the API documentation link to the README.
+- Expanded the README with version `3.0.0` migration information.
+- Added detailed version-catalog guidance for local module consumers.
+- Added QR code generation examples, customization options, error-handling guidance, and a link to the sample implementation.
+- Clarified camera permission, runtime permission, and optional camera hardware feature behavior.
+- Updated README screenshots and links to reflect the current sample applications.
+- Centralized Dokka configuration in the library root project so applications consuming the local modules do not require the Dokka plugin.
+
+## [2.0.0] - May 10, 2026
 
 This is a major modernization release that updates the archived project to current Android tooling, AndroidX, Kotlin, AGP 9, JDK 21, local modules, Material Components, and refreshed documentation.
 
@@ -78,9 +211,8 @@ This is a major modernization release that updates the archived project to curre
 - Removed obsolete `package` declarations from AndroidManifest files.
 - Moved namespace configuration to Gradle.
 - Replaced dynamic sample `applicationId` values based on `project.group` with explicit application IDs.
-- Moved camera permission and camera feature declarations to the `:core` library manifest so ZXing and ZBar consumers inherit them through manifest merging.
-- Removed duplicated camera permission and camera feature declarations from sample app manifests.
-- Set the camera hardware feature as required for the scanner library.
+- Added camera permission and camera feature declarations to the `:core` library manifest so consumers inherit them through manifest merging.
+- Marked the camera hardware feature as optional with `android:required="false"`.
 - Set `android:screenOrientation="portrait"` for all activities in both ZBar and ZXing sample manifests.
 
 ### Launcher icon updates
@@ -168,7 +300,7 @@ This is a major modernization release that updates the archived project to curre
 - Updated the README title and description to better describe the project as an Android QR/barcode scanner library.
 - Preserved original project credits, archive notice, contributor references, and license information.
 
-## [1.9.13] - February  16, 2019
+## [1.9.13] - February 16, 2019
 - Update plugin, build tools and library versions
 - Min SDK version is now 14
 - Upload artifacts to jcenter/bintray instead of Maven central/Sonatype
@@ -202,11 +334,22 @@ This is a major modernization release that updates the archived project to curre
 - Fix inverted camera in devices with differently oriented back and forward facing cameras. Thanks to @thadcodes for PR #191
 - Add ability switch view finder view to square. Thanks to @squeeish for PR #163
 
-## [1.8.4] - Dec 30, 2015
-- Improve performance by opening camera and handling preview frames in a separate HandlerThread (#1, #99)
-- Do not automatically stopCamera after a result is found #115
-- Update samples to use Material Theme and make sure all samples use the FullScreen theme
-- Update gradle wrapper to v2.10, gradle plugin to v1.5.0, buildToolsVersion to v23.0.2 and targetSdkVersion 23
+## [1.8.4] - December 30, 2015
+
+- Improve performance by opening the camera and handling preview frames in a separate `HandlerThread` (#1, #99).
+- Do not automatically stop the camera after a result is found (#115).
+- Update samples to use Material Theme and make sure all samples use the FullScreen theme.
+- Update Gradle wrapper to 2.10, Gradle plugin to 1.5.0, Build Tools to 23.0.2, and `targetSdkVersion` to 23.
+
+### Migration note
+
+After a successful scan, only the camera preview is stopped. The camera itself is not automatically released.
+
+Applications that previously called `startCamera()` inside `handleResult()` should use `resumeCameraPreview()` instead:
+
+```java
+mScannerView.resumeCameraPreview(this);
+```
 
 ## [1.8.3] - October 3, 2015
 - Rebuild ZBar libraries with position independent code (#123,#119,#94).

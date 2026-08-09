@@ -32,12 +32,10 @@ class MessageDialogFragment : DialogFragment() {
             title: String,
             message: String,
             listener: MessageDialogListener
-        ): MessageDialogFragment {
-            return MessageDialogFragment().apply {
-                this.title = title
-                this.message = message
-                this.listener = listener
-            }
+        ): MessageDialogFragment = MessageDialogFragment().apply {
+            this.title = title
+            this.message = message
+            this.listener = listener
         }
     }
 }
