@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.android.library)
 }
 
-version = "3.0.0"
+version = "4.0.0"
 
 android {
     namespace = "me.dm7.barcodescanner.zbar"

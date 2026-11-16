@@ -66,6 +66,15 @@
                 android:text="@string/fragment_sample"
                 android:textAllCaps="false"
                 app:cornerRadius="20dp" />
+
+            <TextView
+                android:id="@+id/text_app_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="end"
+                android:textColor="@android:color/black"
+                tools:text="Version: 1.4.0" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

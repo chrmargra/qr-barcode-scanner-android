@@ -29,6 +29,9 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding?.toolbar)
 
         initListeners()
+
+        binding?.textAppVersion?.text =
+            getString(R.string.app_version, BuildConfig.VERSION_NAME)
     }
 
     private fun initListeners() {

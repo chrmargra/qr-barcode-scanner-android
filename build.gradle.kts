@@ -47,7 +47,7 @@ dependencies {
 dokka {
     dokkaPublications.html {
         moduleName.set("QR Barcode Scanner Android")
-        moduleVersion.set("3.0.0")
+        moduleVersion.set("4.0.0")
         outputDirectory.set(layout.buildDirectory.dir("dokka/html"))
     }
 }

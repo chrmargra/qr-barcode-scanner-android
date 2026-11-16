@@ -13,9 +13,9 @@ android {
     defaultConfig {
         applicationId = "me.dm7.barcodescanner.zbar.sample"
         minSdk = 26
-        targetSdk = 36
-        versionCode = 2001
-        versionName = "3.0.0"
+        targetSdk = 37
+        versionCode = 2002
+        versionName = "4.0.0"
     }
 
     compileOptions {
@@ -25,6 +25,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
