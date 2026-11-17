@@ -15,6 +15,7 @@ import me.dm7.barcodescanner.core.camera.CameraHandlerThread
 import me.dm7.barcodescanner.core.camera.CameraPreview
 import me.dm7.barcodescanner.core.camera.CameraUtils
 import me.dm7.barcodescanner.core.camera.CameraWrapper
+import me.dm7.barcodescanner.core.util.hasCameraPermission
 import me.dm7.barcodescanner.core.viewfinder.ViewFinder
 import me.dm7.barcodescanner.core.viewfinder.ViewFinderView
 
@@ -319,15 +320,25 @@ abstract class BarcodeScannerView : FrameLayout, Camera.PreviewCallback {
     /**
      * Opens the camera identified by [cameraId] on a background thread.
      *
-     * The camera permission must already be granted. If the camera cannot be opened,
-     * no preview is created.
+     * The consuming application is responsible for requesting and granting the
+     * camera permission before calling this method. If the permission is not granted,
+     * an [IllegalStateException] is thrown.
+     *
+     * If the camera cannot be opened, no preview is created.
+     *
+     * @param cameraId Identifier of the camera to open.
+     *
+     * @throws IllegalStateException if the camera permission has not been granted.
      */
     open fun startCamera(cameraId: Int) {
-        if (cameraHandlerThread == null) {
-            cameraHandlerThread = CameraHandlerThread(scannerView = this)
+        check(value = context.hasCameraPermission()) {
+            "Camera permission is required to start the scanner."
         }
 
-        val currentCameraHandlerThread = cameraHandlerThread ?: throw NullPointerException()
+        val currentCameraHandlerThread = cameraHandlerThread
+            ?: CameraHandlerThread(scannerView = this).also { cameraHandlerThread ->
+                this.cameraHandlerThread = cameraHandlerThread
+            }
 
         currentCameraHandlerThread.startCamera(cameraId = cameraId)
     }

@@ -5,24 +5,30 @@ import android.hardware.Camera
 private const val DEFAULT_CAMERA_ID = -1
 
 /**
- * Utility functions for selecting, opening and inspecting legacy Android cameras.
+ * Utility functions for selecting, opening, and inspecting legacy Android cameras.
  */
 object CameraUtils {
 
     /**
      * Attempts to open the preferred camera.
      *
+     * A back-facing camera is preferred. If none is available, another camera
+     * is selected. If no camera is found, the system default camera is attempted.
+     *
      * @return The opened camera, or `null` if it is unavailable, already in use,
-     * missing or cannot be accessed.
+     * missing, or cannot be accessed.
      */
     fun getCameraInstance(): Camera? = getCameraInstance(cameraId = getDefaultCameraId())
 
     /**
      * Attempts to open the camera identified by [cameraId].
      *
-     * Passing `-1` uses the system default camera.
+     * Passing `-1` uses the system default camera. Runtime exceptions raised
+     * while opening the camera are caught, and `null` is returned.
      *
-     * @return The opened camera, or `null` if it cannot be accessed.
+     * @param cameraId Identifier of the camera to open, or `-1` for the system default.
+     *
+     * @return The opened camera, or `null` if it cannot be opened.
      */
     fun getCameraInstance(cameraId: Int): Camera? =
         try {
@@ -31,7 +37,7 @@ object CameraUtils {
             } else {
                 Camera.open(cameraId) // Attempt to get a Camera instance
             }
-        } catch (_: Exception) {
+        } catch (_: RuntimeException) {
             // Camera is not available, in use, or does not exist.
             null
         }
@@ -39,8 +45,8 @@ object CameraUtils {
     /**
      * Returns the preferred camera identifier.
      *
-     * A back-facing camera is preferred. If none exists, another available camera is
-     * returned.
+     * A back-facing camera is preferred. If none exists, the last enumerated
+     * camera is returned.
      *
      * @return The selected camera identifier, or `-1` when no camera is available.
      */
@@ -59,23 +65,28 @@ object CameraUtils {
     }
 
     /**
-     * Checks whether [camera] supports a usable flash mode.
+     * Checks whether [camera] supports a flash mode other than off.
      *
-     * @return `false` when the camera is `null`, has no flash mode, or only supports
-     * flash-off mode.
+     * The camera must have a non-null current flash mode and support at least
+     * one flash mode other than [Camera.Parameters.FLASH_MODE_OFF].
+     *
+     * @param camera Camera instance to inspect, or `null`.
+     *
+     * @return `true` if the camera supports a flash mode other than off,
+     * or `false` if the camera is `null`, has no current flash mode, or has
+     * no supported flash modes other than off.
      */
     fun isFlashSupported(camera: Camera?): Boolean {
         // Credits: Top answer at http://stackoverflow.com/a/19599365/868173
         if (camera == null) return false
 
         val parameters = camera.parameters
-
         if (parameters.flashMode == null) return false
 
-        val supportedFlashModes = parameters.supportedFlashModes
-        return supportedFlashModes != null &&
-                supportedFlashModes.isNotEmpty() &&
-                (supportedFlashModes.size != 1 ||
-                        supportedFlashModes[0] != Camera.Parameters.FLASH_MODE_OFF)
+        val supportedFlashModes = parameters.supportedFlashModes ?: return false
+
+        return supportedFlashModes.any { flashMode ->
+            flashMode != Camera.Parameters.FLASH_MODE_OFF
+        }
     }
 }
