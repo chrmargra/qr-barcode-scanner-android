@@ -7,6 +7,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 
 private const val DEFAULT_QR_CODE_RESOLUTION = 500
+private const val MAX_QR_CODE_LENGTH = 100
 private const val MIN_QR_CODE_RESOLUTION = 1
 
 object QRCodeEncoder {
@@ -18,7 +19,7 @@ object QRCodeEncoder {
      * supplied as both the width and height. The resulting bitmap uses
      * [Bitmap.Config.RGB_565], so alpha transparency is not preserved.
      *
-     * @param value Text to encode. It must contain at least one character.
+     * @param value Text to encode. It must contain between 1 and 100 characters.
      * @param resolution Requested width and height in pixels. It must be greater than zero.
      * Defaults to 500 pixels.
      * @param foregroundColor Color used for the QR code modules.
@@ -26,7 +27,8 @@ object QRCodeEncoder {
      *
      * @return The generated QR code bitmap.
      *
-     * @throws IllegalArgumentException if [value] is empty or [resolution] is not greater than zero.
+     * @throws IllegalArgumentException if [value] is empty, exceeds 100 characters,
+     * or [resolution] is not greater than zero.
      * @throws com.google.zxing.WriterException if ZXing cannot encode [value] as a QR code.
      */
     fun encodeQRCode(
@@ -37,6 +39,9 @@ object QRCodeEncoder {
     ): Bitmap {
         require(value = value.isNotEmpty()) {
             "The value to encode cannot be empty."
+        }
+        require(value.length <= MAX_QR_CODE_LENGTH) {
+            "The value to encode cannot exceed $MAX_QR_CODE_LENGTH characters."
         }
         require(value = resolution >= MIN_QR_CODE_RESOLUTION) {
             "The resolution must be greater than zero."
